@@ -21,22 +21,22 @@ const EmployeeDetail = ({ isOpen, onClose, employeeId }) => {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchEmployeeDetail = async () => {
-      try {
-        const response = await getEmployeeDetail(employeeId);
-        setEmployee(response);
-      } catch (error) {
-        console.error("Error fetching employee details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchEmployeeDetail = async () => {
+  //     try {
+  //       const response = await getEmployeeDetail(employeeId);
+  //       setEmployee(response);
+  //     } catch (error) {
+  //       console.error("Error fetching employee details:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    if (employeeId) {
-      fetchEmployeeDetail();
-    }
-  }, [employeeId]);
+  //   if (employeeId) {
+  //     fetchEmployeeDetail();
+  //   }
+  // }, [employeeId]);
 
   if (loading) {
     return (

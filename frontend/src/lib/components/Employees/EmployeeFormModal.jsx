@@ -40,74 +40,74 @@ const EmployeeFormModal = ({ isOpen, onClose, employee, onSubmit }) => {
   const [departments, setDepartments] = useState([]);
   const toast = useToast();
 
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        const res = await getDepartmentList();
-        setDepartments(res);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchDepartments = async () => {
+  //     try {
+  //       const res = await getDepartmentList();
+  //       setDepartments(res);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    fetchDepartments();
-  }, []);
+  //   fetchDepartments();
+  // }, []);
 
-  useEffect(() => {
-    const fetchEmployeeDetail = async () => {
-      if (employee) {
-        try {
-          const employeeDetail = await getEmployeeDetail(employee.employeeID);
-          setFormData({
-            employeeID: employeeDetail.employeeID || "",
-            fullName: employeeDetail.fullName || "",
-            position: employeeDetail.position || "",
-            departmentID: employeeDetail.departmentID || "",
-            gender: employeeDetail.gender || "",
-            dateOfBirth: employeeDetail.dateOfBirth
-              ? new Date(employeeDetail.dateOfBirth).toISOString().split("T")[0]
-              : "",
-            nationality: employeeDetail.nationality || "",
-            nationalIDNumber: employeeDetail.nationalIDNumber || "",
-            phoneNumber: employeeDetail.phoneNumber || "",
-            healthInsurance: employeeDetail.healthInsurance || "",
-            address: employeeDetail.address || "",
-            bankAccountNumber: employeeDetail.bankAccountNumber || "",
-            bankName: employeeDetail.bankName || "",
-            status: employeeDetail.status || "Active",
-          });
-        } catch (error) {
-          console.error("Error fetching employee detail:", error);
-          toast({
-            title: "Error",
-            description: "Cannot fetch employee detail",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-      } else {
-        setFormData({
-          employeeID: "",
-          fullName: "",
-          position: "",
-          departmentID: "",
-          gender: "",
-          dateOfBirth: "",
-          nationality: "",
-          nationalIDNumber: "",
-          phoneNumber: "",
-          healthInsurance: "",
-          address: "",
-          bankAccountNumber: "",
-          bankName: "",
-          status: "Active",
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const fetchEmployeeDetail = async () => {
+  //     if (employee) {
+  //       try {
+  //         const employeeDetail = await getEmployeeDetail(employee.employeeID);
+  //         setFormData({
+  //           employeeID: employeeDetail.employeeID || "",
+  //           fullName: employeeDetail.fullName || "",
+  //           position: employeeDetail.position || "",
+  //           departmentID: employeeDetail.departmentID || "",
+  //           gender: employeeDetail.gender || "",
+  //           dateOfBirth: employeeDetail.dateOfBirth
+  //             ? new Date(employeeDetail.dateOfBirth).toISOString().split("T")[0]
+  //             : "",
+  //           nationality: employeeDetail.nationality || "",
+  //           nationalIDNumber: employeeDetail.nationalIDNumber || "",
+  //           phoneNumber: employeeDetail.phoneNumber || "",
+  //           healthInsurance: employeeDetail.healthInsurance || "",
+  //           address: employeeDetail.address || "",
+  //           bankAccountNumber: employeeDetail.bankAccountNumber || "",
+  //           bankName: employeeDetail.bankName || "",
+  //           status: employeeDetail.status || "Active",
+  //         });
+  //       } catch (error) {
+  //         console.error("Error fetching employee detail:", error);
+  //         toast({
+  //           title: "Error",
+  //           description: "Cannot fetch employee detail",
+  //           status: "error",
+  //           duration: 3000,
+  //           isClosable: true,
+  //         });
+  //       }
+  //     } else {
+  //       setFormData({
+  //         employeeID: "",
+  //         fullName: "",
+  //         position: "",
+  //         departmentID: "",
+  //         gender: "",
+  //         dateOfBirth: "",
+  //         nationality: "",
+  //         nationalIDNumber: "",
+  //         phoneNumber: "",
+  //         healthInsurance: "",
+  //         address: "",
+  //         bankAccountNumber: "",
+  //         bankName: "",
+  //         status: "Active",
+  //       });
+  //     }
+  //   };
 
-    fetchEmployeeDetail();
-  }, [employee, toast]);
+  //   fetchEmployeeDetail();
+  // }, [employee, toast]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -119,30 +119,30 @@ const EmployeeFormModal = ({ isOpen, onClose, employee, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await onSubmit(formData);
-      onClose();
-      toast({
-        title: "Success",
-        description: employee
-          ? "Update employee successfully"
-          : "Add employee successfully",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      toast({
-        title: "Error",
-        description: employee
-          ? "Cannot update employee"
-          : "Cannot add employee",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+    // try {
+    //   await onSubmit(formData);
+    //   onClose();
+    //   toast({
+    //     title: "Success",
+    //     description: employee
+    //       ? "Update employee successfully"
+    //       : "Add employee successfully",
+    //     status: "success",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    // } catch (error) {
+    //   console.error("Error submitting form:", error);
+    //   toast({
+    //     title: "Error",
+    //     description: employee
+    //       ? "Cannot update employee"
+    //       : "Cannot add employee",
+    //     status: "error",
+    //     duration: 3000,
+    //     isClosable: true,
+    //   });
+    // }
   };
 
   return (

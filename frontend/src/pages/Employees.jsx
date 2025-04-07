@@ -8,12 +8,10 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
-  Select,
-  HStack,
   useToast,
   Spinner,
 } from "@chakra-ui/react";
-import { FiSearch, FiPlus, FiFilter } from "react-icons/fi";
+import { FiSearch, FiPlus } from "react-icons/fi";
 import EmployeeTable from "../lib/components/Employees/EmployeeTable";
 import EmployeeDetail from "../lib/components/Employees/EmployeeDetail";
 import EmployeeFormModal from "../lib/components/Employees/EmployeeFormModal";
@@ -24,38 +22,81 @@ import {
 } from "../lib/controller/employeesController";
 
 const Employees = () => {
-  const [employees, setEmployees] = useState([]);
+  // Tạo mockup data nhân viên: MaNV, HoTenNV, SDT, Email, ChucVu.
+  const mockupData = [
+    {
+      MaNV: "NV001",
+      HoTenNV: "Nguyễn Anh Tú",
+      GioiTinh: 0,
+      DiaChi: "01 An Hoà 4",
+      SDT: "0387631548",
+      Email: "dinhsyquocdoanh@gmail.com",
+      ChucVu: "Nhân viên",
+    },
+    {
+      MaNV: "NV002",
+      HoTenNV: "Nguyễn Anh Tú",
+      GioiTinh: 0,
+      DiaChi: "01 An Hoà 4",
+      SDT: "0387631548",
+      Email: "dinhsyquocdoanh@gmail.com",
+      ChucVu: "Nhân viên",
+    },
+    {
+      MaNV: "NV003",
+      HoTenNV: "Nguyễn Anh Tú",
+      GioiTinh: 0,
+      DiaChi: "01 An Hoà 4",
+      SDT: "0387631548",
+      Email: "dinhsyquocdoanh@gmail.com",
+      ChucVu: "Nhân viên",
+    },
+    {
+      MaNV: "NV004",
+      HoTenNV: "Nguyễn Anh Tú",
+      GioiTinh: 0,
+      DiaChi: "01 An Hoà 4",
+      SDT: "0387631548",
+      Email: "dinhsyquocdoanh@gmail.com",
+      ChucVu: "Nhân viên",
+    },
+  ];
+  const [employees, setEmployees] = useState(mockupData);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const toast = useToast();
 
-  // Gọi API lấy danh sách nhân viên
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await getAllEmployees();
-        setEmployees(response);
-        setFilteredEmployees(response);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        toast({
-          title: "Error",
-          description: "Cannot load employee list",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    setFilteredEmployees(employees);
+  }, [employees]);
 
-    fetchEmployees();
-  }, [toast]);
+  // // Gọi API lấy danh sách nhân viên
+  // useEffect(() => {
+  //   const fetchEmployees = async () => {
+  //     try {
+  //       const response = await getAllEmployees();
+  //       setEmployees(response);
+  //       setFilteredEmployees(response);
+  //     } catch (error) {
+  //       console.error("Error fetching employees:", error);
+  //       toast({
+  //         title: "Error",
+  //         description: "Cannot load employee list",
+  //         status: "error",
+  //         duration: 3000,
+  //         isClosable: true,
+  //       });
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchEmployees();
+  // }, [toast]);
 
   const handleViewEmployee = (employeeId) => {
     setSelectedEmployeeId(employeeId);
@@ -83,20 +124,20 @@ const Employees = () => {
   };
 
   const handleSubmitEmployee = async (formData) => {
-    try {
-      if (selectedEmployee) {
-        // Cập nhật nhân viên
-        await updateEmployee(selectedEmployee.employeeID, formData);
-      } else {
-        // Thêm nhân viên mới
-        await createEmployee(formData);
-      }
-      handleCloseFormModal();
-      window.location.reload();
-    } catch (error) {
-      console.error("Error submitting employee:", error);
-      throw error;
-    }
+    // try {
+    //   if (selectedEmployee) {
+    //     // Cập nhật nhân viên
+    //     await updateEmployee(selectedEmployee.employeeID, formData);
+    //   } else {
+    //     // Thêm nhân viên mới
+    //     await createEmployee(formData);
+    //   }
+    //   handleCloseFormModal();
+    //   window.location.reload();
+    // } catch (error) {
+    //   console.error("Error submitting employee:", error);
+    //   throw error;
+    // }
   };
 
   const handleSearch = (event) => {
@@ -145,68 +186,41 @@ const Employees = () => {
   }
 
   return (
-    <Box>
-      <Flex justify="space-between" align="center" mb={6}>
-        <Heading size="lg">Employee Management</Heading>
+    <Box p={6}>
+      <Box mb={4}>
+        <Heading fontSize="lg" color="blue.600">
+          Quản lý nhân viên
+        </Heading>
+      </Box>
+
+      <Flex justify="space-between" align="center" mb={4}>
+        <InputGroup maxW="300px" bg="white" borderRadius="md" boxShadow="sm">
+          <InputLeftElement pointerEvents="none">
+            <FiSearch color="gray.400" />
+          </InputLeftElement>
+          <Input placeholder="Tìm kiếm nhân viên" onChange={handleSearch} />
+        </InputGroup>
+
         <Button
           leftIcon={<FiPlus />}
-          colorScheme="black"
-          bg="black"
+          bg="blue.600"
+          color="white"
+          _hover={{ bg: "blue.700" }}
+          borderRadius="md"
+          px={5}
           onClick={handleAddEmployee}
         >
-          New Employee
+          Thêm nhân viên
         </Button>
       </Flex>
 
-      <Flex
-        direction={{ base: "column", md: "row" }}
-        mb={6}
-        gap={4}
-        align={{ base: "stretch", md: "center" }}
-      >
-        <InputGroup maxW={{ md: "320px" }}>
-          <InputLeftElement pointerEvents="none">
-            <FiSearch color="gray.300" />
-          </InputLeftElement>
-          <Input placeholder="Search employee..." onChange={handleSearch} />
-        </InputGroup>
-
-        <HStack spacing={4} ml={{ md: "auto" }}>
-          <Select
-            placeholder="Department"
-            maxW="180px"
-            onChange={handleDepartmentFilter}
-          >
-            <option value="all">All departments</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Finance">Finance</option>
-            <option value="Human Resources">Human Resources</option>
-            <option value="Product">Product</option>
-          </Select>
-
-          <Select
-            placeholder="Status"
-            maxW="150px"
-            onChange={handleStatusFilter}
-          >
-            <option value="all">All status</option>
-            <option value="Active">Working</option>
-            <option value="On leave">On leave</option>
-            <option value="Inactive">Inactive</option>
-          </Select>
-
-          <Button leftIcon={<FiFilter />} variant="outline">
-            Filter
-          </Button>
-        </HStack>
-      </Flex>
-
-      <EmployeeTable
-        employees={filteredEmployees}
-        onViewEmployee={handleViewEmployee}
-        onEditEmployee={handleEditEmployee}
-      />
+      <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
+        <EmployeeTable
+          employees={filteredEmployees}
+          onViewEmployee={handleViewEmployee}
+          onEditEmployee={handleEditEmployee}
+        />
+      </Box>
 
       <EmployeeDetail
         isOpen={isDetailModalOpen}
