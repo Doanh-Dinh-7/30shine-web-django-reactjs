@@ -97,6 +97,7 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
             </Td>
             <Td>
               <Link
+                href={`/employees/schedule/${employee.MaNV}`}
                 fontSize="sm"
                 color="gray.500"
                 _hover={{ color: "blue.600", textDecoration: "underline" }}

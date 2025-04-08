@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "../../pages/Error";
 import Employees from "../../pages/Employees";
 import Layout from "../../lib/components/Layout/Layout";
+import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
 
 export const router = createBrowserRouter([
   {
@@ -12,6 +13,10 @@ export const router = createBrowserRouter([
       {
         path: "/employees",
         element: <Employees />,
+      },
+      {
+        path: "/employees/schedule/:maNV",
+        element: <EmployeeSchedule />,
       },
     ],
   },
