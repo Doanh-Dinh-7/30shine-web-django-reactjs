@@ -15,6 +15,7 @@ import { FiSearch, FiPlus } from "react-icons/fi";
 import EmployeeTable from "../lib/components/Employees/EmployeeTable";
 import EmployeeDetail from "../lib/components/Employees/EmployeeDetail";
 import EmployeeFormModal from "../lib/components/Employees/EmployeeFormModal";
+import { Outlet } from "react-router-dom";
 import {
   getAllEmployees,
   createEmployee,

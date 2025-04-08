@@ -20,10 +20,10 @@ const theme = extendTheme({
     Button: {
       variants: {
         solid: {
-          bg: "black",
+          bg: "blue",
           color: "white",
           _hover: {
-            bg: "gray.800",
+            bg: "blue.600",
           },
         },
       },
@@ -33,14 +33,14 @@ const theme = extendTheme({
         simple: {
           th: {
             borderBottom: "1px solid",
-            borderColor: "gray.200",
+            borderColor: "blue.200",
             textTransform: "none",
             letterSpacing: "normal",
             fontWeight: "medium",
           },
           td: {
             borderBottom: "1px solid",
-            borderColor: "gray.100",
+            borderColor: "blue.100",
           },
         },
       },
