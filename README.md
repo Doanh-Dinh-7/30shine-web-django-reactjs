@@ -42,17 +42,17 @@
 │   ├── src/
 │   │   ├── images/                   # 📷 Hình ảnh, font chữ private
 │   │   ├── lib/                      # 📦 Thành phần dùng chung
-│   │   │   ├── <span style="color:#6f42c1; font-weight:bold;">components/</span>           # 🧩 **Component** tái sử dụng
+│   │   │   ├── <span style="color:#6f42c1; font-weight:bold;">components/</span>           # 🧩 **Component** tái sử dụng ⚠️
 │   │   │   │   ├── Employees/        # Thư mục chứa component phục vụ trang Employees
-│   │   │   │   └── <span style="color:#5805f0; font-weight:bold;">*Tên trang chính/</span>     <span style="color:#d73a49; font-weight:bold;"># CHÚ Ý/</span>
+│   │   │   │   └── <span style="color:#5805f0; font-weight:bold;">*Tên trang chính/</span>     <span style="color:#d73a49; font-weight:bold;"># ⚠️ CHÚ Ý/</span>
 │   │   │   │ 
 │   │   │   ├── controller/           # Xử lý API
 │   │   │   ├── router/               # Cấu hình routing
 │   │   │   └── theme/                # Cấu hình giao diện
 │   │   │   
-│   │   ├── <span style="color:#005cc5; font-weight:bold;">pages/</span>                    # 📄 **Component trang**, trang chính của các trang quản lý
+│   │   ├── <span style="color:#005cc5; font-weight:bold;">pages/</span>                    # 📄 **Component trang**, trang chính của các trang quản lý ⚠️
 │   │   │   ├── Employees.jsx 
-│   │   │   └── <span style="color:#057aff; font-weight:bold;">*Tên trang quản lý chính.jsx</span>  <span style="color:#d73a49; font-weight:bold;"># CHÚ Ý</span>
+│   │   │   └── <span style="color:#057aff; font-weight:bold;">*Tên trang quản lý chính.jsx</span>  <span style="color:#d73a49; font-weight:bold;"># ⚠️ CHÚ Ý</span>
 │   │   │   
 │   │   ├── App.jsx                   # Component gốc
 │   │   ├── main.jsx                  # Điểm khởi đầu
