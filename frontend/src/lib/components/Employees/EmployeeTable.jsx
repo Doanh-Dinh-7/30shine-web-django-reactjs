@@ -20,6 +20,8 @@ import {
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { deleteEmployee } from "../../controller/employeesController";
 import { useState } from "react";
+import ReactPaginate from "react-paginate";
+import "../../../assets/styles/paginate.css";
 
 const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
   const toast = useToast();
@@ -53,17 +55,14 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
   };
 
   // Logic phân trang
-  const totalPages = Math.ceil(employees.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
+  const pageCount = Math.ceil(employees.length / pageSize);
+  const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedEmployees = employees.slice(startIndex, endIndex);
 
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  // Handle page change
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
   };
 
   return (
@@ -130,27 +129,29 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
           ))}
         </Tbody>
       </Table>
-      {/* Phân trang thủ công */}
-      <Flex mt={5} justify="center" align="center" gap={4}>
-        <Button
-          onClick={handlePrevious}
-          isDisabled={currentPage === 1}
-          colorScheme="teal"
-          size="sm"
-        >
-          {"<"}
-        </Button>
-        <Text>
-          Trang {currentPage} / {totalPages}
-        </Text>
-        <Button
-          onClick={handleNext}
-          isDisabled={currentPage === totalPages}
-          colorScheme="teal"
-          size="sm"
-        >
-          {">"}
-        </Button>
+
+      {/* ReactPaginate component */}
+      <Flex mt={5} justify="center">
+        <ReactPaginate
+          previousLabel={"<"}
+          nextLabel={">"}
+          breakLabel={"..."}
+          pageCount={pageCount}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          activeClassName={"active"}
+          pageClassName={"page-item"}
+          pageLinkClassName={"page-link"}
+          previousClassName={"page-item"}
+          nextClassName={"page-item"}
+          previousLinkClassName={"previous-link"}
+          nextLinkClassName={"next-link"}
+          breakClassName={"page-item"}
+          breakLinkClassName={"break-link"}
+          forcePage={currentPage}
+        />
       </Flex>
     </Box>
   );

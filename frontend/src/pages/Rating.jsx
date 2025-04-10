@@ -14,10 +14,12 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
+import ReactPaginate from "react-paginate";
+import "../assets/styles/paginate.css";
 
 const Rating = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // Thêm state cho trang hiện tại
+  const [currentPage, setCurrentPage] = useState(0); // Thêm state cho trang hiện tại
   const pageSize = 5; // Số lượng đánh giá mỗi trang
 
   const [ratings, setRatings] = useState([
@@ -76,18 +78,15 @@ const Rating = () => {
       rating.NoiDung.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Logic phân trang
-  const totalPages = Math.ceil(filteredRatings.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
+  // Phân trang logic
+  const pageCount = Math.ceil(filteredRatings.length / pageSize);
+  const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedRatings = filteredRatings.slice(startIndex, endIndex);
 
-  const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  // Handle page change
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
   };
 
   return (
@@ -127,27 +126,28 @@ const Rating = () => {
           </Tbody>
         </Table>
 
-        {/* Phân trang thủ công */}
-        <Flex mt={5} justify="center" align="center" gap={4}>
-          <Button
-            onClick={handlePrevious}
-            isDisabled={currentPage === 1}
-            colorScheme="teal"
-            size="sm"
-          >
-            {"<"}
-          </Button>
-          <Text>
-            Trang {currentPage} / {totalPages}
-          </Text>
-          <Button
-            onClick={handleNext}
-            isDisabled={currentPage === totalPages}
-            colorScheme="teal"
-            size="sm"
-          >
-            {">"}
-          </Button>
+        {/* ReactPaginate component */}
+        <Flex mt={5} justify="center">
+          <ReactPaginate
+            previousLabel={"<"}
+            nextLabel={">"}
+            breakLabel={"..."}
+            pageCount={pageCount}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            onPageChange={handlePageClick}
+            containerClassName={"pagination"}
+            activeClassName={"active"}
+            pageClassName={"page-item"}
+            pageLinkClassName={"page-link"}
+            previousClassName={"page-item"}
+            nextClassName={"page-item"}
+            previousLinkClassName={"previous-link"}
+            nextLinkClassName={"next-link"}
+            breakClassName={"page-item"}
+            breakLinkClassName={"break-link"}
+            forcePage={currentPage}
+          />
         </Flex>
       </Box>
     </Box>

@@ -1,0 +1,72 @@
+/* Pagination container */
+.pagination {
+    display        : flex;
+    gap            : 8px;
+    list-style     : none;
+    padding        : 0;
+    justify-content: center;
+    margin-top     : 20px;
+}
+
+/* Individual page item */
+.page-item {
+    cursor: pointer;
+}
+
+/* Page link (numbers and navigation) */
+.page-link,
+.next-link,
+.previous-link {
+    padding         : 6px 12px;
+    border          : 1px solid #bbbbbb;
+    border-radius   : 4px;
+    color           : #232323;
+    background-color: #ffffff;
+    font-size       : 14px;
+    transition      : all 0.2s ease-in-out;
+}
+
+/* Active page */
+.active .page-link {
+    background-color: #3574dc;
+    color           : #ffffff;
+    border-color    : #3574dc;
+}
+
+/* Hover state cho page-link thông thường */
+.page-link:hover {
+    background-color: #d9d9d9;
+    border-color    : #3b82f6;
+    color           : #3b82f6;
+}
+
+/* Disabled state (for Previous/Next when at limits) */
+.page-item.disabled .previous-link,
+.page-item.disabled .next-link {
+    color           : #ccc;
+    border-color    : #8d95ff;
+    background-color: #8d95ff;
+    cursor          : not-allowed;
+}
+
+/* Previous và Next khi có thể chọn (không bị disabled) */
+.page-item:not(.disabled) .previous-link,
+.page-item:not(.disabled) .next-link {
+    background-color: #3574dc;
+    color           : #ffffff;
+    border-color    : #8d95ff;
+}
+
+/* Hover state cho Previous và Next khi có thể chọn */
+.page-item:not(.disabled) .previous-link:hover,
+.page-item:not(.disabled) .next-link:hover {
+    background-color: #3b82f6;
+    border-color    : #3b82f6;
+    color           : #ffffff;
+}
+
+/* Break (ellipsis) styling */
+.break-link {
+    padding: 6px 12px;
+    color  : #595959;
+}
