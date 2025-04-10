@@ -27,7 +27,7 @@ const Employees = () => {
   const mockupData = [
     {
       MaNV: "NV001",
-      HoTenNV: "Nguyễn Anh Tú",
+      HoTenNV: "Nguyễn Doanh",
       GioiTinh: 0,
       DiaChi: "01 An Hoà 4",
       SDT: "0387631548",
@@ -45,7 +45,7 @@ const Employees = () => {
     },
     {
       MaNV: "NV003",
-      HoTenNV: "Nguyễn Anh Tú",
+      HoTenNV: "Nguyễn Hoàng",
       GioiTinh: 0,
       DiaChi: "01 An Hoà 4",
       SDT: "0387631548",
@@ -54,7 +54,7 @@ const Employees = () => {
     },
     {
       MaNV: "NV004",
-      HoTenNV: "Nguyễn Anh Tú",
+      HoTenNV: "Nguyễn Kiên",
       GioiTinh: 0,
       DiaChi: "01 An Hoà 4",
       SDT: "0387631548",
@@ -143,8 +143,11 @@ const Employees = () => {
 
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
-    const filtered = employees.filter((employee) =>
-      employee.fullName.toLowerCase().includes(searchTerm)
+    const filtered = employees.filter(
+      (employee) =>
+        employee.HoTenNV.toLowerCase().includes(searchTerm) ||
+        employee.SDT.toLowerCase().includes(searchTerm) ||
+        employee.MaNV.toLowerCase().includes(searchTerm)
     );
     setFilteredEmployees(filtered);
   };
@@ -204,9 +207,7 @@ const Employees = () => {
 
         <Button
           leftIcon={<FiPlus />}
-          bg="blue.600"
           color="white"
-          _hover={{ bg: "blue.700" }}
           borderRadius="md"
           px={5}
           onClick={handleAddEmployee}

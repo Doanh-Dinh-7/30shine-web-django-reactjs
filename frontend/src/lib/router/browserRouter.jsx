@@ -3,6 +3,8 @@ import ErrorPage from "../../pages/Error";
 import Employees from "../../pages/Employees";
 import Layout from "../../lib/components/Layout/Layout";
 import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
+import Rating from "../../pages/Rating";
+import Customers from "../../pages/Customers";
 
 export const router = createBrowserRouter([
   {
@@ -17,6 +19,14 @@ export const router = createBrowserRouter([
       {
         path: "/employees/schedule/:maNV",
         element: <EmployeeSchedule />,
+      },
+      {
+        path: "/feedback",
+        element: <Rating />,
+      },
+      {
+        path: "/customers",
+        element: <Customers />,
       },
     ],
   },
