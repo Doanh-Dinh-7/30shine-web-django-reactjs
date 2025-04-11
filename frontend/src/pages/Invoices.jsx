@@ -7,6 +7,7 @@ import { MdAdd, MdEdit, MdDelete } from "react-icons/md";
 import { FaDotCircle } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
 import "../assets/styles/paginate.css";
+import PaymentForm from "../lib/components/Invoices/PaymentForm";
 
 const hoaDonList = [
   {
@@ -80,7 +81,7 @@ const Invoices = () => {
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedInvoices = filteredInvoices.slice(startIndex, endIndex);
-  
+
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
   };
@@ -183,6 +184,8 @@ const Invoices = () => {
             forcePage={currentPage}
           />
         </Flex>
+
+        <PaymentForm />
     </Box>
   );
 };
