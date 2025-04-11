@@ -54,10 +54,6 @@ const Invoices = () => {
     setCurrentPage(0);
   };
 
-  // const filteredInvoices =  invoices.filter(invoice =>
-  //     invoice.MaHD.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //     invoice.MaKH.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
   const filteredInvoices = invoices
   .filter(invoice =>
     invoice.MaHD.toLowerCase().includes(searchQuery.toLowerCase()) ||
