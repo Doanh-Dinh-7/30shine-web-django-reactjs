@@ -80,8 +80,7 @@ const Invoices = () => {
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedInvoices = filteredInvoices.slice(startIndex, endIndex);
-
-  // Handle page change
+  
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
   };
