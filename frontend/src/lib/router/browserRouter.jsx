@@ -5,6 +5,7 @@ import Layout from "../../lib/components/Layout/Layout";
 import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
 import Rating from "../../pages/Rating";
 import Customers from "../../pages/Customers";
+import Invoices from "../../pages/Invoices";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
         path: "/customers",
         element: <Customers />,
       },
+      {
+        path: "/invoices",
+        element: <Invoices />
+      }
     ],
   },
 ]);
