@@ -6,7 +6,8 @@ import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
 import Rating from "../../pages/Rating";
 import Customers from "../../pages/Customers";
 import ServiceAndPrice from "../../pages/ServiceAndPrice";
-import Appointment from "../../pages/Appointment";
+import Appointment from "../../pages/Appointments";
+import Appointments from "../../pages/Appointments";
 
 export const router = createBrowserRouter([
   {
@@ -36,7 +37,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/appointments",
-        element: <Appointment />,
+        element: <Appointments />,
       },
     ],
   },
