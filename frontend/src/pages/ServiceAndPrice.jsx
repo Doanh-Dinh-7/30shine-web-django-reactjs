@@ -1,26 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Input,
   Flex,
-  IconButton,
   InputGroup,
   InputLeftElement,
   Button,
   Heading,
-  HStack,
   useToast,
 } from "@chakra-ui/react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { FiSearch, FiPlus } from "react-icons/fi";
-import ReactPaginate from "react-paginate";
 import ServiceFormModal from "../lib/components/ServiceAndPrice/ServiceFormModal";
+import ServiceAndPriceTable from "../lib/components/ServiceAndPrice/ServiceAndPriceTable";
 
 const ServiceAndPrice = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -104,7 +95,14 @@ const ServiceAndPrice = () => {
   const handleDelete = (MaDV) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa dịch vụ này?")) {
       // Xử lý xóa dịch vụ
-      console.log("Xóa dịch vụ:", MaDV);
+      setServices(services.filter(service => service.MaDV !== MaDV));
+      toast({
+        title: "Xóa thành công",
+        description: "Dịch vụ đã được xóa",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -137,16 +135,6 @@ const ServiceAndPrice = () => {
       service.ChitietDV.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [pageNumber, setPageNumber] = useState(0);
-  const servicesPerPage = 5;
-  const pagesVisited = pageNumber * servicesPerPage;
-
-  const pageCount = Math.ceil(filteredServices.length / servicesPerPage);
-
-  const changePage = ({ selected }) => {
-    setPageNumber(selected);
-  };
-
   return (
     <Box p={6}>
       <Box mb={4}>
@@ -176,68 +164,11 @@ const ServiceAndPrice = () => {
       </Flex>
 
       <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
-        <Table variant="simple" colorScheme="blue" size="md" bg="white" style={{ tableLayout: 'fixed' }}>
-          <Thead>
-            <Tr>
-              <Th width="120px">Mã dịch vụ</Th>
-              <Th width="200px">Tên dịch vụ</Th>
-              <Th width="150px">Giá dịch vụ</Th>
-              <Th>Chi tiết dịch vụ</Th>
-              <Th width="120px">Tác vụ</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {filteredServices
-              .slice(pagesVisited, pagesVisited + servicesPerPage)
-              .map((service) => (
-                <Tr key={service.MaDV}>
-                  <Td width="120px">{service.MaDV}</Td>
-                  <Td width="200px" fontWeight="medium">{service.TenDV}</Td>
-                  <Td width="150px" color="blue.600" fontWeight="bold">
-                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.GiaDV)}
-                  </Td>
-                  <Td>{service.ChitietDV}</Td>
-                  <Td width="120px">
-                    <HStack spacing={2}>
-                      <IconButton
-                        icon={<FiEdit2 />}
-                        variant="ghost"
-                        colorScheme="blue"
-                        onClick={() => handleEdit(service)}
-                        aria-label="Edit"
-                        size="sm"
-                      />
-                      <IconButton
-                        icon={<FiTrash2 />}
-                        variant="ghost"
-                        colorScheme="red"
-                        onClick={() => handleDelete(service.MaDV)}
-                        aria-label="Delete"
-                        size="sm"
-                      />
-                    </HStack>
-                  </Td>
-                </Tr>
-              ))}
-          </Tbody>
-        </Table>
-
-        <Flex mt={5} justify="center">
-          <ReactPaginate
-            previousLabel={"←"}
-            nextLabel={"→"}
-            pageCount={pageCount}
-            onPageChange={changePage}
-            containerClassName={"pagination"}
-            previousLinkClassName={"paginationButton"}
-            nextLinkClassName={"paginationButton"}
-            disabledClassName={"paginationDisabled"}
-            activeClassName={"paginationActive"}
-            pageClassName={"paginationPage"}
-            pageRangeDisplayed={3}
-            marginPagesDisplayed={2}
-          />
-        </Flex>
+        <ServiceAndPriceTable
+          services={filteredServices}
+          onEditService={handleEdit}
+          onDeleteService={handleDelete}
+        />
       </Box>
 
       <ServiceFormModal
@@ -246,74 +177,6 @@ const ServiceAndPrice = () => {
         service={selectedService}
         onSubmit={handleSubmit}
       />
-
-      <style>{`
-        .pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          list-style: none;
-          gap: 8px;
-          margin-top: 20px;
-          padding: 0;
-        }
-
-        .paginationButton,
-        .paginationPage a {
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: white;
-          color: #333;
-          border: 1px solid #e2e8f0;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          font-weight: 500;
-          text-decoration: none;
-        }
-
-        .paginationButton:hover,
-        .paginationPage a:hover {
-          background-color: #f7fafc;
-          border-color: #CBD5E0;
-        }
-
-        .paginationDisabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .paginationPage {
-          display: inline-block;
-        }
-
-        .paginationActive a {
-          background-color: #3182ce !important;
-          color: white !important;
-          border-color: #3182ce !important;
-        }
-
-        .pagination li.break a {
-          border: none;
-          width: auto;
-          background: none;
-        }
-
-        .pagination li.break a:hover {
-          background: none;
-          border: none;
-        }
-
-        .paginationDisabled .paginationButton {
-          background-color: #f7fafc;
-          color: #CBD5E0;
-          cursor: not-allowed;
-          border-color: #E2E8F0;
-        }
-      `}</style>
     </Box>
   );
 };
