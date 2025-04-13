@@ -36,6 +36,7 @@ import {
 } from "react-icons/fi";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import Logo from "../../../../public/logo_30shine.png";
 
 const NavItem = ({ icon, children, to, onClose }) => {
   return (
@@ -183,12 +184,7 @@ const Navbar = () => {
     >
       <Flex h="full" mx="8" align="center" justify="space-between">
         <Flex align="center">
-          <Image
-            src="../../../public/logo_30shine.png"
-            alt="30Shine"
-            h="8"
-            mr="8"
-          />
+          <Image src={Logo} alt="30Shine" h="8" mr="8" />
           <Flex gap="4">{renderNavItems()}</Flex>
         </Flex>
 
