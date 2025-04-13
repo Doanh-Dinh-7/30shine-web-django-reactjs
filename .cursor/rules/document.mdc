@@ -1,0 +1,38 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+- You can @ files here
+- You can use markdown but dont have to
+
+Chức năng của hệ thống
+1.1. Quản lý lịch hẹn
+- Cho phép khách hàng đặt lịch trực tuyến, chọn dịch vụ, thời gian và nhân viên.
+- Kiểm tra lịch trống theo thời gian thực để tránh trùng lặp.
+- Tích hợp hệ thống nhắc nhở tự động qua email, tin nhắn SMS hoặc thông báo ứng dụng.
+- Khách hàng có thể hủy hoặc thay đổi lịch hẹn dễ dàng.
+1.2. Quản lý dịch vụ & giá cả
+- Cập nhật danh sách dịch vụ: cắt tóc, gội đầu, chăm sóc da, combo dịch vụ...
+- Hiển thị giá cả từng dịch vụ để khách hàng dễ dàng lựa chọn.
+1.3. Quản lý khách hàng 
+- Lưu trữ thông tin khách hàng: tên, số điện thoại, lịch sử sử dụng dịch vụ.
+- Gửi thông báo email cho khách hàng thân thiết.
+1.4. Đánh giá và phản hồi
+- Cho phép khách hàng đánh giá chất lượng dịch vụ, nhân viên.
+- Hiển thị đánh giá trung bình để khách hàng tham khảo trước khi đặt lịch.
+- Quản lý phản hồi để cải thiện chất lượng dịch vụ.
+1.6. Quản lý nhân viên
+- Quản lý ca làm việc của nhân viên theo ngày, tuần, tháng.
+- Sắp xếp lịch làm việc cho nhân viên.
+
+Chức năng của các tác nhân
+Khách hàng: Đặt lịch, xem lịch sử giao dịch, đánh giá dịch vụ, quản lý tài khoản.
+Nhân viên: Xác nhận đặt lịch, làm thanh toán, xem lịch làm việc.
+Quản lý: Quản lý nhân viên, dịch vụ, phản hồi đánh giá, xem báo cáo doanh thu.
+Hệ thống: Gửi thông báo, tự động tính lương, nhắc nhở lịch hẹn.
+
+
