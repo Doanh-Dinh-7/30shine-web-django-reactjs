@@ -8,9 +8,10 @@ import {
   InputLeftElement,
   Button,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { FiSearch, FiPlus } from "react-icons/fi";
-import CustomerForm from "../lib/components/Customers/CustomerForm";
+import CustomerFormModal from "../lib/components/Customers/CustomerFormModal";
 import CustomerTable from "../lib/components/Customers/CustomerTable";
 
 const Customers = () => {
@@ -46,27 +47,38 @@ const Customers = () => {
       Email: "tranvana@gmail.com",
     },
   ];
+  const [searchQuery, setSearchQuery] = useState("")
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [customers, setCustomers] = useState(mockupData);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const toast = useToast();
 
-  useEffect(() => {
-    setFilteredCustomers(customers);
-    console.log("Filtered Customers: ", filteredCustomers);
-  }, [customers, filteredCustomers]);
 
   // Xử lý thanh tìm kiếm
-  const handleSearch = (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    const filtered = customers.filter(
-      (employee) =>
-        employee.HoTenNV.toLowerCase().includes(searchTerm) ||
-        employee.SDT.toLowerCase().includes(searchTerm) ||
-        employee.MaNV.toLowerCase().includes(searchTerm)
-    );
-    setFilteredCustomers(filtered);
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredCustomers = customers.filter(
+    (customer) =>
+      customer.HoTenKH.toLowerCase().includes(searchQuery) ||
+      customer.SDT.toLowerCase().includes(searchQuery) ||
+      customer.MaKH.toLowerCase().includes(searchQuery)
+  );
+
+
+  const handleDeleteCustomer = (MaKH) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa khách hàng này?")) {
+      setCustomers(customers.filter(customer => customer.MaKH !== MaKH));
+      toast({
+        title: "Xóa thành công",
+        description: "Khách hàng đã được xóa",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleAddCustomer = () => {
@@ -79,13 +91,23 @@ const Customers = () => {
     onOpen();
   };
 
-  const handleDeleteCustomer = (customerId) => {
-    // Xử lý xóa khách hàng
-  };
-
   const handleSubmit = (formData) => {
-    // Xử lý thêm/sửa khách hàng
-    onClose();
+    try {
+      if (selectedCustomer) {
+        
+        // Xử lý cập nhật 
+        const updatedCustomers = customers.map((customer) =>
+          customer.MaKH === formData.MaKH ? formData : customer
+        );
+        setCustomers(updatedCustomers);
+      } else {
+        // Xử lý thêm mới
+        setCustomers([...customers, formData]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi xử lý khách hàng:", error);
+      throw error;
+    }
   };
 
   return (
@@ -116,7 +138,7 @@ const Customers = () => {
               placeholder="Tìm kiếm khách hàng..."
               bg="white"
               borderColor="gray.200"
-              onChange={handleSearch}
+              onChange={handleSearchChange}
             />
           </InputGroup>
         </Flex>
@@ -130,7 +152,7 @@ const Customers = () => {
         </Box>
       </Flex>
 
-      <CustomerForm
+      <CustomerFormModal
         isOpen={isOpen}
         onClose={onClose}
         customer={selectedCustomer}

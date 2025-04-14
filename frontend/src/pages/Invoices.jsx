@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import {
   Box, Button, Input, Select, Table, Thead, Tbody, Tr, Th, Td,
-  IconButton, Text, Flex
+  IconButton, Text, Flex,
+  HStack
 } from "@chakra-ui/react";
-import { MdAdd, MdEdit, MdDelete } from "react-icons/md";
+import { MdAdd,} from "react-icons/md";
 import { FaDotCircle } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
 import "../assets/styles/paginate.css";
 import PaymentForm from "../lib/components/Invoices/PaymentForm";
+import {FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 
 const hoaDonList = [
   {
@@ -90,8 +92,15 @@ const Invoices = () => {
   return (
     <Box bg="#e8f0ff" borderRadius="xl" p={8}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Button colorScheme="blue" leftIcon={<MdAdd />}>
-          Thêm hóa đơn
+      <Button
+          leftIcon={<FiPlus />}
+          colorScheme="blue"
+          color="white"
+          borderRadius="md"
+          px={5}
+          // onClick={handleAddNew}
+        >
+          Thêm hoá đơn
         </Button>
         <Flex gap={3}>
           {/* <Select placeholder="Ngày" w="100px" />
@@ -137,24 +146,38 @@ const Invoices = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {paginatedInvoices.map((hd, idx) => (
-            <Tr key={idx}>
+          {paginatedInvoices.map((invoice) => (
+            <Tr key={invoice.MaHD}>
               <Td><input type="checkbox" /></Td>
-              <Td>{hd.MaHD}</Td>
-              <Td>{hd.MaKH}</Td>
-              <Td fontWeight="bold">{hd.TongTien}</Td>
-              <Td>{hd.ThoiGianThanhToan}</Td>
-              <Td color={hd.TrangThaiTT === "chưa thanh toán" ? "red.500" : "green.500"} fontWeight="bold">
-                {hd.TrangThaiTT === "chưa thanh toán" ? "Chưa thanh toán" : "Đã thanh toán"}
+              <Td>{invoice.MaHD}</Td>
+              <Td>{invoice.MaKH}</Td>
+              <Td fontWeight="bold">{invoice.TongTien}</Td>
+              <Td>{invoice.ThoiGianThanhToan}</Td>
+              <Td color={invoice.TrangThaiTT === "chưa thanh toán" ? "red.500" : "green.500"} fontWeight="bold">
+                {invoice.TrangThaiTT === "chưa thanh toán" ? "Chưa thanh toán" : "Đã thanh toán"}
               </Td>
               <Td>
-                <Flex gap={2}>
-                  <IconButton size="sm" icon={<MdEdit />} aria-label="edit" />
-                  <IconButton size="sm" icon={<MdDelete />} aria-label="delete" />
-                </Flex>
+              <HStack spacing={2}>
+                  <IconButton
+                    icon={<FiEdit2 />}
+                    variant="ghost"
+                    colorScheme="blue"
+                    // onClick={() => onEditInvoice(invoice)}
+                    aria-label="Edit"
+                    size="sm"
+                  />
+                  <IconButton
+                    icon={<FiTrash2 />}
+                    variant="ghost"
+                    colorScheme="red"
+                    // onClick={() => onDeleteInvoice(invoice.MaHD)}
+                    aria-label="Delete"
+                    size="sm"
+                  />
+                </HStack>
               </Td>
               <Td>
-                {hd.TrangThaiHT === "đã hoàn" && <FaDotCircle color="red" />}
+                {invoice.TrangThaiHT === "đã hoàn" && <FaDotCircle color="red" />}
               </Td>
             </Tr>
           ))}

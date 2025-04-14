@@ -13,14 +13,73 @@ import {
   VStack,
   Grid,
   GridItem,
-  Select,
+  useToast,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 
-const CustomerForm = ({ isOpen, onClose, customer, onSubmit }) => {
-  const handleSubmit = (e) => {
+const CustomerFormModal = ({ isOpen, onClose, customer, onSubmit }) => {
+  const [formData, setFormData] = useState({
+    MaKH: "",
+    HoTenKH: "",
+    SDT: "",
+    Email: "",
+  });
+
+  const toast = useToast();
+
+  useEffect(() => {
+    if (customer) {
+      setFormData({
+        MaKH: customer.MaKH || "",
+        HoTenKH: customer.HoTenKH || "",
+        SDT: customer.SDT || "",
+        Email: customer.Email || "",
+      });
+    } else {
+      setFormData({
+        MaKH: "Mới",
+        HoTenKH: "",
+        SDT: "",
+        Email: "",
+      });
+    }
+  }, [customer]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Xử lý submit form
+    try {
+      await onSubmit(formData);
+      onClose();
+      toast({
+        title: "Thành công",
+        description: customer
+          ? "Cập nhật khách hàng thành công"
+          : "Thêm khách hàng thành công",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Lỗi khi gửi form:", error);
+      toast({
+        title: "Lỗi",
+        description: customer
+          ? "Không thể cập nhật khách hàng"
+          : "Không thể thêm khách hàng",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -39,8 +98,10 @@ const CustomerForm = ({ isOpen, onClose, customer, onSubmit }) => {
                   <FormControl isRequired>
                     <FormLabel color="gray.600">Tên khách hàng</FormLabel>
                     <Input
+                      name="HoTenKH"
                       placeholder="Nhập tên khách hàng"
-                      defaultValue={customer?.HoTenKH}
+                      value={formData.HoTenKH}
+                      onChange={handleChange}
                     />
                   </FormControl>
                 </GridItem>
@@ -48,8 +109,10 @@ const CustomerForm = ({ isOpen, onClose, customer, onSubmit }) => {
                   <FormControl isRequired>
                     <FormLabel color="gray.600">Số điện thoại</FormLabel>
                     <Input
+                      name="SDT"
                       placeholder="Nhập số điện thoại"
-                      defaultValue={customer?.SDT}
+                      value={formData.SDT}
+                      onChange={handleChange}
                     />
                   </FormControl>
                 </GridItem>
@@ -57,8 +120,10 @@ const CustomerForm = ({ isOpen, onClose, customer, onSubmit }) => {
                   <FormControl>
                     <FormLabel color="gray.600">Email</FormLabel>
                     <Input
+                      name="Email"
                       placeholder="Nhập email"
-                      defaultValue={customer?.Email}
+                      value={formData.Email}
+                      onChange={handleChange}
                     />
                   </FormControl>
                 </GridItem>
@@ -71,9 +136,7 @@ const CustomerForm = ({ isOpen, onClose, customer, onSubmit }) => {
             </Button>
             <Button
               type="submit"
-              bg="#2A4365"
-              color="white"
-              _hover={{ bg: "#1A365D" }}
+              colorScheme="blue"
             >
               {customer ? "Cập nhật" : "Thêm mới"}
             </Button>
@@ -84,11 +147,11 @@ const CustomerForm = ({ isOpen, onClose, customer, onSubmit }) => {
   );
 };
 
-CustomerForm.propTypes = {
+CustomerFormModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   customer: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default CustomerForm;
+export default CustomerFormModal;

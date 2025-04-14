@@ -16,7 +16,9 @@ import {
   useToast,
   InputGroup,
   InputLeftElement,
+  ModalFooter,
 } from "@chakra-ui/react";
+import PropTypes from "prop-types";
 import { FiDollarSign } from "react-icons/fi";
 
 const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
@@ -39,7 +41,7 @@ const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
       });
     } else {
       setFormData({
-        MaDV: "",
+        MaDV: "Mới",
         TenDV: "",
         GiaDV: "",
         ChitietDV: "",
@@ -91,72 +93,75 @@ const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
           {service ? "Chỉnh sửa dịch vụ" : "Thêm dịch vụ mới"}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody pb={6}>
-          <form onSubmit={handleSubmit}>
-            <VStack spacing={4}>
-              <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
-                <GridItem>
-                  <FormControl isRequired>
-                    <FormLabel>Mã dịch vụ</FormLabel>
-                    <Input
-                      name="MaDV"
-                      value={formData.MaDV}
-                      onChange={handleChange}
-                      placeholder="Nhập mã dịch vụ"
-                      isReadOnly={!!service}
-                    />
-                  </FormControl>
-                </GridItem>
-                <GridItem>
-                  <FormControl isRequired>
-                    <FormLabel>Tên dịch vụ</FormLabel>
-                    <Input
-                      name="TenDV"
-                      value={formData.TenDV}
-                      onChange={handleChange}
-                      placeholder="Nhập tên dịch vụ"
-                    />
-                  </FormControl>
-                </GridItem>
-                <GridItem>
-                  <FormControl isRequired>
-                    <FormLabel>Giá dịch vụ</FormLabel>
-                    <InputGroup>
-                      <InputLeftElement
-                        pointerEvents="none"
-                        children={<FiDollarSign color="gray.300" />}
-                      />
+        <form onSubmit={handleSubmit}>
+          <ModalBody pb={6}>
+              <VStack spacing={4}>
+                <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
+                  <GridItem>
+                    <FormControl isRequired>
+                      <FormLabel>Tên dịch vụ</FormLabel>
                       <Input
-                        name="GiaDV"
-                        type="number"
-                        value={formData.GiaDV}
+                        name="TenDV"
+                        value={formData.TenDV}
                         onChange={handleChange}
-                        placeholder="Nhập giá dịch vụ"
+                        placeholder="Nhập tên dịch vụ"
                       />
-                    </InputGroup>
-                  </FormControl>
-                </GridItem>
-                <GridItem colSpan={2}>
-                  <FormControl isRequired>
-                    <FormLabel>Chi tiết dịch vụ</FormLabel>
-                    <Input
-                      name="ChitietDV"
-                      value={formData.ChitietDV}
-                      onChange={handleChange}
-                      placeholder="Nhập chi tiết dịch vụ"
-                    />
-                  </FormControl>
-                </GridItem>
-              </Grid>
-              <Button type="submit" colorScheme="blue" w="full">
-                {service ? "Cập nhật" : "Thêm mới"}
-              </Button>
-            </VStack>
+                    </FormControl>
+                  </GridItem>
+                  <GridItem>
+                    <FormControl isRequired>
+                      <FormLabel>Giá dịch vụ</FormLabel>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none">
+                          <FiDollarSign color="gray.300" />
+                        </InputLeftElement>
+                        <Input
+                          name="GiaDV"
+                          type="number"
+                          value={formData.GiaDV}
+                          onChange={handleChange}
+                          placeholder="Nhập giá dịch vụ"
+                        />
+                      </InputGroup>
+                    </FormControl>
+                  </GridItem>
+                  <GridItem colSpan={2}>
+                    <FormControl isRequired>
+                      <FormLabel>Chi tiết dịch vụ</FormLabel>
+                      <Input
+                        name="ChitietDV"
+                        value={formData.ChitietDV}
+                        onChange={handleChange}
+                        placeholder="Nhập chi tiết dịch vụ"
+                      />
+                    </FormControl>
+                  </GridItem>
+                </Grid>
+              </VStack>
+            </ModalBody>
+            <ModalFooter gap={2}>
+            <Button variant="ghost" onClick={onClose}>
+              Huỷ
+            </Button>
+            <Button
+              type="submit"
+              colorScheme="blue"
+            >
+              {service ? "Cập nhật" : "Thêm mới"}
+            </Button>
+            </ModalFooter>
           </form>
-        </ModalBody>
+        
       </ModalContent>
     </Modal>
   );
+};
+
+ServiceFormModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  service: PropTypes.object,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ServiceFormModal; 
