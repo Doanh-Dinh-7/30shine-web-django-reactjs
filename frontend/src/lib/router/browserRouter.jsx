@@ -9,6 +9,7 @@ import Customers from "../../pages/Customers";
 import ServiceAndPrice from "../../pages/ServiceAndPrice";
 import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
+import HomeWrapper from "./HomeWrapper ";
 
 export const router = createBrowserRouter([
   {
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <HomeWrapper />,
       },
       {
         path: "/employees",

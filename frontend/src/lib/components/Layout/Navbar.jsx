@@ -3,7 +3,6 @@ import {
   Avatar,
   Box,
   Flex,
-  Icon,
   IconButton,
   Image,
   Menu,
@@ -37,6 +36,9 @@ import {
 import PropTypes from "prop-types";
 import { useState } from "react";
 import Logo from "../../../../public/logo_30shine.png";
+import LoginModal from "../Auth/LoginModal";
+import RegisterModal from "../Auth/RegisterModal";
+import ForgetPasswordModal from "../Auth/ForgetPasswordModal";
 
 const NavItem = ({ icon, children, to, onClose }) => {
   return (
@@ -80,8 +82,10 @@ NavItem.propTypes = {
 const Navbar = () => {
   const [hasNotification] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [authModal, setAuthModal] = useState(null); // "login" | "register" | "forgot"
   const isMobile = useBreakpointValue({ base: true, md: false });
   const isTablet = useBreakpointValue({ base: false, md: true, lg: false });
+  const role = localStorage.getItem("role");
 
   const renderNavItems = () => {
     if (isMobile) {
@@ -218,38 +222,80 @@ const Navbar = () => {
               </Badge>
             )}
           </Box>
+          {role === "quan ly"? (
+            <Menu>
+              <MenuButton
+                as={Flex}
+                cursor="pointer"
+                _hover={{ bg: "gray.50" }}
+                p={2}
+                borderRadius="md"
+              >
+                <Flex align="center">
+                  <Avatar
+                    size="sm"
+                    src="/placeholder.svg?height=40&width=40"
+                    mr="2"
+                  />
+                  <Box display={{ base: "none", md: "block" }}>
+                    <Text fontWeight="medium" fontSize="sm">
+                      John Doe
+                    </Text>
+                    <Text fontSize="xs" color="gray.500">
+                      Admin
+                    </Text>
+                  </Box>
+                  <FiChevronDown size="1em" style={{ marginLeft: "8px" }} />
+                </Flex>
+              </MenuButton>
+              <MenuList>
+                <MenuItem>Thông tin cá nhân</MenuItem>
+                <MenuItem>Đổi mật khẩu</MenuItem>
+                <MenuItem color="red.500">Đăng xuất</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <Flex gap={2}>
+              {/* Nút nếu chưa đăng nhập */}
+              <Button
+                bg="#2A50FC"
+                color="white"
+                onClick={() => setAuthModal("login")}
+                _hover={{ bg: "#2A50FC" }}
+              >
+                Đăng nhập
+              </Button>
+              <Button
+                variant="outline"
+                borderColor="transparent"
+                color="#2A50FC"
+                onClick={() => setAuthModal("register")}
+                _hover={{ bg: "gray.100" }}
+              >
+                Đăng ký
+              </Button>
+            </Flex>
+          )}
+          
+          
 
-          <Menu>
-            <MenuButton
-              as={Flex}
-              cursor="pointer"
-              _hover={{ bg: "gray.50" }}
-              p={2}
-              borderRadius="md"
-            >
-              <Flex align="center">
-                <Avatar
-                  size="sm"
-                  src="/placeholder.svg?height=40&width=40"
-                  mr="2"
-                />
-                <Box display={{ base: "none", md: "block" }}>
-                  <Text fontWeight="medium" fontSize="sm">
-                    John Doe
-                  </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    Admin
-                  </Text>
-                </Box>
-                <FiChevronDown size="1em" style={{ marginLeft: "8px" }} />
-              </Flex>
-            </MenuButton>
-            <MenuList>
-              <MenuItem>Thông tin cá nhân</MenuItem>
-              <MenuItem>Đổi mật khẩu</MenuItem>
-              <MenuItem color="red.500">Đăng xuất</MenuItem>
-            </MenuList>
-          </Menu>
+          {/* Các modal */}
+          <LoginModal
+            isOpen={authModal === "login"}
+            onClose={() => setAuthModal(null)}
+            onSwitchRegister={() => setAuthModal("register")}
+            onSwitchForgot={() => setAuthModal("forgot")}
+          />
+          <RegisterModal
+            isOpen={authModal === "register"}
+            onClose={() => setAuthModal(null)}
+            onSwitchLogin={() => setAuthModal("login")}
+          />
+          <ForgetPasswordModal
+            isOpen={authModal === "forgot"}
+            onClose={() => setAuthModal(null)}
+            onSwitchLogin={() => setAuthModal("login")}
+          />
         </Flex>
       </Flex>
     </Box>
