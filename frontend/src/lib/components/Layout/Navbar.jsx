@@ -87,6 +87,11 @@ const Navbar = () => {
   const isTablet = useBreakpointValue({ base: false, md: true, lg: false });
   const role = localStorage.getItem("role");
 
+  const handleLogout = () => {
+    localStorage.removeItem("role");
+    window.location.reload();
+  };
+
   const renderNavItems = () => {
     if (isMobile) {
       return (
@@ -222,7 +227,7 @@ const Navbar = () => {
               </Badge>
             )}
           </Box>
-          {role === "quan ly"? (
+          {role === "quan ly" ? (
             <Menu>
               <MenuButton
                 as={Flex}
@@ -239,7 +244,7 @@ const Navbar = () => {
                   />
                   <Box display={{ base: "none", md: "block" }}>
                     <Text fontWeight="medium" fontSize="sm">
-                      John Doe
+                      Đinh Sỹ Quốc Doanh
                     </Text>
                     <Text fontSize="xs" color="gray.500">
                       Admin
@@ -251,7 +256,9 @@ const Navbar = () => {
               <MenuList>
                 <MenuItem>Thông tin cá nhân</MenuItem>
                 <MenuItem>Đổi mật khẩu</MenuItem>
-                <MenuItem color="red.500">Đăng xuất</MenuItem>
+                <MenuItem color="red.500" onClick={handleLogout}>
+                  Đăng xuất
+                </MenuItem>
               </MenuList>
             </Menu>
           ) : (
@@ -276,8 +283,6 @@ const Navbar = () => {
               </Button>
             </Flex>
           )}
-          
-          
 
           {/* Các modal */}
           <LoginModal
