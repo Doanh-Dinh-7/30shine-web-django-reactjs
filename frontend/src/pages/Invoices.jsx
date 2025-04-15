@@ -1,24 +1,20 @@
 import React, { useState } from "react";
 import {
-  Box, Button, Input, Select, Table, Thead, Tbody, Tr, Th, Td,
-  IconButton, Text, Flex,
-  HStack
+  Box, Button, Flex, Heading, Select , useDisclosure, useToast, Input, InputGroup, InputLeftElement
 } from "@chakra-ui/react";
-import { MdAdd,} from "react-icons/md";
-import { FaDotCircle } from "react-icons/fa";
-import ReactPaginate from "react-paginate";
-import "../assets/styles/paginate.css";
-import PaymentForm from "../lib/components/Invoices/PaymentForm";
-import {FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiPlus, FiSearch } from "react-icons/fi";
+import InvoiceTable from "../lib/components/Invoices/InvoiceTable";
+import InvoiceFormDrawer from "../lib/components/Invoices/InvoiceFormDrawer";
+import InvoiceDetailDrawer from "../lib/components/Invoices/InvoiceDetailDrawer";
 
 const hoaDonList = [
   {
     MaHD: "HD001", MaKH: "KH0001", TongTien: "200.000",
-    ThoiGianThanhToan: "10:00 22/06/2024", TrangThaiTT: "chưa thanh toán", TrangThaiHT: "đã hoàn"
+    ThoiGianThanhToan: "10:00 22/06/2024", TrangThaiTT: "chưa thanh toán", TrangThaiHT: "chưa hoàn"
   },
   {
     MaHD: "HD002", MaKH: "KH0002", TongTien: "300.000",
-    ThoiGianThanhToan: "9:00 23/2/2025", TrangThaiTT: "chưa thanh toán", TrangThaiHT: "đã hoàn"
+    ThoiGianThanhToan: "9:00 23/02/2025", TrangThaiTT: "chưa thanh toán", TrangThaiHT: "chưa hoàn"
   },
   {
     MaHD: "HD003", MaKH: "KH0003", TongTien: "200.000",
@@ -30,12 +26,13 @@ const hoaDonList = [
   },
   {
     MaHD: "HD007", MaKH: "KH0007", TongTien: "300.000",
-    ThoiGianThanhToan: "16:30 05/02/2025", TrangThaiTT: "đã thanh toán", TrangThaiHT: "chưa hoàn"
+    ThoiGianThanhToan: "16:30 05/02/2025", TrangThaiTT: "đã thanh toán", TrangThaiHT: "đã hoàn"
   }
 ];
 
 const parseDate = (str) => {
   // Format: "HH:mm dd/MM/yyyy"
+
   const [time, date] = str.split(" ");
   const [day, month, year] = date.split("/").map(Number);
   const [hour, minute] = time.split(":").map(Number);
@@ -43,14 +40,16 @@ const parseDate = (str) => {
 };
 
 const Invoices = () => {
-  const [invoices, setInvoices] = useState(hoaDonList)
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const detailDrawer = useDisclosure();
+  const toast = useToast();
+
+  const [invoices, setInvoices] = useState(hoaDonList);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(0); // Thêm state cho trang hiện tại
-  const pageSize = 10; // Số lượng đánh giá mỗi trang
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -58,50 +57,97 @@ const Invoices = () => {
   };
 
   const filteredInvoices = invoices
-  .filter(invoice =>
-    invoice.MaHD.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    invoice.MaKH.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-  .filter(invoice => {
-    const dateObj = parseDate(invoice.ThoiGianThanhToan);
-    const day = dateObj.getDate();
-    const month = dateObj.getMonth() + 1;
-    const year = dateObj.getFullYear();
+    .filter(invoice =>
+      invoice.MaHD.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      invoice.MaKH.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter(invoice => {
+      const dateObj = parseDate(invoice.ThoiGianThanhToan);
+      const day = dateObj.getDate();
+      const month = dateObj.getMonth() + 1;
+      const year = dateObj.getFullYear();
+      
+      return (
+        (!selectedDay || day === Number(selectedDay)) &&
+        (!selectedMonth || month === Number(selectedMonth)) &&
+        (!selectedYear || year === Number(selectedYear))
+      );
+    })
+    .sort((a, b) => parseDate(b.ThoiGianThanhToan) - parseDate(a.ThoiGianThanhToan));
 
-    return (
-      (!selectedDay || day === Number(selectedDay)) &&
-      (!selectedMonth || month === Number(selectedMonth)) &&
-      (!selectedYear || year === Number(selectedYear))
-    );
-  })
-  .sort((a, b) => parseDate(b.ThoiGianThanhToan) - parseDate(a.ThoiGianThanhToan)); // Mới nhất lên đầu
-
-
-
-  // Phân trang logic
-  const pageCount = Math.ceil(filteredInvoices.length / pageSize);
-  const startIndex = currentPage * pageSize;
-  const endIndex = startIndex + pageSize;
-  const paginatedInvoices = filteredInvoices.slice(startIndex, endIndex);
-
-  const handlePageClick = (event) => {
-    setCurrentPage(event.selected);
+  const handleAddInvoice = () => {
+    setSelectedInvoice(null);
+    onOpen();
   };
-  
+
+  const handleEditInvoice = (invoice) => {
+    setSelectedInvoice(invoice);
+    detailDrawer.onOpen();
+  };
+
+  const handleDeleteInvoice = (MaHD) => {
+    if (window.confirm("Xoá hoá đơn này?")) {
+      setInvoices(invoices.filter((inv) => inv.MaHD !== MaHD));
+      toast({
+        title: "Đã xóa",
+        description: "Hóa đơn đã được xóa",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleSubmit = (formData) => {
+    try{
+      if (selectedInvoice) {
+        // Xử lý cập nhật
+        const updatedInvoice = invoices.map((invoice) =>
+          invoice.MaHD === formData.MaHD ? formData : invoice
+        );
+        setInvoice(updatedInvoice);
+      } else {
+        setInvoices([...invoices, formData]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi xử lý hóa đơn:", error);
+      throw error;
+    }
+  };
+
+  const handleUpdateFromDetail = (updatedInvoice) => {
+    setInvoices((prev) =>
+      prev.map((inv) => (inv.MaHD === updatedInvoice.MaHD ? { ...updatedInvoice } : inv))
+    );
+    detailDrawer.onClose();
+  };
 
   return (
-    <Box bg="#e8f0ff" borderRadius="xl" p={8}>
+    <Box p={6} bg="gray.50">
       <Flex justify="space-between" align="center" mb={4}>
-      <Button
-          leftIcon={<FiPlus />}
-          colorScheme="blue"
-          color="white"
-          borderRadius="md"
-          px={5}
-          // onClick={handleAddNew}
-        >
-          Thêm hoá đơn
+        <Heading size="lg" color="blue.600">
+          Quản lý hóa đơn
+        </Heading>
+        
+        <Button leftIcon={<FiPlus />} colorScheme="blue" onClick={handleAddInvoice}>
+          Thêm hóa đơn
         </Button>
+        
+      </Flex>
+
+      {/* Thanh tìm kiếm */}
+      <Flex mb={4} justifyContent="space-between">
+        <InputGroup maxW="400px">
+          <InputLeftElement pointerEvents="none">
+            <FiSearch color="gray.400" />
+          </InputLeftElement>
+          <Input
+            placeholder="Tìm kiếm theo mã hoá đơn hoặc mã khách hàng"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            bg="white"
+          />
+        </InputGroup>
         <Flex gap={3}>
           {/* <Select placeholder="Ngày" w="100px" />
           <Select placeholder="Tháng" w="100px" />
@@ -123,92 +169,29 @@ const Invoices = () => {
           </Select>
         </Flex>
       </Flex>
+      
 
-      <Input
-        placeholder="Tìm kiếm theo mã hóa đơn"
-        maxW="300px"
-        mb={4}
-        value={searchQuery}
-        onChange={handleSearchChange}
+      <InvoiceTable
+        invoices={filteredInvoices}
+        onEditInvoice={handleEditInvoice}
+        onDeleteInvoice={handleDeleteInvoice}
       />
 
-      <Table bg="white" variant="simple" borderRadius="lg" boxShadow="md">
-        <Thead bg="gray.100">
-          <Tr>
-            <Th><input type="checkbox" /></Th>
-            <Th>Mã hóa đơn</Th>
-            <Th>Mã khách hàng</Th>
-            <Th>Tổng tiền</Th>
-            <Th>Thời gian</Th>
-            <Th>Trạng thái</Th>
-            <Th>Tác vụ</Th>
-            <Th>Yêu cầu hoàn tiền</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {paginatedInvoices.map((invoice) => (
-            <Tr key={invoice.MaHD}>
-              <Td><input type="checkbox" /></Td>
-              <Td>{invoice.MaHD}</Td>
-              <Td>{invoice.MaKH}</Td>
-              <Td fontWeight="bold">{invoice.TongTien}</Td>
-              <Td>{invoice.ThoiGianThanhToan}</Td>
-              <Td color={invoice.TrangThaiTT === "chưa thanh toán" ? "red.500" : "green.500"} fontWeight="bold">
-                {invoice.TrangThaiTT === "chưa thanh toán" ? "Chưa thanh toán" : "Đã thanh toán"}
-              </Td>
-              <Td>
-              <HStack spacing={2}>
-                  <IconButton
-                    icon={<FiEdit2 />}
-                    variant="ghost"
-                    colorScheme="blue"
-                    // onClick={() => onEditInvoice(invoice)}
-                    aria-label="Edit"
-                    size="sm"
-                  />
-                  <IconButton
-                    icon={<FiTrash2 />}
-                    variant="ghost"
-                    colorScheme="red"
-                    // onClick={() => onDeleteInvoice(invoice.MaHD)}
-                    aria-label="Delete"
-                    size="sm"
-                  />
-                </HStack>
-              </Td>
-              <Td>
-                {invoice.TrangThaiHT === "đã hoàn" && <FaDotCircle color="red" />}
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
+      <InvoiceFormDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        invoice={selectedInvoice}
+        onSubmit={handleSubmit}
+      />
 
-      {/* ReactPaginate component */}
-      <Flex mt={5} justify="center">
-          <ReactPaginate
-            previousLabel={"<"}
-            nextLabel={">"}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}
-            nextClassName={"page-item"}
-            previousLinkClassName={"previous-link"}
-            nextLinkClassName={"next-link"}
-            breakClassName={"page-item"}
-            breakLinkClassName={"break-link"}
-            forcePage={currentPage}
-          />
-        </Flex>
-
-        <PaymentForm />
+      {selectedInvoice && (
+        <InvoiceDetailDrawer
+          isOpen={detailDrawer.isOpen}
+          onClose={detailDrawer.onClose}
+          invoice={selectedInvoice}
+          onUpdate={handleUpdateFromDetail}
+        />
+      )}
     </Box>
   );
 };
