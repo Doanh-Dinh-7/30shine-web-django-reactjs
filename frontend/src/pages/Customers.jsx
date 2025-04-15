@@ -11,7 +11,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FiSearch, FiPlus } from "react-icons/fi";
-import CustomerFormModal from "../lib/components/Customers/CustomerFormModal";
+import CustomerFormDrawer from "../lib/components/Customers/CustomerFormDrawer";
 import CustomerTable from "../lib/components/Customers/CustomerTable";
 
 const Customers = () => {
@@ -47,13 +47,12 @@ const Customers = () => {
       Email: "tranvana@gmail.com",
     },
   ];
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [customers, setCustomers] = useState(mockupData);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
-
 
   // Xử lý thanh tìm kiếm
   const handleSearchChange = (e) => {
@@ -67,10 +66,9 @@ const Customers = () => {
       customer.MaKH.toLowerCase().includes(searchQuery)
   );
 
-
   const handleDeleteCustomer = (MaKH) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa khách hàng này?")) {
-      setCustomers(customers.filter(customer => customer.MaKH !== MaKH));
+      setCustomers(customers.filter((customer) => customer.MaKH !== MaKH));
       toast({
         title: "Xóa thành công",
         description: "Khách hàng đã được xóa",
@@ -94,8 +92,7 @@ const Customers = () => {
   const handleSubmit = (formData) => {
     try {
       if (selectedCustomer) {
-        
-        // Xử lý cập nhật 
+        // Xử lý cập nhật
         const updatedCustomers = customers.map((customer) =>
           customer.MaKH === formData.MaKH ? formData : customer
         );
@@ -152,7 +149,7 @@ const Customers = () => {
         </Box>
       </Flex>
 
-      <CustomerFormModal
+      <CustomerFormDrawer
         isOpen={isOpen}
         onClose={onClose}
         customer={selectedCustomer}

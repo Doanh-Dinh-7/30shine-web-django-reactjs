@@ -1,11 +1,11 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
   Button,
   FormControl,
   FormLabel,
@@ -14,11 +14,13 @@ import {
   Grid,
   GridItem,
   useToast,
+  Box,
+  Text,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 
-const CustomerFormModal = ({ isOpen, onClose, customer, onSubmit }) => {
+const CustomerFormDrawer = ({ isOpen, onClose, customer, onSubmit }) => {
   const [formData, setFormData] = useState({
     MaKH: "",
     HoTenKH: "",
@@ -83,75 +85,79 @@ const CustomerFormModal = ({ isOpen, onClose, customer, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader color="gray.700">
-          {customer ? "Chỉnh sửa khách hàng" : "Thêm khách hàng mới"}
-        </ModalHeader>
-        <ModalCloseButton />
+    <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="md">
+      <DrawerOverlay />
+      <DrawerContent>
+        <Box bg="blue.50" px={6} py={4}>
+          <DrawerHeader p={0} color="black" fontWeight="semibold">
+            Thông tin cá nhân khách hàng:{" "}
+            <Text as="span" fontWeight="normal">
+              {formData.MaKH}
+            </Text>
+          </DrawerHeader>
+        </Box>
+        <DrawerCloseButton />
+
         <form onSubmit={handleSubmit}>
-          <ModalBody>
+          <DrawerBody py={6}>
             <VStack spacing={4}>
-              <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
+              <Grid templateColumns="repeat(1, 1fr)" gap={4} w="full">
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel color="gray.600">Tên khách hàng</FormLabel>
+                    <FormLabel>Họ và tên :</FormLabel>
                     <Input
                       name="HoTenKH"
-                      placeholder="Nhập tên khách hàng"
                       value={formData.HoTenKH}
                       onChange={handleChange}
+                      placeholder="Nhập tên khách hàng"
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel color="gray.600">Số điện thoại</FormLabel>
+                    <FormLabel>Email:</FormLabel>
                     <Input
-                      name="SDT"
-                      placeholder="Nhập số điện thoại"
-                      value={formData.SDT}
+                      name="Email"
+                      value={formData.Email}
                       onChange={handleChange}
+                      placeholder="Nhập email"
                     />
                   </FormControl>
                 </GridItem>
                 <GridItem>
-                  <FormControl>
-                    <FormLabel color="gray.600">Email</FormLabel>
+                  <FormControl isRequired>
+                    <FormLabel>Số điện thoại :</FormLabel>
                     <Input
-                      name="Email"
-                      placeholder="Nhập email"
-                      value={formData.Email}
+                      name="SDT"
+                      value={formData.SDT}
                       onChange={handleChange}
+                      placeholder="Nhập số điện thoại"
                     />
                   </FormControl>
                 </GridItem>
               </Grid>
             </VStack>
-          </ModalBody>
-          <ModalFooter gap={2}>
-            <Button variant="ghost" onClick={onClose}>
+          </DrawerBody>
+
+          <DrawerFooter bg="blue.50" justifyContent="flex-end" gap={2}>
+            <Button variant="outline" onClick={onClose}>
               Huỷ
             </Button>
-            <Button
-              type="submit"
-              colorScheme="blue"
-            >
-              {customer ? "Cập nhật" : "Thêm mới"}
+            <Button type="submit" colorScheme="blue">
+              Lưu
             </Button>
-          </ModalFooter>
+          </DrawerFooter>
         </form>
-      </ModalContent>
-    </Modal>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
-CustomerFormModal.propTypes = {
+CustomerFormDrawer.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   customer: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default CustomerFormModal;
+export default CustomerFormDrawer;

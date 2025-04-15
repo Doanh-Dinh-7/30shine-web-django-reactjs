@@ -14,7 +14,7 @@ import {
 import { FiSearch, FiPlus } from "react-icons/fi";
 import EmployeeTable from "../lib/components/Employees/EmployeeTable";
 import EmployeeDetail from "../lib/components/Employees/EmployeeDetail";
-import EmployeeFormModal from "../lib/components/Employees/EmployeeFormModal";
+import EmployeeFormDrawer from "../lib/components/Employees/EmployeeFormDrawer";
 import { Outlet } from "react-router-dom";
 import {
   getAllEmployees,
@@ -230,7 +230,7 @@ const Employees = () => {
         employeeId={selectedEmployeeId}
       />
 
-      <EmployeeFormModal
+      <EmployeeFormDrawer
         isOpen={isFormModalOpen}
         onClose={handleCloseFormModal}
         employee={selectedEmployee}
