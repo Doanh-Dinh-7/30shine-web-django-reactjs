@@ -4,7 +4,6 @@ import {
   } from "@chakra-ui/react";
   import { useState } from "react";
   import InvoiceEditForm from "./InvoiceEditForm";
-  import InvoicePrintView from "./InvoicePrintView";
   import InvoiceTransaction from "./InvoiceTransaction";
   
   const InvoiceDetailDrawer = ({ isOpen, onClose, invoice, onUpdate }) => {
@@ -29,13 +28,13 @@ import {
             <Tabs index={tabIndex} onChange={setTabIndex} isFitted variant="enclosed-colored">
               <TabList bg="gray.50">
                 <Tab>🧾 Thanh toán</Tab>
-                <Tab>🖨️ Xuất hóa đơn</Tab>
+               
                 <Tab>✏️ Chỉnh sửa</Tab>
               </TabList>
   
               <TabPanels>
                 <TabPanel p={6}><InvoiceTransaction invoice={invoice} onUpdate={onUpdate} /></TabPanel>
-                <TabPanel p={6}><InvoicePrintView invoice={invoice} /></TabPanel>
+                
                 <TabPanel p={6}><InvoiceEditForm invoice={invoice} onUpdate={onUpdate} /></TabPanel>
               </TabPanels>
             </Tabs>

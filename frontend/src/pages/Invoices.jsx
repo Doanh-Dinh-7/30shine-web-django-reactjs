@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import {
-  Box, Button, Flex, Heading, Select , useDisclosure, useToast, Input, InputGroup, InputLeftElement
+  Box, Button, Flex, Heading, Select,
+  useDisclosure, useToast, Input, InputGroup, InputLeftElement,
+  Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, DrawerCloseButton // ✅ Thêm dòng này
 } from "@chakra-ui/react";
+
 import { FiPlus, FiSearch } from "react-icons/fi";
 import InvoiceTable from "../lib/components/Invoices/InvoiceTable";
 import InvoiceFormDrawer from "../lib/components/Invoices/InvoiceFormDrawer";
 import InvoiceDetailDrawer from "../lib/components/Invoices/InvoiceDetailDrawer";
+import InvoicePrintView from "../lib/components/Invoices/InvoicePrintView"; 
 
 const hoaDonList = [
   {
@@ -30,6 +34,8 @@ const hoaDonList = [
   }
 ];
 
+
+
 const parseDate = (str) => {
   // Format: "HH:mm dd/MM/yyyy"
 
@@ -43,6 +49,7 @@ const Invoices = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const detailDrawer = useDisclosure();
   const toast = useToast();
+  const printDrawer = useDisclosure();
 
   const [invoices, setInvoices] = useState(hoaDonList);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -51,6 +58,7 @@ const Invoices = () => {
   const [selectedYear, setSelectedYear] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [invoiceToPrint, setInvoiceToPrint] = useState(null);
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(0);
@@ -97,6 +105,11 @@ const Invoices = () => {
       });
     }
   };
+  const handlePrintInvoice = (invoice) => {
+    setInvoiceToPrint(invoice);
+    printDrawer.onOpen();
+  };
+  
 
   const handleSubmit = (formData) => {
     try{
@@ -175,6 +188,7 @@ const Invoices = () => {
         invoices={filteredInvoices}
         onEditInvoice={handleEditInvoice}
         onDeleteInvoice={handleDeleteInvoice}
+        onPrintInvoice={handlePrintInvoice}
       />
 
       <InvoiceFormDrawer
@@ -191,6 +205,20 @@ const Invoices = () => {
           invoice={selectedInvoice}
           onUpdate={handleUpdateFromDetail}
         />
+      )}
+      {invoiceToPrint && (
+        <Drawer isOpen={printDrawer.isOpen} onClose={printDrawer.onClose} size="md">
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerHeader borderBottomWidth="1px">
+              Xuất hóa đơn - {invoiceToPrint.MaHD}
+            </DrawerHeader>
+            <DrawerCloseButton />
+            <DrawerBody>
+              <InvoicePrintView invoice={invoiceToPrint} />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       )}
     </Box>
   );
