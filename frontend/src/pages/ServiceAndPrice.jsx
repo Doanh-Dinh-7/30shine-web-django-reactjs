@@ -8,14 +8,15 @@ import {
   Button,
   Heading,
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FiSearch, FiPlus } from "react-icons/fi";
-import ServiceFormModal from "../lib/components/ServiceAndPrice/ServiceFormModal";
+import ServiceFormDrawer from "../lib/components/ServiceAndPrice/ServiceFormDrawer";
 import ServiceAndPriceTable from "../lib/components/ServiceAndPrice/ServiceAndPriceTable";
 
 const ServiceAndPrice = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedService, setSelectedService] = useState(null);
   const toast = useToast();
 
@@ -87,12 +88,7 @@ const ServiceAndPrice = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleEdit = (service) => {
-    setSelectedService(service);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = (MaDV) => {
+  const handleDeleteService = (MaDV) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa dịch vụ này?")) {
       // Xử lý xóa dịch vụ
       setServices(services.filter(service => service.MaDV !== MaDV));
@@ -106,9 +102,14 @@ const ServiceAndPrice = () => {
     }
   };
 
-  const handleAddNew = () => {
+  const handleAddService = () => {
     setSelectedService(null);
-    setIsModalOpen(true);
+    onOpen();
+  };
+
+  const handleEditService = (service) => {
+    setSelectedService(service);
+    onOpen();
   };
 
   const handleSubmit = async (formData) => {
@@ -157,7 +158,7 @@ const ServiceAndPrice = () => {
           color="white"
           borderRadius="md"
           px={5}
-          onClick={handleAddNew}
+          onClick={handleAddService}
         >
           Thêm dịch vụ
         </Button>
@@ -166,14 +167,14 @@ const ServiceAndPrice = () => {
       <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
         <ServiceAndPriceTable
           services={filteredServices}
-          onEditService={handleEdit}
-          onDeleteService={handleDelete}
+          onEditService={handleEditService}
+          onDeleteService={handleDeleteService}
         />
       </Box>
 
-      <ServiceFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+      <ServiceFormDrawer
+        isOpen={isOpen}
+        onClose={onClose}
         service={selectedService}
         onSubmit={handleSubmit}
       />

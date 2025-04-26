@@ -1,11 +1,12 @@
 import React from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
   FormControl,
   FormLabel,
   Input,
@@ -15,10 +16,11 @@ import {
   GridItem,
   useToast,
   Select,
+  Box,
 } from "@chakra-ui/react";
 import PropTypes from 'prop-types';
 
-const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
+const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
   const [formData, setFormData] = React.useState({
     TenKH: "",
     SDT: "",
@@ -89,20 +91,23 @@ const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {appointment ? "Chỉnh sửa lịch hẹn" : "Thêm lịch hẹn mới"}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6}>
-          <form onSubmit={handleSubmit}>
-            <VStack spacing={4}>
+    <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="lg">
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <Box bg="blue.50" p={4}>
+          <DrawerHeader p={0} fontSize="xl" fontWeight="semibold">
+            {appointment ? "Cập nhật lịch hẹn" : "Thêm lịch hẹn mới"}
+          </DrawerHeader>
+        </Box>
+
+        <form onSubmit={handleSubmit}>
+          <DrawerBody>
+            <VStack spacing={5} mt={4}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Tên khách hàng</FormLabel>
+                    <FormLabel fontWeight="bold">Tên khách hàng:</FormLabel>
                     <Input
                       name="TenKH"
                       value={formData.TenKH}
@@ -113,7 +118,7 @@ const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Số điện thoại</FormLabel>
+                    <FormLabel fontWeight="bold">Số điện thoại:</FormLabel>
                     <Input
                       name="SDT"
                       value={formData.SDT}
@@ -125,7 +130,7 @@ const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Ngày hẹn</FormLabel>
+                    <FormLabel fontWeight="bold">Ngày hẹn:</FormLabel>
                     <Input
                       name="TGHen"
                       type="date"
@@ -136,7 +141,7 @@ const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Giờ hẹn</FormLabel>
+                    <FormLabel fontWeight="bold">Giờ hẹn:</FormLabel>
                     <Input
                       name="GioKhachDen"
                       type="time"
@@ -147,7 +152,7 @@ const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Loại dịch vụ</FormLabel>
+                    <FormLabel fontWeight="bold">Loại dịch vụ:</FormLabel>
                     <Select
                       name="LoaiDV"
                       value={formData.LoaiDV}
@@ -164,7 +169,7 @@ const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Trạng thái</FormLabel>
+                    <FormLabel fontWeight="bold">Trạng thái:</FormLabel>
                     <Select
                       name="TrangThai"
                       value={formData.TrangThai}
@@ -178,18 +183,24 @@ const AppointmentFormModal = ({ isOpen, onClose, appointment, onSubmit }) => {
                   </FormControl>
                 </GridItem>
               </Grid>
-              <Button type="submit" colorScheme="blue" w="full">
-                {appointment ? "Cập nhật" : "Thêm mới"}
-              </Button>
             </VStack>
-          </form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </DrawerBody>
+
+          <DrawerFooter bg="blue.50" justifyContent="flex-end">
+            <Button variant="outline" mr={3} onClick={onClose}>
+              Huỷ
+            </Button>
+            <Button type="submit" colorScheme="blue">
+              {appointment ? "Cập nhật" : "Thêm mới"}
+            </Button>
+          </DrawerFooter>
+        </form>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
-AppointmentFormModal.propTypes = {
+AppointmentFormDrawer.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   appointment: PropTypes.shape({
@@ -203,4 +214,4 @@ AppointmentFormModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default AppointmentFormModal; 
+export default AppointmentFormDrawer; 

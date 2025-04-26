@@ -30,14 +30,10 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Đã xác nhận":
-        return "green";
-      case "Chờ xác nhận":
+      case "Chờ hoàn thành":
         return "yellow";
       case "Đã hoàn thành":
-        return "blue";
-      case "Đã hủy":
-        return "red";
+        return "green";
       default:
         return "gray";
     }
@@ -59,7 +55,7 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
         </Thead>
         <Tbody>
           {paginatedAppointments.map((appointment, index) => (
-            <Tr key={index}>
+            <Tr key={index} _hover={{ bg: "gray.100" }}>
               <Td width="180px">{appointment.TenKH}</Td>
               <Td width="120px">{appointment.SDT}</Td>
               <Td width="120px">{appointment.TGHen}</Td>

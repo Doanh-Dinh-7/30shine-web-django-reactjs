@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "../../pages/Error";
+import Home from "../../pages/Home";
 import Employees from "../../pages/Employees";
 import Layout from "../../lib/components/Layout/Layout";
 import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
@@ -8,6 +9,7 @@ import Customers from "../../pages/Customers";
 import ServiceAndPrice from "../../pages/ServiceAndPrice";
 import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
+import HomeWrapper from "./HomeWrapper ";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +17,10 @@ export const router = createBrowserRouter([
     element: <Layout />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        path: "/",
+        element: <HomeWrapper />,
+      },
       {
         path: "/employees",
         element: <Employees />,
@@ -41,8 +47,8 @@ export const router = createBrowserRouter([
       },
       {
         path: "/invoices",
-        element: <Invoices />
-      }
+        element: <Invoices />,
+      },
     ],
   },
 ]);

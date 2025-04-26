@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
   FormControl,
   FormLabel,
   Input,
@@ -16,10 +17,12 @@ import {
   useToast,
   InputGroup,
   InputLeftElement,
+  Box,
 } from "@chakra-ui/react";
+import PropTypes from "prop-types";
 import { FiDollarSign } from "react-icons/fi";
 
-const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
+const ServiceFormDrawer = ({ isOpen, onClose, service, onSubmit }) => {
   const [formData, setFormData] = useState({
     MaDV: "",
     TenDV: "",
@@ -39,7 +42,7 @@ const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
       });
     } else {
       setFormData({
-        MaDV: "",
+        MaDV: "Mới",
         TenDV: "",
         GiaDV: "",
         ChitietDV: "",
@@ -84,32 +87,23 @@ const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {service ? "Chỉnh sửa dịch vụ" : "Thêm dịch vụ mới"}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6}>
-          <form onSubmit={handleSubmit}>
-            <VStack spacing={4}>
+    <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="lg">
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <Box bg="blue.50" p={4}>
+          <DrawerHeader p={0} fontSize="xl" fontWeight="semibold">
+            {service ? "Chỉnh sửa dịch vụ" : "Thêm dịch vụ mới"}
+          </DrawerHeader>
+        </Box>
+
+        <form onSubmit={handleSubmit}>
+          <DrawerBody>
+            <VStack spacing={5} mt={4}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Mã dịch vụ</FormLabel>
-                    <Input
-                      name="MaDV"
-                      value={formData.MaDV}
-                      onChange={handleChange}
-                      placeholder="Nhập mã dịch vụ"
-                      isReadOnly={!!service}
-                    />
-                  </FormControl>
-                </GridItem>
-                <GridItem>
-                  <FormControl isRequired>
-                    <FormLabel>Tên dịch vụ</FormLabel>
+                    <FormLabel fontWeight="bold">Tên dịch vụ:</FormLabel>
                     <Input
                       name="TenDV"
                       value={formData.TenDV}
@@ -120,12 +114,11 @@ const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel>Giá dịch vụ</FormLabel>
+                    <FormLabel fontWeight="bold">Giá dịch vụ:</FormLabel>
                     <InputGroup>
-                      <InputLeftElement
-                        pointerEvents="none"
-                        children={<FiDollarSign color="gray.300" />}
-                      />
+                      <InputLeftElement pointerEvents="none">
+                        <FiDollarSign color="gray.300" />
+                      </InputLeftElement>
                       <Input
                         name="GiaDV"
                         type="number"
@@ -138,7 +131,7 @@ const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
                 </GridItem>
                 <GridItem colSpan={2}>
                   <FormControl isRequired>
-                    <FormLabel>Chi tiết dịch vụ</FormLabel>
+                    <FormLabel fontWeight="bold">Chi tiết dịch vụ:</FormLabel>
                     <Input
                       name="ChitietDV"
                       value={formData.ChitietDV}
@@ -148,15 +141,33 @@ const ServiceFormModal = ({ isOpen, onClose, service, onSubmit }) => {
                   </FormControl>
                 </GridItem>
               </Grid>
-              <Button type="submit" colorScheme="blue" w="full">
-                {service ? "Cập nhật" : "Thêm mới"}
-              </Button>
             </VStack>
-          </form>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </DrawerBody>
+
+          <DrawerFooter bg="blue.50" justifyContent="flex-end">
+            <Button variant="outline" mr={3} onClick={onClose}>
+              Huỷ
+            </Button>
+            <Button type="submit" colorScheme="blue">
+              {service ? "Cập nhật" : "Thêm mới"}
+            </Button>
+          </DrawerFooter>
+        </form>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
-export default ServiceFormModal; 
+ServiceFormDrawer.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  service: PropTypes.shape({
+    MaDV: PropTypes.string,
+    TenDV: PropTypes.string,
+    GiaDV: PropTypes.string,
+    ChitietDV: PropTypes.string,
+  }),
+  onSubmit: PropTypes.func.isRequired,
+};
+
+export default ServiceFormDrawer; 
