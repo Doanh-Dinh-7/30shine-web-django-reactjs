@@ -5,9 +5,7 @@ import {
   PopoverBody,
   IconButton,
   VStack,
-  HStack,
   Text,
-  Avatar,
   Box,
   Badge,
   Input,
@@ -22,30 +20,36 @@ import { useNotifications } from "./useNotifications";
 
 const NotificationItem = ({ notification, onClick }) => {
   return (
-    <HStack
+    <Box
       w="full"
       p="3"
       bg={!notification.isRead ? "blue.50" : "white"}
       _hover={{ bg: "gray.50" }}
       cursor="pointer"
       onClick={() => onClick(notification)}
+      position="relative"
     >
-      <Avatar size="sm" name={notification.customerName} />
-      <Box flex="1">
+      <Box>
         <Text fontSize="sm" noOfLines={2}>
           <Text as="span" fontWeight="medium">
             Khách hàng {notification.customerName}
           </Text>{" "}
           {notification.message}
         </Text>
-        <Text fontSize="xs" color="gray.500">
+        <Text fontSize="xs" color="gray.500" mt="1">
           {notification.time}
         </Text>
       </Box>
       {!notification.isRead && (
-        <Badge colorScheme="red" borderRadius="full" />
+        <Badge 
+          colorScheme="red" 
+          borderRadius="full"
+          position="absolute"
+          top="3"
+          right="3"
+        />
       )}
-    </HStack>
+    </Box>
   );
 };
 
