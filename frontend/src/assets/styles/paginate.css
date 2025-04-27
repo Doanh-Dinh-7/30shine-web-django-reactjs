@@ -70,3 +70,25 @@
     padding: 6px 12px;
     color  : #595959;
 }
+/* Used to print the contents of the invoice*/
+
+@media print {
+    body * {
+      visibility: hidden; /* Hide all */
+    }
+    .print-area, .print-area * {
+      visibility: visible; /* Shows only the print section */
+    }
+    .print-area {
+        position: fixed; 
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%; 
+        box-shadow: none; 
+    }
+    .no-print {
+        display: none;
+    }
+  }
+  

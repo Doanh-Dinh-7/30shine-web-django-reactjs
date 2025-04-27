@@ -2,7 +2,7 @@ import {
     Table, Thead, Tbody, Tr, Th, Td,
     IconButton, HStack, Box, Flex
   } from "@chakra-ui/react";
-  import { FiEdit2, FiTrash2,FiPrinter  } from "react-icons/fi";
+  import { FiEdit2, FiTrash2, FiEye } from "react-icons/fi";
   import ReactPaginate from "react-paginate";
   import { FaDotCircle } from "react-icons/fa";
   import "../../../assets/styles/paginate.css";
@@ -61,6 +61,13 @@ import {
                 </Td>
                 <Td>
                   <HStack spacing={2}>
+                  <IconButton
+                      icon={<FiEye />}
+                      variant="ghost"
+                      colorScheme="teal"
+                      aria-label="Xem chi tiết"
+                      onClick={() => onPrintInvoice(invoice)}
+                    />
                     <IconButton
                       icon={<FiEdit2 />}
                       variant="ghost"
@@ -75,13 +82,7 @@ import {
                       aria-label="Delete"
                       onClick={() => onDeleteInvoice(invoice.MaHD)}
                     />
-                    <IconButton
-                      icon={<FiPrinter />}
-                      variant="ghost"
-                      colorScheme="teal"
-                      aria-label="Print"
-                      onClick={() => onPrintInvoice(invoice)} // GỌI TỚI HÀM MỚI
-                    />
+                  
                   </HStack>
                 </Td>
                 <Td>

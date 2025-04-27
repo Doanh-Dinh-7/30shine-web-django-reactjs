@@ -9,6 +9,7 @@ import {
   
   const InvoicePrintView = ({ invoice }) => {
     return (
+      <Box className="print-area">
       <Box px={6} py={4} borderWidth={1} borderRadius="lg" bg="white" boxShadow="md">
         <Text fontSize="2xl" fontWeight="bold" textAlign="center" mb={6}>
           Hóa đơn
@@ -19,10 +20,13 @@ import {
             <Text fontWeight="semibold">Tên khách hàng:</Text>
             <Text>{invoice.HoTenKH || "-"}</Text>
           </HStack>
-          <HStack w="full" justifyContent="space-between">
-            <Text fontWeight="semibold">Sử dụng dịch vụ:</Text>
-            <Text>{invoice.NoiDung || "-"}</Text>
-          </HStack>
+          {invoice.DichVu && invoice.DichVu.map((dv, index) => (
+            <HStack key={index} w="full" justifyContent="space-between">
+              <Text>{dv.tenDichVu}</Text>
+              <Text>Số lượng: {dv.soLuong}</Text>
+            </HStack>
+          ))}
+
           <HStack w="full" justifyContent="space-between">
             <Text fontWeight="semibold">Giá tiền:</Text>
             <Text>{invoice.GiaTien} VND</Text>
@@ -39,9 +43,11 @@ import {
             <Text fontWeight="bold">{invoice.TongTien} VND</Text>
           </HStack>
         </VStack>
-  
-        <Box mt={8} textAlign="right">
-          <Button colorScheme="blue">Xuất</Button>
+        </Box>
+        <Box mt={8} textAlign="right" className="no-print">
+        <Button colorScheme="blue" onClick={() => window.print()}>
+          Xuất hóa đơn
+        </Button>
         </Box>
       </Box>
     );
