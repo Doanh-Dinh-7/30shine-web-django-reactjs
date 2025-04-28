@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -51,7 +51,6 @@ const Customers = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [customers, setCustomers] = useState(mockupData);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   // Xử lý thanh tìm kiếm
@@ -144,7 +143,6 @@ const Customers = () => {
             customers={filteredCustomers}
             onEditCustomer={handleEditCustomer}
             onDeleteCustomer={handleDeleteCustomer}
-            loading={loading}
           />
         </Box>
       </Flex>

@@ -3,14 +3,16 @@ import {
   Avatar,
   Box,
   Flex,
+<<<<<<< HEAD
+=======
   IconButton,
+>>>>>>> main
   Image,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Text,
-  Badge,
   Button,
   Popover,
   PopoverTrigger,
@@ -22,15 +24,7 @@ import {
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import {
-  FiHome,
-  FiCalendar,
-  FiDollarSign,
-  FiUsers,
   FiChevronDown,
-  FiBell,
-  FiMessageSquare,
-  FiFileText,
-  FiChevronUp,
   FiMenu,
 } from "react-icons/fi";
 import PropTypes from "prop-types";
@@ -39,8 +33,12 @@ import Logo from "../../../../public/logo_30shine.png";
 import LoginModal from "../Auth/LoginModal";
 import RegisterModal from "../Auth/RegisterModal";
 import ForgetPasswordModal from "../Auth/ForgetPasswordModal";
+<<<<<<< HEAD
+import NotificationPopover from "../Notification/NotificationPopover";
+=======
+>>>>>>> main
 
-const NavItem = ({ icon, children, to, onClose }) => {
+const NavItem = ({ children, to, onClose }) => {
   return (
     <NavLink
       to={to}
@@ -73,14 +71,12 @@ const NavItem = ({ icon, children, to, onClose }) => {
 };
 
 NavItem.propTypes = {
-  icon: PropTypes.elementType.isRequired,
   children: PropTypes.node.isRequired,
   to: PropTypes.string.isRequired,
   onClose: PropTypes.func,
 };
 
 const Navbar = () => {
-  const [hasNotification] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [authModal, setAuthModal] = useState(null); // "login" | "register" | "forgot"
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -198,35 +194,7 @@ const Navbar = () => {
         </Flex>
 
         <Flex align="center" gap="4">
-          <Box position="relative">
-            <IconButton
-              icon={<FiBell />}
-              variant="ghost"
-              size="lg"
-              aria-label="Thông báo"
-              isRound={true}
-              color={hasNotification ? "blue.500" : "gray.600"}
-              bg={hasNotification ? "blue.50" : "transparent"}
-              _hover={{ bg: "blue.50", color: "blue.500" }}
-            />
-            {hasNotification && (
-              <Badge
-                position="absolute"
-                top="-1"
-                right="-1"
-                colorScheme="red"
-                borderRadius="full"
-                w="4"
-                h="4"
-                p="0"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                2
-              </Badge>
-            )}
-          </Box>
+          <NotificationPopover />
           {role === "quan ly" ? (
             <Menu>
               <MenuButton
