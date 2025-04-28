@@ -120,11 +120,10 @@ const ServiceFormDrawer = ({ isOpen, onClose, service, onSubmit }) => {
                         <FiDollarSign color="gray.300" />
                       </InputLeftElement>
                       <Input
-                        name="GiaDV"
-                        type="number"
-                        value={formData.GiaDV}
+                        name="TenDV"
+                        value={formData.TenDV}
                         onChange={handleChange}
-                        placeholder="Nhập giá dịch vụ"
+                        placeholder="Nhập tên dịch vụ"
                       />
                     </InputGroup>
                   </FormControl>
@@ -170,4 +169,4 @@ ServiceFormDrawer.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default ServiceFormDrawer; 
+export default ServiceFormDrawer;

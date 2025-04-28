@@ -3,6 +3,10 @@ import {
   Avatar,
   Box,
   Flex,
+<<<<<<< HEAD
+=======
+  IconButton,
+>>>>>>> main
   Image,
   Menu,
   MenuButton,
@@ -29,7 +33,10 @@ import Logo from "../../../../public/logo_30shine.png";
 import LoginModal from "../Auth/LoginModal";
 import RegisterModal from "../Auth/RegisterModal";
 import ForgetPasswordModal from "../Auth/ForgetPasswordModal";
+<<<<<<< HEAD
 import NotificationPopover from "../Notification/NotificationPopover";
+=======
+>>>>>>> main
 
 const NavItem = ({ children, to, onClose }) => {
   return (
@@ -71,7 +78,7 @@ NavItem.propTypes = {
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [authModal, setAuthModal] = useState(null);
+  const [authModal, setAuthModal] = useState(null); // "login" | "register" | "forgot"
   const isMobile = useBreakpointValue({ base: true, md: false });
   const isTablet = useBreakpointValue({ base: false, md: true, lg: false });
   const role = localStorage.getItem("role");

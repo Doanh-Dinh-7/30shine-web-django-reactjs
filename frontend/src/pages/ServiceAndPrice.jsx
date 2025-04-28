@@ -18,6 +18,7 @@ const ServiceAndPrice = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedService, setSelectedService] = useState(null);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   // eslint-disable-next-line no-unused-vars
