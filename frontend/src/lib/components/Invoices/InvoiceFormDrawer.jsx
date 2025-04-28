@@ -29,18 +29,17 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
     return `${hh}:${mm} ${dd}/${MM}/${yyyy}`;
   };
   
-  
   const [formData, setFormData] = useState({
-    MaHD: "",
     MaKH: "",
     HoTenKH: "",
     GiaTien: "",
-    ChietKhau: "",
+    ChietKhau: "0",
     TongTien: "",
     NoiDung: "",
-    TrangThaiTT: "",
-    TrangThaiHT: "",
-    ThoiGianThanhToan: new Date()
+    DichVu: [{ tenDichVu: "", soLuong: 1 }],
+    TrangThaiTT: "chưa thanh toán",
+    TrangThaiHT: "chưa hoàn",
+    ThoiGianThanhToan: formatDateTime(new Date())
   });
 
   const toast = useToast();
@@ -48,7 +47,7 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
   useEffect(() => {
     if (invoice) {
       setFormData({
-        ...invoice,
+        ...invoice
       });
     } else {
       setFormData({
@@ -59,6 +58,7 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
         ChietKhau: "0",
         TongTien: "",
         NoiDung: "",
+        DichVu: [{ tenDichVu: "", soLuong: 1 }],
         TrangThaiTT: "chưa thanh toán",
         TrangThaiHT: "chưa hoàn",
         ThoiGianThanhToan: formatDateTime(new Date())
@@ -68,22 +68,59 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let formattedValue = value;
+  
+    if (name === "GiaTien" || name === "ChietKhau") {
+      const numberValue = value.replace(/\D/g, ""); // Bỏ tất cả ký tự không phải số
+      formattedValue = numberValue.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Thêm dấu phẩy
+    }
+  
+    setFormData((prev) => {
+      const giaTien = parseInt(name === "GiaTien" ? formattedValue.replace(/,/g, "") : prev.GiaTien.replace(/,/g, "") || 0);
+      const chietKhau = parseInt(name === "ChietKhau" ? formattedValue.replace(/,/g, "") : prev.ChietKhau.replace(/,/g, "") || 0);
+      const tongTien = (giaTien - chietKhau).toLocaleString();
+      return { ...prev, [name]: formattedValue, TongTien: tongTien };
+    });
+  };
+
+  const handleServiceChange = (index, field, value) => {
+    const updatedDichVu = [...formData.DichVu];
+    updatedDichVu[index][field] = value;
+    setFormData((prev) => ({ ...prev, DichVu: updatedDichVu }));
+  };
+
+  const handleAddService = () => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
-      TongTien:
-        name === "GiaTien" || name === "ChietKhau"
-          ? `${
-              parseFloat(name === "GiaTien" ? value : prev.GiaTien || 0) -
-              parseFloat(name === "ChietKhau" ? value : prev.ChietKhau || 0)
-            }`
-          : prev.TongTien
+      DichVu: [...prev.DichVu, { tenDichVu: "", soLuong: 1 }]
     }));
+  };
+
+  const handleRemoveService = (index) => {
+    const updatedDichVu = formData.DichVu.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, DichVu: updatedDichVu }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
+  
+    // Validate dịch vụ
+    const hasInvalidService = formData.DichVu.some(
+      (dv) => !dv.tenDichVu.trim() || dv.soLuong < 1
+    );
+  
+    if (hasInvalidService) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng nhập đầy đủ tên dịch vụ và số lượng hợp lệ!",
+        status: "error",
+        duration: 3000,
+        isClosable: true
+      });
+      return; // Dừng lại nếu dịch vụ không hợp lệ
+    }
+  
+    try {
       await onSubmit(formData);
       onClose();
       toast({
@@ -98,10 +135,11 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
         description: "Không thể lưu thông tin",
         status: "error",
         duration: 3000,
-        isClosable: true,
+        isClosable: true
       });
     }
   };
+  
 
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="lg">
@@ -118,7 +156,7 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
         <DrawerCloseButton />
 
         <form onSubmit={handleSubmit}>
-          <DrawerBody py={6}>
+          <DrawerBody py={6} overflow="auto" maxHeight="calc(100vh - 160px)">
             <VStack spacing={5} align="stretch">
               <FormControl isRequired>
                 <HStack>
@@ -132,6 +170,41 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
                   <Input name="MaKH" value={formData.MaKH} onChange={handleChange} />
                 </HStack>
               </FormControl>
+
+              <FormControl isRequired>
+                <HStack align="flex-start">
+                  <FormLabel minW="14vw" pt={2}>Dịch vụ</FormLabel>
+                  <VStack spacing={2} flex={1} align="stretch">
+                    {formData.DichVu.map((dv, index) => (
+                      <HStack key={index} spacing={3}>
+                        <Input
+                          placeholder="Tên dịch vụ"
+                          value={dv.tenDichVu}
+                          onChange={(e) => handleServiceChange(index, "tenDichVu", e.target.value)}
+                        />
+                        <Input
+                          placeholder="Số lượng"
+                          type="number"
+                          min={1}
+                          maxW="100px"
+                          value={dv.soLuong}
+                          onChange={(e) => handleServiceChange(index, "soLuong", e.target.value)}
+                        />
+                        {formData.DichVu.length > 1 && (
+                          <Button size="sm" colorScheme="red" onClick={() => handleRemoveService(index)}>
+                            -
+                          </Button>
+                        )}
+                      </HStack>
+                    ))}
+                    <Button size="sm" variant="outline" colorScheme="blue" onClick={handleAddService}>
+                      + Thêm dịch vụ
+                    </Button>
+                  </VStack>
+                </HStack>
+              </FormControl>
+
+
               <FormControl isRequired>
                 <HStack>
                   <FormLabel minW="14vw">Giá tiền</FormLabel>
@@ -159,7 +232,7 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
             </VStack>
           </DrawerBody>
 
-          <DrawerFooter bg="blue.50" justifyContent="flex-end" gap={2}>
+          <DrawerFooter bg="blue.50" justifyContent="flex-end" gap={2} position="sticky" bottom="0">
             <Button variant="outline" onClick={onClose}>
               Huỷ
             </Button>
