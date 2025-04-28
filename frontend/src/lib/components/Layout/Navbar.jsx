@@ -3,10 +3,6 @@ import {
   Avatar,
   Box,
   Flex,
-<<<<<<< HEAD
-=======
-  IconButton,
->>>>>>> main
   Image,
   Menu,
   MenuButton,
@@ -33,10 +29,7 @@ import Logo from "../../../../public/logo_30shine.png";
 import LoginModal from "../Auth/LoginModal";
 import RegisterModal from "../Auth/RegisterModal";
 import ForgetPasswordModal from "../Auth/ForgetPasswordModal";
-<<<<<<< HEAD
 import NotificationPopover from "../Notification/NotificationPopover";
-=======
->>>>>>> main
 
 const NavItem = ({ children, to, onClose }) => {
   return (
