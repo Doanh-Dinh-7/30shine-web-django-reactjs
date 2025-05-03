@@ -16,7 +16,7 @@ import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import "../../../assets/styles/paginate.css";
 
-const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment }) => {
+const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment, showMaKH }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const appointmentsPerPage = 5;
   const pageCount = Math.ceil(appointments.length / appointmentsPerPage);
@@ -44,6 +44,8 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
       <Table variant="simple" colorScheme="blue" size="md" bg="white" style={{ tableLayout: 'fixed' }}>
         <Thead>
           <Tr>
+            {showMaKH && <Th width="100px">Mã khách hàng</Th>}
+            <Th width="100px">Mã lịch hẹn</Th>
             <Th width="180px">Tên khách hàng</Th>
             <Th width="120px">Số điện thoại</Th>
             <Th width="120px">Thời gian hẹn</Th>
@@ -56,6 +58,8 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
         <Tbody>
           {paginatedAppointments.map((appointment, index) => (
             <Tr key={index} _hover={{ bg: "gray.100" }}>
+              {showMaKH && <Td width="100px">{appointment.MaKH}</Td>}
+              <Td width="100px">{appointment.MaLH}</Td>
               <Td width="180px">{appointment.TenKH}</Td>
               <Td width="120px">{appointment.SDT}</Td>
               <Td width="120px">{appointment.TGHen}</Td>
@@ -80,7 +84,7 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
                     icon={<FiTrash2 />}
                     variant="ghost"
                     colorScheme="red"
-                    onClick={() => onDeleteAppointment(appointment.SDT)}
+                    onClick={() => onDeleteAppointment(appointment.MaLH)}
                     aria-label="Delete"
                     size="sm"
                   />

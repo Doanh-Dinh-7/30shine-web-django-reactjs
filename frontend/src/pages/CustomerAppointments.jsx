@@ -13,7 +13,7 @@ import { FiSearch, FiPlus, FiFilter } from "react-icons/fi";
 import AppointmentFormDrawer from "../lib/components/Appointments/AppointmentFormDrawer";
 import AppointmentTable from "../lib/components/Appointments/AppointmentTable";
 
-const Appointments = () => {
+const CustomerAppointments = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -21,7 +21,6 @@ const Appointments = () => {
   const toast = useToast();
   const [appointments, setAppointments] = useState([
     {
-      MaKH: "KH001",
       MaLH: "LH001",
       TenKH: "Nguyễn Văn An",
       SDT: "0912345678",
@@ -31,93 +30,21 @@ const Appointments = () => {
       TrangThai: "Chờ hoàn thành",
     },
     {
-      MaKH: "KH002",
       MaLH: "LH002",
-      TenKH: "Trần Thị Bình",
-      SDT: "0923456789",
-      TGHen: "2024-03-22",
-      GioKhachDen: "10:00",
+      TenKH: "Nguyễn Văn An",
+      SDT: "0912345678",
+      TGHen: "2024-03-25",
+      GioKhachDen: "14:00",
       LoaiDV: "Nhuộm tóc",
       TrangThai: "Chờ hoàn thành",
     },
     {
-      MaKH: "KH001",
       MaLH: "LH003",
       TenKH: "Nguyễn Văn An",
       SDT: "0912345678",
-      TGHen: "2024-03-21",
-      GioKhachDen: "14:30",
+      TGHen: "2024-03-28",
+      GioKhachDen: "10:30",
       LoaiDV: "Combo cắt gội",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH003",
-      MaLH: "LH004",
-      TenKH: "Phạm Thị Dung",
-      SDT: "0945678901",
-      TGHen: "2024-03-21",
-      GioKhachDen: "15:00",
-      LoaiDV: "Uốn tóc",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH004",
-      MaLH: "LH005",
-      TenKH: "Hoàng Văn Em",
-      SDT: "0956789012",
-      TGHen: "2024-03-20",
-      GioKhachDen: "13:30",
-      LoaiDV: "Gội đầu",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH002",
-      MaLH: "LH006",
-      TenKH: "Trần Thị Bình",
-      SDT: "0923456789",
-      TGHen: "2024-03-20",
-      GioKhachDen: "14:00",
-      LoaiDV: "Nhuộm tóc",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH005",
-      MaLH: "LH007",
-      TenKH: "Vũ Văn Giang",
-      SDT: "0978901234",
-      TGHen: "2024-03-19",
-      GioKhachDen: "16:00",
-      LoaiDV: "Cắt tóc nam",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH006",
-      MaLH: "LH008",
-      TenKH: "Đỗ Thị Hương",
-      SDT: "0989012345",
-      TGHen: "2024-03-19",
-      GioKhachDen: "16:30",
-      LoaiDV: "Uốn tóc",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH007",
-      MaLH: "LH009",
-      TenKH: "Bùi Văn Khoa",
-      SDT: "0990123456",
-      TGHen: "2024-03-18",
-      GioKhachDen: "11:00",
-      LoaiDV: "Combo cắt gội",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH008",
-      MaLH: "LH010",
-      TenKH: "Lý Thị Mai",
-      SDT: "0912345679",
-      TGHen: "2024-03-18",
-      GioKhachDen: "11:30",
-      LoaiDV: "Nhuộm tóc",
       TrangThai: "Đã hoàn thành",
     }
   ]);
@@ -144,14 +71,12 @@ const Appointments = () => {
 
   const handleSubmit = (formData) => {
     if (selectedAppointment) {
-      // Update existing appointment
       setAppointments(
         appointments.map((app) =>
           app.MaLH === selectedAppointment.MaLH ? { ...formData, MaLH: selectedAppointment.MaLH } : app
         )
       );
     } else {
-      // Add new appointment
       const maxNumber = appointments.reduce((max, app) => {
         const num = parseInt(app.MaLH.replace('LH', ''));
         return num > max ? num : max;
@@ -183,7 +108,7 @@ const Appointments = () => {
     <Box p={6}>
       <Box mb={4}>
         <Heading fontSize="lg" color="blue.600">
-          Quản lý lịch hẹn
+          Lịch hẹn của tôi
         </Heading>
       </Box>
 
@@ -215,7 +140,7 @@ const Appointments = () => {
             px={5}
             onClick={() => setIsModalOpen(true)}
           >
-            Thêm lịch hẹn
+            Đặt lịch mới
           </Button>
         </Flex>
       </Flex>
@@ -225,7 +150,7 @@ const Appointments = () => {
           appointments={filteredAppointments}
           onEditAppointment={handleEdit}
           onDeleteAppointment={handleDelete}
-          showMaKH={true}
+          showMaKH={false}
         />
       </Box>
 
@@ -234,10 +159,10 @@ const Appointments = () => {
         onClose={() => setIsModalOpen(false)}
         appointment={selectedAppointment}
         onSubmit={handleSubmit}
-        isManager={true}
+        isManager={false}
       />
     </Box>
   );
 };
 
-export default Appointments; 
+export default CustomerAppointments; 

@@ -9,7 +9,8 @@ import Customers from "../../pages/Customers";
 import ServiceAndPrice from "../../pages/ServiceAndPrice";
 import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
-import HomeWrapper from "./HomeWrapper ";
+import CustomerAppointments from "../../pages/CustomerAppointments";
+import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +20,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomeWrapper />,
+        element: <Home />,
       },
       {
         path: "/employees",
@@ -46,8 +47,16 @@ export const router = createBrowserRouter([
         element: <Appointments />,
       },
       {
+        path: "/customerappointments",
+        element: <CustomerAppointments />,
+      },
+      {
         path: "/invoices",
         element: <Invoices />,
+      },
+      {
+        path: "/customerserviceandprice",
+        element: <CustomerServiceAndPrice />,
       },
     ],
   },

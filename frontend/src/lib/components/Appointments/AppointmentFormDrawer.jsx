@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Drawer,
   DrawerOverlay,
@@ -20,17 +20,18 @@ import {
 } from "@chakra-ui/react";
 import PropTypes from 'prop-types';
 
-const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
+const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManager }) => {
   const [formData, setFormData] = React.useState({
     TenKH: "",
     SDT: "",
     TGHen: "",
     GioKhachDen: "",
     LoaiDV: "",
-    TrangThai: "Chờ xác nhận",
+    TrangThai: "Chờ hoàn thành",
   });
 
   const toast = useToast();
+  const [error, setError] = useState("");
 
   React.useEffect(() => {
     if (appointment) {
@@ -40,7 +41,7 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
         TGHen: appointment.TGHen || "",
         GioKhachDen: appointment.GioKhachDen || "",
         LoaiDV: appointment.LoaiDV || "",
-        TrangThai: appointment.TrangThai || "Chờ xác nhận",
+        TrangThai: appointment.TrangThai || "Chờ hoàn thành",
       });
     } else {
       setFormData({
@@ -49,10 +50,10 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
         TGHen: "",
         GioKhachDen: "",
         LoaiDV: "",
-        TrangThai: "Chờ xác nhận",
+        TrangThai: "Chờ hoàn thành",
       });
     }
-  }, [appointment]);
+  }, [appointment, isManager]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +65,19 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    // Validate ngày giờ
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const currentTime = now.toTimeString().slice(0, 5);
+    if (formData.TGHen < todayStr) {
+      setError("Ngày hẹn phải lớn hơn hoặc bằng ngày hiện tại.");
+      return;
+    }
+    if (formData.TGHen === todayStr && formData.GioKhachDen <= currentTime) {
+      setError("Giờ hẹn phải lớn hơn giờ hiện tại nếu chọn ngày hôm nay.");
+      return;
+    }
     try {
       await onSubmit(formData);
       onClose();
@@ -105,6 +119,19 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
           <DrawerBody>
             <VStack spacing={5} mt={4}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
+                {isManager && (
+                  <GridItem colSpan={2}>
+                    <FormControl isRequired>
+                      <FormLabel fontWeight="bold">Mã khách hàng:</FormLabel>
+                      <Input
+                        name="MaKH"
+                        value={formData.MaKH || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập mã khách hàng (ví dụ: KH001)"
+                      />
+                    </FormControl>
+                  </GridItem>
+                )}
                 <GridItem>
                   <FormControl isRequired>
                     <FormLabel fontWeight="bold">Tên khách hàng:</FormLabel>
@@ -170,20 +197,35 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
                 <GridItem>
                   <FormControl isRequired>
                     <FormLabel fontWeight="bold">Trạng thái:</FormLabel>
-                    <Select
-                      name="TrangThai"
-                      value={formData.TrangThai}
-                      onChange={handleChange}
-                    >
-                      <option value="Chờ xác nhận">Chờ xác nhận</option>
-                      <option value="Đã xác nhận">Đã xác nhận</option>
-                      <option value="Đã hoàn thành">Đã hoàn thành</option>
-                      <option value="Đã hủy">Đã hủy</option>
-                    </Select>
+                    {(!appointment) ? (
+                      <Input
+                        name="TrangThai"
+                        value="Chờ hoàn thành"
+                        readOnly
+                        bg="gray.100"
+                      />
+                    ) : isManager ? (
+                      <Select
+                        name="TrangThai"
+                        value={formData.TrangThai}
+                        onChange={handleChange}
+                      >
+                        <option value="Chờ hoàn thành">Chờ hoàn thành</option>
+                        <option value="Đã hoàn thành">Đã hoàn thành</option>
+                      </Select>
+                    ) : (
+                      <Input
+                        name="TrangThai"
+                        value={"Chờ hoàn thành"}
+                        readOnly
+                        bg="gray.100"
+                      />
+                    )}
                   </FormControl>
                 </GridItem>
               </Grid>
             </VStack>
+            {error && <Box color="red.500" mt={2}>{error}</Box>}
           </DrawerBody>
 
           <DrawerFooter bg="blue.50" justifyContent="flex-end">
@@ -212,6 +254,7 @@ AppointmentFormDrawer.propTypes = {
     TrangThai: PropTypes.string,
   }),
   onSubmit: PropTypes.func.isRequired,
+  isManager: PropTypes.bool,
 };
 
 export default AppointmentFormDrawer; 
