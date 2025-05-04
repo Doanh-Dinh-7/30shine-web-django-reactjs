@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import NhanVien
+from .models import NhanVien, LichLamViec
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,4 +29,9 @@ class NhanVienSerializer(serializers.ModelSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
-        return instance 
+        return instance
+
+class LichLamViecSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LichLamViec
+        fields = ['MaLLV', 'MaNV', 'NgayLam', 'CaLam'] 

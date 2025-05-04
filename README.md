@@ -108,23 +108,23 @@
 └── README.md
 </pre>
 
-
-## 2. Cài đặt Backend
+## 2. Cài đặt & Chạy Backend
 ### 2.1. Clone dự án
 ```bash
-git clone <repository_url>
+# Clone repository
+https://github.com/<repository_url>
 cd backend
 ```
 
 ### 2.2. Tạo môi trường ảo Python
 ```bash
 # Windows
-python -m venv .venv
-.venv\Scripts\activate
+python -m venv venv
+.\venv\Scripts\activate
 
 # Linux/Mac
 python3 -m venv venv
-source .venv/bin/activate
+source venv/bin/activate
 ```
 
 ### 2.3. Cài đặt thư viện Python
@@ -132,14 +132,31 @@ source .venv/bin/activate
 pip install -r requirements.txt --no-cache-dir
 ```
 
-### 2.4. Khởi động backend server
+### 2.4. Khởi tạo database & migrate
+```bash
+cd salon
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 2.5. Tạo tài khoản quản trị (superuser)
+```bash
+python manage.py createsuperuser
+```
+
+### 2.6. Chạy backend server
 ```bash
 # Development
 python manage.py runserver
 ```
-Backend server sẽ chạy tại: http://localhost:5000
+Backend server sẽ chạy tại: http://localhost:8000 (hoặc cổng bạn chỉ định)
 
-## 3. Cài đặt Frontend
+### 2.7. Tham khảo API
+- Xem chi tiết các endpoint và mẫu request tại file [`backend/README_API.md`](backend/README_API.md)
+
+---
+
+## 3. Cài đặt & Chạy Frontend
 ### 3.1. Cài đặt dependencies
 ```bash
 cd frontend
@@ -149,7 +166,7 @@ npm install
 ### 3.2. Cấu hình môi trường
 Tạo file `.env` trong thư mục `frontend`:
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:8000/api
 ```
 
 ### 3.3. Khởi động frontend server
