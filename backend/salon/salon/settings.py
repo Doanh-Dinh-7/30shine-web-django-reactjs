@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'qlLichHen',
     'qlThongBao',
     'qlDanhGia',
-    'qlSanPham',
+    # 'qlSanPham', # Chưa cần
     'qlHoaDon',
     'qlDichVu',
 ]

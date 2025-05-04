@@ -12,7 +12,7 @@ class KhachHangSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = KhachHang
-        fields = ['id', 'user', 'ho_ten', 'sdt', 'email', 'dia_chi']
+        fields = ['MaKH', 'user', 'HoTenKH', 'SDT', 'Email', 'DiaChi']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')

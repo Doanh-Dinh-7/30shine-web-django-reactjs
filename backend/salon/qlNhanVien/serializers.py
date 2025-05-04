@@ -12,7 +12,7 @@ class NhanVienSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NhanVien
-        fields = ['id', 'user', 'ho_ten', 'sdt', 'dia_chi', 'gioi_tinh']
+        fields = ['MaNV', 'user', 'HoTenNV', 'SDT', 'DiaChi', 'GioiTinh']
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')

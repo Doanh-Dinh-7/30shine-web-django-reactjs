@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/khach-hang/', include('qlKhachHang.urls')),
     path('api/dich-vu/', include('qlDichVu.urls')),
     path('api/hoa-don/', include('qlHoaDon.urls')),
+    path('api/lich-hen/', include('qlLichHen.urls')),
 ]
