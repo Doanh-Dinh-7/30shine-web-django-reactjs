@@ -11,6 +11,7 @@ import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
 import CustomerAppointments from "../../pages/CustomerAppointments";
 import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
+import AddAppointment from "../../pages/AddAppointment";
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "/customerappointments",
         element: <CustomerAppointments />,
+      },
+      {
+        path: "/customerappointments/addappointment",
+        element: <AddAppointment />,
       },
       {
         path: "/invoices",
