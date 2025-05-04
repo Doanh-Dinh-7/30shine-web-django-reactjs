@@ -7,30 +7,75 @@
 <pre>
 30shine-web-django-reactjs/
 ├── <span style="color:#d73a49; font-weight:bold;">backend/</span>                          # <span style="color:gray;">💾 Backend Django</span>
-│   ├── schedule_haircut/             # Dự án chính
+│   ├── salon/                # Thư mục project chính (settings, urls, wsgi, asgi)
 │   │   ├── __init__.py
-│   │   ├── settings.py               # Cấu hình dự án
-│   │   ├── urls.py                   # Đường dẫn chính
-│   │   └── wsgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   └── asgi.py
 │   │
-│   ├── qlkhachhang/                  # App quản lý khách hàng
-│   │   ├── __init__.py
-│   │   ├── admin.py                  # Cấu hình admin
-│   │   ├── apps.py
-│   │   ├── models.py                 # Model dữ liệu
-│   │   ├── serializers.py            # Chuyển đổi dữ liệu
-│   │   ├── urls.py                   # API endpoints
-│   │   └── views.py                  # Xử lý logic
-│   │
-│   ├── qlnhanvien/                   # App quản lý nhân viên
-│   │   ├── __init__.py
-│   │   ├── admin.py
-│   │   ├── apps.py
+│   ├── taiKhoan/             # Đăng ký, đăng nhập, phân quyền
 │   │   ├── models.py
+│   │   ├── views.py
 │   │   ├── serializers.py
 │   │   ├── urls.py
-│   │   └── views.py
-│   ├── ....                          # các App quản lý khác
+│   │   └── ...
+│   │
+│   ├── qlKhachHang/          # Quản lý khách hàng
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── qlNhanVien/           # Quản lý nhân viên
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── qlLichHen/            # Quản lý lịch hẹn, đặt lịch hẹn
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── qlThongBao/           # Quản lý thông báo
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── qlDanhGia/            # Quản lý đánh giá
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── qlSanPham/            # Quản lý sản phẩm (nếu có)
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── qlHoaDon/             # Quản lý hoá đơn, chi tiết hoá đơn
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
+│   │
+│   ├── qlDichVu/             # Quản lý dịch vụ
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── ...
 │   │
 │   ├── manage.py
 │   └── requirements.txt              # Thư viện Python
