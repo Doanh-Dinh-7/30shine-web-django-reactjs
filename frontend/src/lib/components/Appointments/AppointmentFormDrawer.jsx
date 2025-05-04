@@ -20,6 +20,15 @@ import {
 } from "@chakra-ui/react";
 import PropTypes from 'prop-types';
 
+// Thêm danh sách nhân viên mẫu
+const STAFF_LIST = [
+  { id: "NV001", name: "Nguyễn Văn A" },
+  { id: "NV002", name: "Trần Thị B" },
+  { id: "NV003", name: "Phạm Văn C" },
+  { id: "NV004", name: "Lê Thị D" },
+  { id: "NV005", name: "Hoàng Văn E" },
+];
+
 const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManager }) => {
   const [formData, setFormData] = React.useState({
     TenKH: "",
@@ -28,6 +37,7 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
     GioKhachDen: "",
     LoaiDV: "",
     TrangThai: "Chờ hoàn thành",
+    NhanVien: "", // Thêm trường nhân viên
   });
 
   const toast = useToast();
@@ -42,6 +52,7 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
         GioKhachDen: appointment.GioKhachDen || "",
         LoaiDV: appointment.LoaiDV || "",
         TrangThai: appointment.TrangThai || "Chờ hoàn thành",
+        NhanVien: appointment.NhanVien || "", // Thêm trường nhân viên
       });
     } else {
       setFormData({
@@ -51,6 +62,7 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
         GioKhachDen: "",
         LoaiDV: "",
         TrangThai: "Chờ hoàn thành",
+        NhanVien: "", // Thêm trường nhân viên
       });
     }
   }, [appointment, isManager]);
@@ -66,7 +78,11 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    // Validate ngày giờ
+    // Validate ngày giờ và nhân viên
+    if (!formData.NhanVien) {
+      setError("Vui lòng chọn nhân viên phụ trách.");
+      return;
+    }
     const now = new Date();
     const todayStr = now.toISOString().slice(0, 10);
     const currentTime = now.toTimeString().slice(0, 5);
@@ -191,6 +207,23 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
                       <option value="Uốn tóc">Uốn tóc</option>
                       <option value="Gội đầu">Gội đầu</option>
                       <option value="Combo cắt gội">Combo cắt gội</option>
+                    </Select>
+                  </FormControl>
+                </GridItem>
+                <GridItem>
+                  <FormControl isRequired>
+                    <FormLabel fontWeight="bold">Nhân viên phụ trách:</FormLabel>
+                    <Select
+                      name="NhanVien"
+                      value={formData.NhanVien}
+                      onChange={handleChange}
+                      placeholder="Chọn nhân viên"
+                    >
+                      {STAFF_LIST.map((staff) => (
+                        <option key={staff.id} value={staff.name}>
+                          {staff.name}
+                        </option>
+                      ))}
                     </Select>
                   </FormControl>
                 </GridItem>

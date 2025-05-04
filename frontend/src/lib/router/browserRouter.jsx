@@ -12,6 +12,7 @@ import Invoices from "../../pages/Invoices";
 import HomeWrapper from "./HomeWrapper ";
 import CustomerAppointments from "../../pages/CustomerAppointments";
 import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
+import AddAppointment from "../../pages/AddAppointment";
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: "/customerserviceandprice",
         element: <CustomerServiceAndPrice />,
+      },
+      {
+        path: "/customerappointments/addappointment",
+        element: <AddAppointment />,
       },
     ],
   },

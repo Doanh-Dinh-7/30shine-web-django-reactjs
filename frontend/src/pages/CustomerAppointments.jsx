@@ -12,6 +12,7 @@ import {
 import { FiSearch, FiPlus, FiFilter } from "react-icons/fi";
 import AppointmentFormDrawer from "../lib/components/Appointments/AppointmentFormDrawer";
 import AppointmentTable from "../lib/components/Appointments/AppointmentTable";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 const CustomerAppointments = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,35 +20,8 @@ const CustomerAppointments = () => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showOnlyPending, setShowOnlyPending] = useState(false);
   const toast = useToast();
-  const [appointments, setAppointments] = useState([
-    {
-      MaLH: "LH001",
-      TenKH: "Nguyễn Văn An",
-      SDT: "0912345678",
-      TGHen: "2024-03-22",
-      GioKhachDen: "09:30",
-      LoaiDV: "Cắt tóc nam",
-      TrangThai: "Chờ hoàn thành",
-    },
-    {
-      MaLH: "LH002",
-      TenKH: "Nguyễn Văn An",
-      SDT: "0912345678",
-      TGHen: "2024-03-25",
-      GioKhachDen: "14:00",
-      LoaiDV: "Nhuộm tóc",
-      TrangThai: "Chờ hoàn thành",
-    },
-    {
-      MaLH: "LH003",
-      TenKH: "Nguyễn Văn An",
-      SDT: "0912345678",
-      TGHen: "2024-03-28",
-      GioKhachDen: "10:30",
-      LoaiDV: "Combo cắt gội",
-      TrangThai: "Đã hoàn thành",
-    }
-  ]);
+  const navigate = useNavigate();
+  const { appointments, setAppointments } = useOutletContext();
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -76,16 +50,20 @@ const CustomerAppointments = () => {
           app.MaLH === selectedAppointment.MaLH ? { ...formData, MaLH: selectedAppointment.MaLH } : app
         )
       );
-    } else {
-      const maxNumber = appointments.reduce((max, app) => {
-        const num = parseInt(app.MaLH.replace('LH', ''));
-        return num > max ? num : max;
-      }, 0);
-      const newNumber = (maxNumber + 1).toString().padStart(3, '0');
-      const newMaLH = `LH${newNumber}`;
-      setAppointments([...appointments, { ...formData, MaLH: newMaLH }]);
+      toast({
+        title: "Cập nhật thành công",
+        description: "Lịch hẹn đã được cập nhật",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     }
     setIsModalOpen(false);
+    setSelectedAppointment(null);
+  };
+
+  const handleAddNewAppointment = () => {
+    navigate("/customerappointments/addappointment");
   };
 
   const filteredAppointments = appointments
@@ -138,7 +116,7 @@ const CustomerAppointments = () => {
             color="white"
             borderRadius="md"
             px={5}
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleAddNewAppointment}
           >
             Đặt lịch mới
           </Button>
@@ -156,7 +134,10 @@ const CustomerAppointments = () => {
 
       <AppointmentFormDrawer
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedAppointment(null);
+        }}
         appointment={selectedAppointment}
         onSubmit={handleSubmit}
         isManager={false}

@@ -12,42 +12,54 @@ const services = [
     TenDV: "Cắt gội khoang thương gia",
     MoTa: ["Combo cắt kỹ", "Combo gội massage"],
     ThoiGian: "50 Phút",
+    Gia: "350.000đ",
     image: service2,
   },
   {
     TenDV: "Cắt gội Combo 1",
     MoTa: ["Combo cắt kỹ", "Combo gội massage"],
     ThoiGian: "45 Phút",
+    Gia: "250.000đ",
     image: service3,
   },
   {
     TenDV: "Cắt gội Combo 2",
     MoTa: ["Combo cắt kỹ", "Combo gội massage cổ vai gáy"],
     ThoiGian: "55 Phút",
+    Gia: "300.000đ",
     image: service4,
   },
   {
     TenDV: "Cắt gội Combo 3",
     MoTa: ["Combo cắt kỹ", "Combo gội massage chăm sóc da"],
     ThoiGian: "65 Phút",
+    Gia: "400.000đ",
     image: service5,
   },
   {
     TenDV: "Cắt gội Combo 4",
     MoTa: ["Combo cắt kỹ", "Combo gội massage bằng đá nóng"],
     ThoiGian: "75 Phút",
+    Gia: "450.000đ",
     image: service6,
   },
   {
     TenDV: "Cắt gội Combo 5",
     MoTa: ["Combo cắt kỹ", "Combo gội massage lấy nhân mụn chuyên sâu"],
     ThoiGian: "75 Phút",
+    Gia: "500.000đ",
     image: service7,
   },
 ];
 
 const CustomerServiceAndPrice = () => {
   const navigate = useNavigate();
+
+  const handleBooking = () => {
+    // Scroll to top before navigating
+    window.scrollTo(0, 0);
+    navigate('/customerappointments/addappointment');
+  };
 
   return (
     <Box p={6} bg="gray.50">
@@ -98,13 +110,13 @@ const CustomerServiceAndPrice = () => {
                 >
                   {service.ThoiGian}
                 </Button>
-                <Button 
-                  size="sm" 
-                  colorScheme="blue"
-                  rightIcon={<Box as="span" fontSize="lg">→</Box>}
+                <Text 
+                  fontSize="lg" 
+                  fontWeight="bold" 
+                  color="blue.700"
                 >
-                  Tìm hiểu thêm
-                </Button>
+                  {service.Gia}
+                </Text>
               </Flex>
             </Box>
           </Box>
@@ -119,7 +131,7 @@ const CustomerServiceAndPrice = () => {
           py={6}
           fontSize="xl"
           fontWeight="bold"
-          onClick={() => navigate('/customerappointments')}
+          onClick={handleBooking}
           _hover={{
             transform: 'translateY(-2px)',
             boxShadow: 'xl',

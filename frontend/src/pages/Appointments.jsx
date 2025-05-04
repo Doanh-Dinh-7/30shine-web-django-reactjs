@@ -28,6 +28,7 @@ const Appointments = () => {
       TGHen: "2024-03-22",
       GioKhachDen: "09:30",
       LoaiDV: "Cắt tóc nam",
+      NhanVien: "Nguyễn Văn A",
       TrangThai: "Chờ hoàn thành",
     },
     {
@@ -38,6 +39,7 @@ const Appointments = () => {
       TGHen: "2024-03-22",
       GioKhachDen: "10:00",
       LoaiDV: "Nhuộm tóc",
+      NhanVien: "Trần Thị B",
       TrangThai: "Chờ hoàn thành",
     },
     {
@@ -48,6 +50,7 @@ const Appointments = () => {
       TGHen: "2024-03-21",
       GioKhachDen: "14:30",
       LoaiDV: "Combo cắt gội",
+      NhanVien: "Phạm Văn C",
       TrangThai: "Đã hoàn thành",
     },
     {
@@ -58,6 +61,7 @@ const Appointments = () => {
       TGHen: "2024-03-21",
       GioKhachDen: "15:00",
       LoaiDV: "Uốn tóc",
+      NhanVien: "Nguyễn Văn D",
       TrangThai: "Đã hoàn thành",
     },
     {
@@ -68,6 +72,7 @@ const Appointments = () => {
       TGHen: "2024-03-20",
       GioKhachDen: "13:30",
       LoaiDV: "Gội đầu",
+      NhanVien: "Trần Thị E",
       TrangThai: "Đã hoàn thành",
     },
     {
@@ -78,6 +83,7 @@ const Appointments = () => {
       TGHen: "2024-03-20",
       GioKhachDen: "14:00",
       LoaiDV: "Nhuộm tóc",
+      NhanVien: "Trần Thị F",
       TrangThai: "Đã hoàn thành",
     },
     {
@@ -88,6 +94,7 @@ const Appointments = () => {
       TGHen: "2024-03-19",
       GioKhachDen: "16:00",
       LoaiDV: "Cắt tóc nam",
+      NhanVien: "Nguyễn Văn G",
       TrangThai: "Đã hoàn thành",
     },
     {
@@ -98,6 +105,7 @@ const Appointments = () => {
       TGHen: "2024-03-19",
       GioKhachDen: "16:30",
       LoaiDV: "Uốn tóc",
+      NhanVien: "Trần Thị H",
       TrangThai: "Đã hoàn thành",
     },
     {
@@ -108,6 +116,7 @@ const Appointments = () => {
       TGHen: "2024-03-18",
       GioKhachDen: "11:00",
       LoaiDV: "Combo cắt gội",
+      NhanVien: "Nguyễn Văn I",
       TrangThai: "Đã hoàn thành",
     },
     {
@@ -118,6 +127,7 @@ const Appointments = () => {
       TGHen: "2024-03-18",
       GioKhachDen: "11:30",
       LoaiDV: "Nhuộm tóc",
+      NhanVien: "Trần Thị J",
       TrangThai: "Đã hoàn thành",
     }
   ]);
