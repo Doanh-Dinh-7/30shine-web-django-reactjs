@@ -9,6 +9,7 @@ import Customers from "../../pages/Customers";
 import ServiceAndPrice from "../../pages/ServiceAndPrice";
 import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
+import HomeWrapper from "./HomeWrapper ";
 import CustomerAppointments from "../../pages/CustomerAppointments";
 import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
 import AddAppointment from "../../pages/AddAppointment";
@@ -21,7 +22,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <HomeWrapper />,
       },
       {
         path: "/employees",
