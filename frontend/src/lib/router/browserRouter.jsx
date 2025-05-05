@@ -10,6 +10,8 @@ import ServiceAndPrice from "../../pages/ServiceAndPrice";
 import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
 import HomeWrapper from "./HomeWrapper ";
+import CustomerInvoices from "../../lib/components/Invoices/CustomerInvoices";
+
 
 export const router = createBrowserRouter([
   {
@@ -49,6 +51,11 @@ export const router = createBrowserRouter([
         path: "/invoices",
         element: <Invoices />,
       },
+      {
+        path: "/CustomerInvoices",
+        element: <CustomerInvoices />
+      },
+      
     ],
   },
 ]);
