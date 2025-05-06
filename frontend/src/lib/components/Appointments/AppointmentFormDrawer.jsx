@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Drawer,
   DrawerOverlay,
@@ -20,17 +20,28 @@ import {
 } from "@chakra-ui/react";
 import PropTypes from 'prop-types';
 
-const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
+// Thêm danh sách nhân viên mẫu
+const STAFF_LIST = [
+  { id: "NV001", name: "Nguyễn Văn A" },
+  { id: "NV002", name: "Trần Thị B" },
+  { id: "NV003", name: "Phạm Văn C" },
+  { id: "NV004", name: "Lê Thị D" },
+  { id: "NV005", name: "Hoàng Văn E" },
+];
+
+const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManager }) => {
   const [formData, setFormData] = React.useState({
     TenKH: "",
     SDT: "",
     TGHen: "",
     GioKhachDen: "",
     LoaiDV: "",
-    TrangThai: "Chờ xác nhận",
+    TrangThai: "Chờ hoàn thành",
+    NhanVien: "", // Thêm trường nhân viên
   });
 
   const toast = useToast();
+  const [error, setError] = useState("");
 
   React.useEffect(() => {
     if (appointment) {
@@ -40,7 +51,8 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
         TGHen: appointment.TGHen || "",
         GioKhachDen: appointment.GioKhachDen || "",
         LoaiDV: appointment.LoaiDV || "",
-        TrangThai: appointment.TrangThai || "Chờ xác nhận",
+        TrangThai: appointment.TrangThai || "Chờ hoàn thành",
+        NhanVien: appointment.NhanVien || "", // Thêm trường nhân viên
       });
     } else {
       setFormData({
@@ -49,10 +61,11 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
         TGHen: "",
         GioKhachDen: "",
         LoaiDV: "",
-        TrangThai: "Chờ xác nhận",
+        TrangThai: "Chờ hoàn thành",
+        NhanVien: "", // Thêm trường nhân viên
       });
     }
-  }, [appointment]);
+  }, [appointment, isManager]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +77,23 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    // Validate ngày giờ và nhân viên
+    if (!formData.NhanVien) {
+      setError("Vui lòng chọn nhân viên phụ trách.");
+      return;
+    }
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const currentTime = now.toTimeString().slice(0, 5);
+    if (formData.TGHen < todayStr) {
+      setError("Ngày hẹn phải lớn hơn hoặc bằng ngày hiện tại.");
+      return;
+    }
+    if (formData.TGHen === todayStr && formData.GioKhachDen <= currentTime) {
+      setError("Giờ hẹn phải lớn hơn giờ hiện tại nếu chọn ngày hôm nay.");
+      return;
+    }
     try {
       await onSubmit(formData);
       onClose();
@@ -105,6 +135,19 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
           <DrawerBody>
             <VStack spacing={5} mt={4}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
+                {isManager && (
+                  <GridItem colSpan={2}>
+                    <FormControl isRequired>
+                      <FormLabel fontWeight="bold">Mã khách hàng:</FormLabel>
+                      <Input
+                        name="MaKH"
+                        value={formData.MaKH || ""}
+                        onChange={handleChange}
+                        placeholder="Nhập mã khách hàng (ví dụ: KH001)"
+                      />
+                    </FormControl>
+                  </GridItem>
+                )}
                 <GridItem>
                   <FormControl isRequired>
                     <FormLabel fontWeight="bold">Tên khách hàng:</FormLabel>
@@ -169,21 +212,53 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit }) => {
                 </GridItem>
                 <GridItem>
                   <FormControl isRequired>
-                    <FormLabel fontWeight="bold">Trạng thái:</FormLabel>
+                    <FormLabel fontWeight="bold">Nhân viên phụ trách:</FormLabel>
                     <Select
-                      name="TrangThai"
-                      value={formData.TrangThai}
+                      name="NhanVien"
+                      value={formData.NhanVien}
                       onChange={handleChange}
+                      placeholder="Chọn nhân viên"
                     >
-                      <option value="Chờ xác nhận">Chờ xác nhận</option>
-                      <option value="Đã xác nhận">Đã xác nhận</option>
-                      <option value="Đã hoàn thành">Đã hoàn thành</option>
-                      <option value="Đã hủy">Đã hủy</option>
+                      {STAFF_LIST.map((staff) => (
+                        <option key={staff.id} value={staff.name}>
+                          {staff.name}
+                        </option>
+                      ))}
                     </Select>
+                  </FormControl>
+                </GridItem>
+                <GridItem>
+                  <FormControl isRequired>
+                    <FormLabel fontWeight="bold">Trạng thái:</FormLabel>
+                    {(!appointment) ? (
+                      <Input
+                        name="TrangThai"
+                        value="Chờ hoàn thành"
+                        readOnly
+                        bg="gray.100"
+                      />
+                    ) : isManager ? (
+                      <Select
+                        name="TrangThai"
+                        value={formData.TrangThai}
+                        onChange={handleChange}
+                      >
+                        <option value="Chờ hoàn thành">Chờ hoàn thành</option>
+                        <option value="Đã hoàn thành">Đã hoàn thành</option>
+                      </Select>
+                    ) : (
+                      <Input
+                        name="TrangThai"
+                        value={"Chờ hoàn thành"}
+                        readOnly
+                        bg="gray.100"
+                      />
+                    )}
                   </FormControl>
                 </GridItem>
               </Grid>
             </VStack>
+            {error && <Box color="red.500" mt={2}>{error}</Box>}
           </DrawerBody>
 
           <DrawerFooter bg="blue.50" justifyContent="flex-end">
@@ -212,6 +287,7 @@ AppointmentFormDrawer.propTypes = {
     TrangThai: PropTypes.string,
   }),
   onSubmit: PropTypes.func.isRequired,
+  isManager: PropTypes.bool,
 };
 
 export default AppointmentFormDrawer; 

@@ -1,5 +1,4 @@
 import { Box, Flex } from "@chakra-ui/react";
-import Navbar from "./Navbar";
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import React from "react";
