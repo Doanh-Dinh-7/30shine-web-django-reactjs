@@ -61,6 +61,7 @@ export const router = createBrowserRouter([
         path: "/CustomerInvoices",
         element: <CustomerInvoices />
       },
+      {
         path: "/customerserviceandprice",
         element: <CustomerServiceAndPrice />,
       },
