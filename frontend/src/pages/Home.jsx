@@ -11,7 +11,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import HeroImage from "../images/hero-banner.png";
-import Logo from "../../public/logo_30shine.png";
 import Service1 from "../images/service-1.png";
 import Service2 from "../images/service-2.png";
 import Service3 from "../images/service-3.png";
@@ -85,7 +84,15 @@ function RatingStars() {
 // Floating action buttons with fan menu
 function FloatingButtons() {
   const [open, setOpen] = useState(false);
-  const handleScrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const { containerRef } = useOutletContext?.() || {};
+  const handleScrollTop = (e) => {
+    e.preventDefault();
+    if (containerRef && containerRef.current && containerRef.current.scrollTo) {
+      containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   // Fan menu items
   const fanItems = [
@@ -105,12 +112,19 @@ function FloatingButtons() {
       icon: <FaStar size={22} color="#FFD600" />,
       label: "Đánh giá dịch vụ",
       color: "#17408B",
-      onClick: () => document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" }),
+      onClick: () =>
+        document
+          .getElementById("booking")
+          ?.scrollIntoView({ behavior: "smooth" }),
     },
   ];
 
   // Fan menu angles (adjusted to match the image layout: ~45°, 90°, 135°)
-  const fanAngles = [250 * Math.PI / 180, 210 * Math.PI / 180, 180 * Math.PI / 180];
+  const fanAngles = [
+    (250 * Math.PI) / 180,
+    (210 * Math.PI) / 180,
+    (180 * Math.PI) / 180,
+  ];
   const radius = 120; // Adjusted radius for better spacing
 
   return (
@@ -118,7 +132,7 @@ function FloatingButtons() {
       {open && (
         <Box
           position="fixed"
-          zIndex={1199}
+          zIndex={1000}
           top={0}
           left={0}
           w="100vw"
@@ -170,7 +184,12 @@ function FloatingButtons() {
           </Button>
 
           {/* Fan menu */}
-          <Box position="absolute" right={0} bottom={0} pointerEvents={open ? "auto" : "none"}>
+          <Box
+            position="absolute"
+            right={0}
+            bottom={0}
+            pointerEvents={open ? "auto" : "none"}
+          >
             {fanItems.map((item, idx) => {
               const angle = fanAngles[idx];
               // Adjust x and y for right-to-left fan spread
@@ -223,7 +242,8 @@ function FloatingButtons() {
 }
 
 const Home = () => {
-  const { onOpenRegister, isRegisterOpen, onCloseRegister } = useOutletContext?.() || {};
+  const { onOpenRegister, isRegisterOpen, onCloseRegister } =
+    useOutletContext?.() || {};
   const [showLogin, setShowLogin] = useState(false);
   const handleOpenLogin = () => {
     setShowLogin(true);
@@ -239,16 +259,35 @@ const Home = () => {
       {/* Hero Section */}
       <Box id="hero" bg="#fff" minH="600px" position="relative" pt="100px">
         <Container maxW="container.xl" py={8}>
-          <Grid templateColumns={{ base: "1fr", md: "1.2fr 1fr" }} gap={8} alignItems="center">
+          <Grid
+            templateColumns={{ base: "1fr", md: "1.2fr 1fr" }}
+            gap={8}
+            alignItems="center"
+          >
             <Box w="full">
-              <Heading as="h1" size="2xl" color="#1E3A8A" mb={2} fontWeight="bold" lineHeight="1.2">
+              <Heading
+                as="h1"
+                size="2xl"
+                color="#1E3A8A"
+                mb={2}
+                fontWeight="bold"
+                lineHeight="1.2"
+              >
                 Đặt lịch giữ chỗ chỉ 30s
               </Heading>
               <Text color="#A0AEC0" fontSize="lg" mb={8}>
                 Cắt xong trả tiền, hủy lịch không sao
               </Text>
               {/* Đặt lịch ngay */}
-              <Box id="booking" bg="#17408B" borderRadius="2xl" p={6} boxShadow="lg" color="white" mb={4}>
+              <Box
+                id="booking"
+                bg="#17408B"
+                borderRadius="2xl"
+                p={6}
+                boxShadow="lg"
+                color="white"
+                mb={4}
+              >
                 <Flex gap={4}>
                   <Input
                     placeholder="Nhập SĐT để đặt lịch"
@@ -273,19 +312,41 @@ const Home = () => {
                 </Flex>
               </Box>
               {/* Đánh giá dưới đặt lịch */}
-              <Box bg="white" borderRadius="xl" p={6} boxShadow="md" color="#17408B" minW="220px" mt={4}>
+              <Box
+                bg="white"
+                borderRadius="xl"
+                p={6}
+                boxShadow="md"
+                color="#17408B"
+                minW="220px"
+                mt={4}
+              >
                 <Text fontWeight="bold" fontSize="md" mb={1}>
                   MỜI ANH ĐÁNH GIÁ CHẤT LƯỢNG PHỤC VỤ
                 </Text>
                 <Text fontSize="sm" color="gray.600" mb={2}>
-                  Phản hồi của anh sẽ giúp chúng em cải thiện chất lượng dịch vụ tốt hơn
+                  Phản hồi của anh sẽ giúp chúng em cải thiện chất lượng dịch vụ
+                  tốt hơn
                 </Text>
                 <RatingStars />
               </Box>
             </Box>
             <Box>
-              <Box bg="#fff" borderRadius="2xl" boxShadow="lg" p={0} overflow="hidden">
-                <Image src={HeroImage} alt="30Shine Banner" w="full" h="auto" borderTopLeftRadius="2xl" borderTopRightRadius="2xl" />
+              <Box
+                bg="#fff"
+                borderRadius="2xl"
+                boxShadow="lg"
+                p={0}
+                overflow="hidden"
+              >
+                <Image
+                  src={HeroImage}
+                  alt="30Shine Banner"
+                  w="full"
+                  h="auto"
+                  borderTopLeftRadius="2xl"
+                  borderTopRightRadius="2xl"
+                />
                 {/* Banner overlay nếu cần */}
               </Box>
             </Box>
@@ -301,8 +362,21 @@ const Home = () => {
           </Heading>
           <Grid templateColumns={{ base: "1fr", md: "1.5fr 1fr 1fr" }} gap={6}>
             {/* Dịch vụ lớn bên trái */}
-            <Box rowSpan={2} bg="#fff" borderRadius="2xl" boxShadow="md" overflow="hidden" position="relative">
-              <Image src={services[0].img} alt={services[0].title} w="full" h="320px" objectFit="cover" />
+            <Box
+              rowSpan={2}
+              bg="#fff"
+              borderRadius="2xl"
+              boxShadow="md"
+              overflow="hidden"
+              position="relative"
+            >
+              <Image
+                src={services[0].img}
+                alt={services[0].title}
+                w="full"
+                h="320px"
+                objectFit="cover"
+              />
               <Button
                 position="absolute"
                 top={4}
@@ -330,8 +404,20 @@ const Home = () => {
             </Box>
             {/* 2 dịch vụ nhỏ bên phải */}
             <VStack spacing={6} align="stretch">
-              <Box bg="#fff" borderRadius="2xl" boxShadow="md" overflow="hidden" position="relative">
-                <Image src={services[1].img} alt={services[1].title} w="full" h="150px" objectFit="cover" />
+              <Box
+                bg="#fff"
+                borderRadius="2xl"
+                boxShadow="md"
+                overflow="hidden"
+                position="relative"
+              >
+                <Image
+                  src={services[1].img}
+                  alt={services[1].title}
+                  w="full"
+                  h="150px"
+                  objectFit="cover"
+                />
                 <Button
                   position="absolute"
                   top={4}
@@ -357,8 +443,20 @@ const Home = () => {
                   {services[1].title}
                 </Text>
               </Box>
-              <Box bg="#fff" borderRadius="2xl" boxShadow="md" overflow="hidden" position="relative">
-                <Image src={services[2].img} alt={services[2].title} w="full" h="150px" objectFit="cover" />
+              <Box
+                bg="#fff"
+                borderRadius="2xl"
+                boxShadow="md"
+                overflow="hidden"
+                position="relative"
+              >
+                <Image
+                  src={services[2].img}
+                  alt={services[2].title}
+                  w="full"
+                  h="150px"
+                  objectFit="cover"
+                />
                 <Button
                   position="absolute"
                   top={4}
@@ -387,8 +485,20 @@ const Home = () => {
             </VStack>
             {/* 2 dịch vụ nhỏ bên dưới */}
             <VStack spacing={6} align="stretch">
-              <Box bg="#fff" borderRadius="2xl" boxShadow="md" overflow="hidden" position="relative">
-                <Image src={services[3].img} alt={services[3].title} w="full" h="150px" objectFit="cover" />
+              <Box
+                bg="#fff"
+                borderRadius="2xl"
+                boxShadow="md"
+                overflow="hidden"
+                position="relative"
+              >
+                <Image
+                  src={services[3].img}
+                  alt={services[3].title}
+                  w="full"
+                  h="150px"
+                  objectFit="cover"
+                />
                 <Button
                   position="absolute"
                   top={4}
@@ -414,8 +524,20 @@ const Home = () => {
                   {services[3].title}
                 </Text>
               </Box>
-              <Box bg="#fff" borderRadius="2xl" boxShadow="md" overflow="hidden" position="relative">
-                <Image src={services[4].img} alt={services[4].title} w="full" h="150px" objectFit="cover" />
+              <Box
+                bg="#fff"
+                borderRadius="2xl"
+                boxShadow="md"
+                overflow="hidden"
+                position="relative"
+              >
+                <Image
+                  src={services[4].img}
+                  alt={services[4].title}
+                  w="full"
+                  h="150px"
+                  objectFit="cover"
+                />
                 <Button
                   position="absolute"
                   top={4}
@@ -444,10 +566,27 @@ const Home = () => {
             </VStack>
           </Grid>
           {/* Dịch vụ nổi bật thêm */}
-          <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6} mt={8}>
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+            gap={6}
+            mt={8}
+          >
             {services.slice(5).map((s, idx) => (
-              <Box key={idx} bg="#fff" borderRadius="2xl" boxShadow="md" overflow="hidden" position="relative">
-                <Image src={s.img} alt={s.title} w="full" h="150px" objectFit="cover" />
+              <Box
+                key={idx}
+                bg="#fff"
+                borderRadius="2xl"
+                boxShadow="md"
+                overflow="hidden"
+                position="relative"
+              >
+                <Image
+                  src={s.img}
+                  alt={s.title}
+                  w="full"
+                  h="150px"
+                  objectFit="cover"
+                />
                 <Button
                   position="absolute"
                   top={4}
@@ -488,22 +627,28 @@ const Home = () => {
               </Box>
             </Heading>
             <Text fontStyle="italic" color="#1E3A8A" mb={2}>
-              "Hãy cho tôi một điểm tựa, tôi sẽ nâng cả thế giới." - Archimedes
+              &quot;Hãy cho tôi một điểm tựa, tôi sẽ nâng cả thế giới.&quot; -
+              Archimedes
             </Text>
             <Text color="#1E3A8A">
-              Mỗi người đàn ông đều có một hành trình riêng, một thế giới muốn chinh phục
+              Mỗi người đàn ông đều có một hành trình riêng, một thế giới muốn
+              chinh phục
             </Text>
             <Text color="#1E3A8A">
               Có người đang tiến về đích, có người vẫn đang tìm hướng đi
             </Text>
             <Text color="#1E3A8A">
-              Có người biết chính xác điều mình muốn, có người đang từng bước khám phá
+              Có người biết chính xác điều mình muốn, có người đang từng bước
+              khám phá
             </Text>
             <Text color="#1E3A8A" fontWeight="bold">
-              Dù anh đang ở đâu trên hành trình ấy – bản lĩnh và sự tự tin luôn có trong chính anh
+              Dù anh đang ở đâu trên hành trình ấy – bản lĩnh và sự tự tin luôn
+              có trong chính anh
             </Text>
             <Text color="#1E3A8A">
-              30Shine không tạo ra chúng. <b>Chúng tôi là điểm tựa</b>, giúp anh thể hiện trọn vẹn phong thái, khí chất và sẵn sàng cho những điều quan trọng phía trước
+              30Shine không tạo ra chúng. <b>Chúng tôi là điểm tựa</b>, giúp anh
+              thể hiện trọn vẹn phong thái, khí chất và sẵn sàng cho những điều
+              quan trọng phía trước
             </Text>
           </Box>
           <Box mb={12}>
@@ -513,21 +658,60 @@ const Home = () => {
               </Box>
             </Heading>
             <Text color="#1E3A8A" mb={4}>
-              30Shine đại diện cho tuổi 30 toả sáng của mỗi người đàn ông - độ tuổi mang ý nghĩa biểu tượng mạnh mẽ nhất đại diện cho ngọn lửa thành công, khát vọng chiến thắng và ý chí vươn lên của bất kỳ người đàn ông hiện đại nào. Tên gọi được thể hiện qua Logo nam nhân tỏa sáng cùng font chữ hiện đại và công nghệ như một sự khẳng định mạnh mẽ cho tinh thần chiến thắng, khát vọng thành công.
+              30Shine đại diện cho tuổi 30 toả sáng của mỗi người đàn ông - độ
+              tuổi mang ý nghĩa biểu tượng mạnh mẽ nhất đại diện cho ngọn lửa
+              thành công, khát vọng chiến thắng và ý chí vươn lên của bất kỳ
+              người đàn ông hiện đại nào. Tên gọi được thể hiện qua Logo nam
+              nhân tỏa sáng cùng font chữ hiện đại và công nghệ như một sự khẳng
+              định mạnh mẽ cho tinh thần chiến thắng, khát vọng thành công.
             </Text>
-            <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6} mb={4}>
-              <Box border="2px solid #B6C6E3" borderRadius="xl" p={4} textAlign="center">
-                <Image src="/logo-old.png" alt="Logo cũ" mx="auto" mb={2} h="100px" />
-                <Text fontWeight="bold" color="#1E3A8A">Logo 30Shine trước 07/2023</Text>
+            <Grid
+              templateColumns={{ base: "1fr", md: "1fr 1fr" }}
+              gap={6}
+              mb={4}
+            >
+              <Box
+                border="2px solid #B6C6E3"
+                borderRadius="xl"
+                p={4}
+                textAlign="center"
+              >
+                <Image
+                  src="/logo-old.png"
+                  alt="Logo cũ"
+                  mx="auto"
+                  mb={2}
+                  h="100px"
+                />
+                <Text fontWeight="bold" color="#1E3A8A">
+                  Logo 30Shine trước 07/2023
+                </Text>
               </Box>
-              <Box border="2px solid #B6C6E3" borderRadius="xl" p={4} textAlign="center">
-                <Image src="logo_30shine.png" alt="Logo mới" mx="auto" mb={2} h="100px" />
-                <Text fontWeight="bold" color="#1E3A8A">Logo 30Shine sau 07/2023</Text>
+              <Box
+                border="2px solid #B6C6E3"
+                borderRadius="xl"
+                p={4}
+                textAlign="center"
+              >
+                <Image
+                  src="logo_30shine.png"
+                  alt="Logo mới"
+                  mx="auto"
+                  mb={2}
+                  h="100px"
+                />
+                <Text fontWeight="bold" color="#1E3A8A">
+                  Logo 30Shine sau 07/2023
+                </Text>
               </Box>
             </Grid>
             <Text color="#1E3A8A">
-              Nhận diện mới của 30Shine nổi bật với màu xanh Blue Royal đại diện hình mẫu người khởi tạo với ý chí không ngừng đổi mới, luôn nhìn ra cơ hội để thay đổi cuộc chơi, phá bỏ quan niệm cũ."
-              Sự lựa chọn của 30Shine là một định vị không hào nhoáng, nhưng chứa đựng mơ ước lớn của doanh nghiệp 30Shine là hiện đại hoá ngành tóc ở Việt Nam.
+              Nhận diện mới của 30Shine nổi bật với màu xanh Blue Royal đại diện
+              hình mẫu người khởi tạo với ý chí không ngừng đổi mới, luôn nhìn
+              ra cơ hội để thay đổi cuộc chơi, phá bỏ quan niệm cũ. Sự lựa chọn
+              của 30Shine là một định vị không hào nhoáng, nhưng chứa đựng mơ
+              ước lớn của doanh nghiệp 30Shine là hiện đại hoá ngành tóc ở Việt
+              Nam.
             </Text>
           </Box>
           <Box mb={12}>
@@ -537,30 +721,38 @@ const Home = () => {
               </Box>
             </Heading>
             <Text color="#1E3A8A" mb={2}>
-              Ở 30Shine, chúng tôi không chỉ tạo ra diện mạo tuyệt vời – chúng tôi phục vụ những người đàn ông muốn tốt hơn mỗi ngày
+              Ở 30Shine, chúng tôi không chỉ tạo ra diện mạo tuyệt vời – chúng
+              tôi phục vụ những người đàn ông muốn tốt hơn mỗi ngày
             </Text>
             <Text color="#1E3A8A" mb={2}>
-              Dù anh đang <b>bắt đầu, bứt phá hay khẳng định chính mình</b>, tinh thần WILLS luôn đồng hành:
+              Dù anh đang <b>bắt đầu, bứt phá hay khẳng định chính mình</b>,
+              tinh thần WILLS luôn đồng hành:
             </Text>
             <Box as="ul" pl={6} color="#1E3A8A" mb={2}>
               <li>
-                <b>W - Warrior</b> (Chiến binh) – Kiên cường, không lùi bước trước thử thách
+                <b>W - Warrior</b> (Chiến binh) – Kiên cường, không lùi bước
+                trước thử thách
               </li>
               <li>
-                <b>I - Intervention</b> (Can thiệp) – Không đợi thời điểm hoàn hảo, mà tạo ra nó
+                <b>I - Intervention</b> (Can thiệp) – Không đợi thời điểm hoàn
+                hảo, mà tạo ra nó
               </li>
               <li>
-                <b>L - Learning</b> (Ham học hỏi) – Phát triển không giới hạn, không ngừng nâng cấp bản thân
+                <b>L - Learning</b> (Ham học hỏi) – Phát triển không giới hạn,
+                không ngừng nâng cấp bản thân
               </li>
               <li>
-                <b>L - Leadership</b> (Đổi mới) – Luôn sáng tạo, chủ động dẫn đầu sự thay đổi
+                <b>L - Leadership</b> (Đổi mới) – Luôn sáng tạo, chủ động dẫn
+                đầu sự thay đổi
               </li>
               <li>
-                <b>S - Sincerity</b> (Chân thành) – Minh bạch, đáng tin cậy, tạo dựng giá trị bền vững
+                <b>S - Sincerity</b> (Chân thành) – Minh bạch, đáng tin cậy, tạo
+                dựng giá trị bền vững
               </li>
             </Box>
             <Text color="#1E3A8A" mb={2}>
-              Không có đúng hay sai – chỉ có phiên bản tốt nhất của chính mình, và 30Shine ở đây để giúp anh tự tin thể hiện điều đó
+              Không có đúng hay sai – chỉ có phiên bản tốt nhất của chính mình,
+              và 30Shine ở đây để giúp anh tự tin thể hiện điều đó
             </Text>
           </Box>
           <Box>
@@ -570,16 +762,21 @@ const Home = () => {
               </Box>
             </Heading>
             <Text color="#1E3A8A" mb={2}>
-              30Shine không chỉ là điểm tựa giúp đàn ông thể hiện phong độ, mà còn mang trong mình một sứ mệnh lớn hơn:
+              30Shine không chỉ là điểm tựa giúp đàn ông thể hiện phong độ, mà
+              còn mang trong mình một sứ mệnh lớn hơn:
             </Text>
             <Text color="#1E3A8A" fontWeight="bold" mb={2}>
-              Tôn vinh và nâng tầm đôi bàn tay tài hoa của người thợ Việt trên bản đồ thế giới
+              Tôn vinh và nâng tầm đôi bàn tay tài hoa của người thợ Việt trên
+              bản đồ thế giới
             </Text>
             <Text color="#1E3A8A" mb={2}>
               Tay nghề con người Việt Nam không chỉ giỏi – mà có thể vươn xa
             </Text>
             <Text color="#1E3A8A" mb={2}>
-              Bằng việc không ngừng đổi mới, nâng cao chất lượng dịch vụ và xây dựng môi trường phát triển chuyên nghiệp, 30Shine giúp người thợ Việt phát triển bản thân, nghề nghiệp và vị thế trong ngành tóc toàn cầu
+              Bằng việc không ngừng đổi mới, nâng cao chất lượng dịch vụ và xây
+              dựng môi trường phát triển chuyên nghiệp, 30Shine giúp người thợ
+              Việt phát triển bản thân, nghề nghiệp và vị thế trong ngành tóc
+              toàn cầu
             </Text>
             <Text color="#1E3A8A" fontWeight="bold">
               Từ bàn tay Việt – vươn tới những tầm cao mới
@@ -589,13 +786,30 @@ const Home = () => {
       </Box>
 
       {/* Footer CTA */}
-      <Box id="contact" bg="#233876" py={8} color="white" borderTopRadius="2xl" mt={8}>
+      <Box
+        id="contact"
+        bg="#233876"
+        py={8}
+        color="white"
+        borderTopRadius="2xl"
+        mt={8}
+      >
         <Container maxW="container.xl">
-          <Grid templateColumns={{ base: "1fr", md: "1.5fr 1fr" }} gap={8} alignItems="center">
+          <Grid
+            templateColumns={{ base: "1fr", md: "1.5fr 1fr" }}
+            gap={8}
+            alignItems="center"
+          >
             <Box>
-              <Image src="/logo-new-footer.png" alt="30Shine Logo" h="52px" mb={2} />
+              <Image
+                src="/logo-new-footer.png"
+                alt="30Shine Logo"
+                h="52px"
+                mb={2}
+              />
               <Text fontSize="md" mb={2}>
-                Điểm Tựa Cho Việc Lớn<br />
+                Điểm Tựa Cho Việc Lớn
+                <br />
                 Kiểu Tóc Đẹp Không Phải Điểm Đến – Mà Là Điểm Khởi Đầu
               </Text>
               <Text fontSize="sm" opacity={0.8}>
@@ -606,17 +820,25 @@ const Home = () => {
               <Text fontWeight="bold">Liên hệ</Text>
               <Text fontSize="sm">
                 Hotline (1000đ/phút):{" "}
-                <a href="tel:1900272703" style={{ color: "white", textDecoration: "underline" }}>
+                <a
+                  href="tel:1900272703"
+                  style={{ color: "white", textDecoration: "underline" }}
+                >
                   1900.27.27.03
                 </a>
               </Text>
               <Text fontSize="15px">
                 Liên hệ học nghề tóc:{" "}
-                <a href="tel:0967863030" style={{ color: "white", textDecoration: "underline" }}>
+                <a
+                  href="tel:0967863030"
+                  style={{ color: "white", textDecoration: "underline" }}
+                >
                   0967.86.3030
                 </a>
               </Text>
-              <Text fontSize="15px" fontWeight="bold">Giờ phục vụ: Thứ 2 - CN, 8h30 - 20h30</Text>
+              <Text fontSize="15px" fontWeight="bold">
+                Giờ phục vụ: Thứ 2 - CN, 8h30 - 20h30
+              </Text>
               <Button
                 size="md"
                 colorScheme="whiteAlpha"
@@ -635,7 +857,11 @@ const Home = () => {
         </Container>
       </Box>
       {isRegisterOpen && (
-        <RegisterModal isOpen={isRegisterOpen} onClose={onCloseRegister} onSwitchLogin={handleOpenLogin} />
+        <RegisterModal
+          isOpen={isRegisterOpen}
+          onClose={onCloseRegister}
+          onSwitchLogin={handleOpenLogin}
+        />
       )}
       {showLogin && (
         <LoginModal
