@@ -10,6 +10,7 @@ import ServiceAndPrice from "../../pages/ServiceAndPrice";
 import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
 import HomeWrapper from "./HomeWrapper ";
+import CustomerInvoices from "../../lib/components/Invoices/CustomerInvoices";
 import CustomerAppointments from "../../pages/CustomerAppointments";
 import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
 import AddAppointment from "../../pages/AddAppointment";
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "/invoices",
         element: <Invoices />,
+      },
+      {
+        path: "/CustomerInvoices",
+        element: <CustomerInvoices />
       },
       {
         path: "/customerserviceandprice",
