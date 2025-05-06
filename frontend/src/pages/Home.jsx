@@ -20,6 +20,7 @@ import {
   FiSearch,
 } from "react-icons/fi";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import HeroIamge from "../images/hero-banner.png";
 import Logo from "../../public/logo_30shine.png";
 import Service1 from "../images/service-1.png";
@@ -27,6 +28,12 @@ import Service2 from "../images/service-2.png";
 import Service3 from "../images/service-3.png";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleBooking = () => {
+    navigate('/customerappointments/addappointment');
+  };
+
   return (
     <Box>
       {/* Hero Section */}
@@ -64,6 +71,7 @@ const Home = () => {
                   color="white"
                   _hover={{ bg: "#2563EB" }}
                   width="full"
+                  onClick={handleBooking}
                 >
                   ĐẶT LỊCH NGAY
                 </Button>
@@ -122,6 +130,7 @@ const Home = () => {
               colorScheme="blue"
               size="lg"
               justifyContent="flex-start"
+              onClick={handleBooking}
             >
               Kiểm tra lịch trống
             </Button>

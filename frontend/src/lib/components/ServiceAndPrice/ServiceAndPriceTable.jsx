@@ -41,7 +41,7 @@ const ServiceAndPriceTable = ({ services, onEditService, onDeleteService }) => {
         </Thead>
         <Tbody>
           {paginatedServices.map((service) => (
-            <Tr key={service.MaDV}>
+            <Tr key={service.MaDV} _hover={{ bg: "gray.100" }}>
               <Td width="120px">{service.MaDV}</Td>
               <Td width="200px" fontWeight="medium">{service.TenDV}</Td>
               <Td width="150px" color="blue.600" fontWeight="bold">

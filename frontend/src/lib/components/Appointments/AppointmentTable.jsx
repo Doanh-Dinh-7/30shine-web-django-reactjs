@@ -14,9 +14,10 @@ import {
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
+import PropTypes from 'prop-types';
 import "../../../assets/styles/paginate.css";
 
-const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment }) => {
+const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment, showMaKH }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const appointmentsPerPage = 5;
   const pageCount = Math.ceil(appointments.length / appointmentsPerPage);
@@ -30,14 +31,10 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Đã xác nhận":
-        return "green";
-      case "Chờ xác nhận":
+      case "Chờ hoàn thành":
         return "yellow";
       case "Đã hoàn thành":
-        return "blue";
-      case "Đã hủy":
-        return "red";
+        return "green";
       default:
         return "gray";
     }
@@ -48,23 +45,29 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
       <Table variant="simple" colorScheme="blue" size="md" bg="white" style={{ tableLayout: 'fixed' }}>
         <Thead>
           <Tr>
-            <Th width="180px">Tên khách hàng</Th>
+            {showMaKH && <Th width="100px">Mã khách hàng</Th>}
+            <Th width="100px">Mã lịch hẹn</Th>
+            <Th width="150px">Tên khách hàng</Th>
             <Th width="120px">Số điện thoại</Th>
             <Th width="120px">Thời gian hẹn</Th>
             <Th width="120px">Giờ khách đến</Th>
             <Th width="150px">Loại dịch vụ</Th>
+            <Th width="150px">Nhân viên phụ trách</Th>
             <Th width="130px">Trạng thái</Th>
             <Th width="100px">Tác vụ</Th>
           </Tr>
         </Thead>
         <Tbody>
           {paginatedAppointments.map((appointment, index) => (
-            <Tr key={index}>
-              <Td width="180px">{appointment.TenKH}</Td>
+            <Tr key={index} _hover={{ bg: "gray.100" }}>
+              {showMaKH && <Td width="100px">{appointment.MaKH}</Td>}
+              <Td width="100px">{appointment.MaLH}</Td>
+              <Td width="150px">{appointment.TenKH}</Td>
               <Td width="120px">{appointment.SDT}</Td>
               <Td width="120px">{appointment.TGHen}</Td>
               <Td width="120px">{appointment.GioKhachDen}</Td>
               <Td width="150px">{appointment.LoaiDV}</Td>
+              <Td width="150px">{appointment.NhanVien}</Td>
               <Td width="130px">
                 <Badge colorScheme={getStatusColor(appointment.TrangThai)}>
                   {appointment.TrangThai}
@@ -84,7 +87,7 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
                     icon={<FiTrash2 />}
                     variant="ghost"
                     colorScheme="red"
-                    onClick={() => onDeleteAppointment(appointment.SDT)}
+                    onClick={() => onDeleteAppointment(appointment.MaLH)}
                     aria-label="Delete"
                     size="sm"
                   />
@@ -117,6 +120,25 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
       </Flex>
     </Box>
   );
+};
+
+AppointmentTable.propTypes = {
+  appointments: PropTypes.arrayOf(
+    PropTypes.shape({
+      MaKH: PropTypes.string,
+      MaLH: PropTypes.string.isRequired,
+      TenKH: PropTypes.string.isRequired,
+      SDT: PropTypes.string.isRequired,
+      TGHen: PropTypes.string.isRequired,
+      GioKhachDen: PropTypes.string.isRequired,
+      LoaiDV: PropTypes.string.isRequired,
+      NhanVien: PropTypes.string.isRequired,
+      TrangThai: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onEditAppointment: PropTypes.func.isRequired,
+  onDeleteAppointment: PropTypes.func.isRequired,
+  showMaKH: PropTypes.bool.isRequired,
 };
 
 export default AppointmentTable; 

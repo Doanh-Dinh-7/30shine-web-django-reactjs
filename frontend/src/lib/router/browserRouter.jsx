@@ -11,7 +11,9 @@ import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
 import HomeWrapper from "./HomeWrapper ";
 import CustomerInvoices from "../../lib/components/Invoices/CustomerInvoices";
-
+import CustomerAppointments from "../../pages/CustomerAppointments";
+import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
+import AddAppointment from "../../pages/AddAppointment";
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +50,10 @@ export const router = createBrowserRouter([
         element: <Appointments />,
       },
       {
+        path: "/customerappointments",
+        element: <CustomerAppointments />,
+      },
+      {
         path: "/invoices",
         element: <Invoices />,
       },
@@ -55,7 +61,13 @@ export const router = createBrowserRouter([
         path: "/CustomerInvoices",
         element: <CustomerInvoices />
       },
-      
+        path: "/customerserviceandprice",
+        element: <CustomerServiceAndPrice />,
+      },
+      {
+        path: "/customerappointments/addappointment",
+        element: <AddAppointment />,
+      },
     ],
   },
 ]);

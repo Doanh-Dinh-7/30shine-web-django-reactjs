@@ -11,7 +11,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiSearch, FiPlus } from "react-icons/fi";
-import ServiceFormModal from "../lib/components/ServiceAndPrice/ServiceFormModal";
+import ServiceFormDrawer from "../lib/components/ServiceAndPrice/ServiceFormDrawer";
 import ServiceAndPriceTable from "../lib/components/ServiceAndPrice/ServiceAndPriceTable";
 
 const ServiceAndPrice = () => {
@@ -170,11 +170,10 @@ const ServiceAndPrice = () => {
           services={filteredServices}
           onEditService={handleEditService}
           onDeleteService={handleDeleteService}
-          loading={loading}
         />
       </Box>
 
-      <ServiceFormModal
+      <ServiceFormDrawer
         isOpen={isOpen}
         onClose={onClose}
         service={selectedService}
