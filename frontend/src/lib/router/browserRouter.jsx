@@ -10,10 +10,13 @@ import ServiceAndPrice from "../../pages/ServiceAndPrice";
 import Appointments from "../../pages/Appointments";
 import Invoices from "../../pages/Invoices";
 import HomeWrapper from "./HomeWrapper ";
-import CustomerInvoices from "../../lib/components/Invoices/CustomerInvoices";
+import CustomerInvoices from "../../pages/CustomerInvoices";
 import CustomerAppointments from "../../pages/CustomerAppointments";
 import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
-import AddAppointment from "../../pages/AddAppointment";
+import CustomerAddAppointment from "../components/Appointments/CustomerAddAppointment";
+import AppointmentWrapper from "./AppointmentWrapper";
+import ServiceAndPriceWrapper from "./ServiceAndPrice";
+import InvoiceWrapper from "./InvoiceWrapper";
 
 export const router = createBrowserRouter([
   {
@@ -43,32 +46,32 @@ export const router = createBrowserRouter([
       },
       {
         path: "/services",
-        element: <ServiceAndPrice />,
+        element: <ServiceAndPriceWrapper />,
       },
+      // {
+      //   path: "/customerservices",
+      //   element: <CustomerServiceAndPrice />,
+      // },
       {
         path: "/appointments",
-        element: <Appointments />,
+        element: <AppointmentWrapper />,
       },
       {
-        path: "/customerappointments",
-        element: <CustomerAppointments />,
+        path: "/appointments/addappointment",
+        element: <CustomerAddAppointment />,
       },
+      // {
+      //   path: "/customerappointments",
+      //   element: <CustomerAppointments />,
+      // },
       {
         path: "/invoices",
-        element: <Invoices />,
+        element: <InvoiceWrapper />,
       },
-      {
-        path: "/CustomerInvoices",
-        element: <CustomerInvoices />
-      },
-      {
-        path: "/customerserviceandprice",
-        element: <CustomerServiceAndPrice />,
-      },
-      {
-        path: "/customerappointments/addappointment",
-        element: <AddAppointment />,
-      },
+      // {
+      //   path: "/CustomerInvoices",
+      //   element: <CustomerInvoices />,
+      // },
     ],
   },
 ]);

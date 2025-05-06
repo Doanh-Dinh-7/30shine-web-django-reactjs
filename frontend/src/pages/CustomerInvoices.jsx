@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -9,9 +9,11 @@ import {
   Flex,
   useDisclosure,
   Heading,
+  useToast,
 } from "@chakra-ui/react";
-import PaymentDrawer from "./PaymentDrawer";
-import RefundDrawer from "./RefundDrawer";
+import PaymentDrawer from "../lib/components/Invoices/PaymentDrawer";
+import RefundDrawer from "../lib/components/Invoices/RefundDrawer";
+import RatingModal from "../lib/components/Invoices/CustomerRatingModal";
 
 const dummyInvoices = [
   {
@@ -49,6 +51,10 @@ const CustomerInvoices = () => {
 
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showQR, setShowQR] = useState(false);
+  const [isRatingOpen, setRatingOpen] = useState(false);
+  const [ratingValue, setRatingValue] = useState(5);
+  const [ratingContent, setRatingContent] = useState("");
+  const toast = useToast();
 
   const {
     isOpen: isPaymentOpen,
@@ -83,9 +89,31 @@ const CustomerInvoices = () => {
     onRefundOpen();
   };
 
+  const handleOpenRating = () => {
+    setRatingValue(5);
+    setRatingContent("");
+    setRatingOpen(true);
+  };
+
+  const handleSubmitRating = () => {
+    // TODO: Gửi rating lên server nếu cần, có thể dùng ratingInvoice
+    setRatingOpen(false);
+    toast({
+      title: "Cảm ơn bạn đã đánh giá!",
+      description: `Bạn đã đánh giá ${ratingValue} sao${
+        ratingContent ? ": " + ratingContent : ""
+      }`,
+      status: "success",
+      duration: 4000,
+      isClosable: true,
+    });
+  };
+
   const filteredInvoices = invoices.filter((inv) => {
-    const matchesSearch = inv.DịchVu.toLowerCase().includes(search.toLowerCase());
-    const [time, dateStr] = inv.NgayLapHD.split(" ");
+    const matchesSearch = inv.DịchVu.toLowerCase().includes(
+      search.toLowerCase()
+    );
+    const [, dateStr] = inv.NgayLapHD.split(" ");
     const [day, month, year] = dateStr.split("/");
 
     const matchDate =
@@ -97,10 +125,12 @@ const CustomerInvoices = () => {
   });
 
   return (
-    <Box bg="#eaf0fb" minH="100vh" p={6}>
-      <Heading size="lg" mb={4} color="blue.700">
-        Hóa đơn
-      </Heading>
+    <Box p={6}>
+      <Box mb={4}>
+        <Heading size="lg" mb={4} color="blue.600">
+          Hóa đơn
+        </Heading>
+      </Box>
 
       <Flex justify="space-between" mb={4} gap={4} flexWrap="wrap">
         <Input
@@ -145,49 +175,67 @@ const CustomerInvoices = () => {
         </Flex>
       </Flex>
 
-      <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-        {filteredInvoices.map((inv) => (
-          <Box
-            key={inv.MaHD}
-            borderTop="5px solid #25c3d9"
-            bg="white"
-            borderRadius="md"
-            p={4}
-            boxShadow="sm"
-            position="relative"
-          >
-            <Text fontWeight="bold" mb={2}>
-              {inv.NgayLapHD}
-            </Text>
-            {inv.TrangThaiTT === "Đã thanh toán" && (
-              <Text
-                position="absolute"
-                right={4}
-                top={2}
-                color="green"
-                fontWeight="bold"
-              >
-                Đã thanh toán
+      <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md" >
+        <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+          {filteredInvoices.map((inv) => (
+            <Box
+              key={inv.MaHD}
+              borderTop="5px solid #25c3d9"
+              bg="white"
+              borderRadius="md"
+              p={4}
+              boxShadow="sm"
+              position="relative"
+            >
+              <Text fontWeight="bold" mb={2}>
+                {inv.NgayLapHD}
               </Text>
-            )}
-            <Text>Dịch vụ: {inv.DịchVu}</Text>
-            <Text>Chiết khấu: {inv.ChietKhau.toLocaleString()} VND</Text>
-            <Text fontWeight="bold">
-              Tổng tiền: {inv.TongTien.toLocaleString()} VND
-            </Text>
-            <Flex gap={3} mt={3}>
-              {inv.TrangThaiTT === "Chưa thanh toán" && (
-                <Button colorScheme="blue" onClick={() => handlePay(inv)}>
-                  Thanh toán
-                </Button>
+              {inv.TrangThaiTT === "Đã thanh toán" && (
+                <Text
+                  position="absolute"
+                  right={4}
+                  top={2}
+                  color="green"
+                  fontWeight="bold"
+                >
+                  Đã thanh toán
+                </Text>
               )}
-              <Button colorScheme="blue" onClick={() => handleRefund(inv)}>
-                Hoàn tiền
-              </Button>
-            </Flex>
-          </Box>
-        ))}
-      </SimpleGrid>
+              <Text>Dịch vụ: {inv.DịchVu}</Text>
+              <Text>Chiết khấu: {inv.ChietKhau.toLocaleString()} VND</Text>
+              <Text fontWeight="bold">
+                Tổng tiền: {inv.TongTien.toLocaleString()} VND
+              </Text>
+              <Flex gap={3} mt={3}>
+                {inv.TrangThaiTT === "Chưa thanh toán" && (
+                  <Button colorScheme="blue" onClick={() => handlePay(inv)}>
+                    Thanh toán
+                  </Button>
+                )}
+                <Button colorScheme="red" onClick={() => handleRefund(inv)}>
+                  Hoàn tiền
+                </Button>
+                {inv.TrangThaiTT === "Đã thanh toán" && (
+                  <Button colorScheme="yellow" onClick={handleOpenRating}>
+                    Đánh giá
+                  </Button>
+                )}
+              </Flex>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </Box>
+
+      {/* Modal đánh giá */}
+      <RatingModal
+        isOpen={isRatingOpen}
+        onClose={() => setRatingOpen(false)}
+        onSubmit={handleSubmitRating}
+        value={ratingValue}
+        onChange={setRatingValue}
+        content={ratingContent}
+        onContentChange={setRatingContent}
+      />
 
       <PaymentDrawer
         isOpen={isPaymentOpen}

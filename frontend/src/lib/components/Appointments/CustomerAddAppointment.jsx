@@ -12,7 +12,10 @@ import {
   useToast,
   SimpleGrid,
   Tooltip,
+  IconButton,
+  Flex,
 } from "@chakra-ui/react";
+import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
 const SERVICES = [
@@ -44,7 +47,7 @@ const TIME_SLOTS = [
 
 const MAX_APPOINTMENTS_PER_SLOT = 2; // Số lượng tối đa lịch hẹn cho mỗi khung giờ
 
-const AddAppointment = () => {
+const CustomerAddAppointment = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { appointments, setAppointments } = useOutletContext();
@@ -55,7 +58,7 @@ const AddAppointment = () => {
     GioKhachDen: "",
     LoaiDV: "",
     NhanVien: "",
-    TrangThai: "Chờ hoàn thành"
+    TrangThai: "Chờ hoàn thành",
   });
 
   // Scroll to top when component mounts
@@ -63,7 +66,7 @@ const AddAppointment = () => {
     const mainContent = document.querySelector('[role="main"]') || window;
     mainContent.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   }, []);
 
@@ -71,22 +74,29 @@ const AddAppointment = () => {
   const isTimeSlotFull = (time) => {
     if (!formData.TGHen) return false;
     const appointmentsForSlot = appointments.filter(
-      app => app.TGHen === formData.TGHen && app.GioKhachDen === time
+      (app) => app.TGHen === formData.TGHen && app.GioKhachDen === time
     );
     return appointmentsForSlot.length >= MAX_APPOINTMENTS_PER_SLOT;
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = () => {
     // Validate form data
-    if (!formData.TenKH || !formData.SDT || !formData.TGHen || !formData.GioKhachDen || !formData.LoaiDV || !formData.NhanVien) {
+    if (
+      !formData.TenKH ||
+      !formData.SDT ||
+      !formData.TGHen ||
+      !formData.GioKhachDen ||
+      !formData.LoaiDV ||
+      !formData.NhanVien
+    ) {
       toast({
         title: "Lỗi",
         description: "Vui lòng điền đầy đủ thông tin",
@@ -99,16 +109,16 @@ const AddAppointment = () => {
 
     // Generate new appointment ID
     const maxNumber = appointments.reduce((max, app) => {
-      const num = parseInt(app.MaLH.replace('LH', ''));
+      const num = parseInt(app.MaLH.replace("LH", ""));
       return num > max ? num : max;
     }, 0);
-    const newNumber = (maxNumber + 1).toString().padStart(3, '0');
+    const newNumber = (maxNumber + 1).toString().padStart(3, "0");
     const newMaLH = `LH${newNumber}`;
 
     // Create new appointment object
     const newAppointment = {
       MaLH: newMaLH,
-      ...formData
+      ...formData,
     };
 
     // Add new appointment to the list
@@ -121,14 +131,25 @@ const AddAppointment = () => {
       duration: 3000,
       isClosable: true,
     });
+    window.scrollTo(0, 0);
     navigate("/customerappointments");
   };
 
   return (
     <Box maxW="800px" mx="auto" p={6} role="main">
-      <Heading textAlign="center" color="blue.700" mb={8}>
-        Đặt lịch giữ chỗ
-      </Heading>
+      <Flex align="center" mb={8}>
+        <IconButton
+          icon={<FiArrowLeft />}
+          aria-label="Quay lại"
+          variant="ghost"
+          colorScheme="blue"
+          mr={2}
+          onClick={() => navigate(-1)}
+        />
+        <Heading textAlign="center" color="blue.700" flex={1}>
+          Đặt lịch giữ chỗ
+        </Heading>
+      </Flex>
 
       <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
         <VStack spacing={4} align="stretch">
@@ -163,7 +184,11 @@ const AddAppointment = () => {
             >
               {SERVICES.map((service) => (
                 <option key={service.id} value={service.name}>
-                  {service.name} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.price)}
+                  {service.name} -{" "}
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(service.price)}
                 </option>
               ))}
             </Select>
@@ -192,7 +217,7 @@ const AddAppointment = () => {
               value={formData.TGHen}
               onChange={handleInputChange}
               type="date"
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date().toISOString().split("T")[0]}
             />
           </FormControl>
 
@@ -211,11 +236,18 @@ const AddAppointment = () => {
                       >
                         <Button
                           size="sm"
-                          variant={formData.GioKhachDen === time ? "solid" : "outline"}
-                          colorScheme={formData.GioKhachDen === time ? "blue" : "gray"}
-                          onClick={() => !isFull && handleInputChange({
-                            target: { name: "GioKhachDen", value: time }
-                          })}
+                          variant={
+                            formData.GioKhachDen === time ? "solid" : "outline"
+                          }
+                          colorScheme={
+                            formData.GioKhachDen === time ? "blue" : "gray"
+                          }
+                          onClick={() =>
+                            !isFull &&
+                            handleInputChange({
+                              target: { name: "GioKhachDen", value: time },
+                            })
+                          }
                           opacity={isFull ? 0.5 : 1}
                           cursor={isFull ? "not-allowed" : "pointer"}
                           _hover={{
@@ -234,12 +266,7 @@ const AddAppointment = () => {
             </VStack>
           </FormControl>
 
-          <Button
-            colorScheme="blue"
-            size="lg"
-            onClick={handleSubmit}
-            mt={4}
-          >
+          <Button colorScheme="blue" size="lg" onClick={handleSubmit} mt={4}>
             Đặt lịch
           </Button>
         </VStack>
@@ -252,4 +279,4 @@ const AddAppointment = () => {
   );
 };
 
-export default AddAppointment; 
+export default CustomerAddAppointment;

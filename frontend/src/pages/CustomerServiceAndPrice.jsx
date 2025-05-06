@@ -185,7 +185,7 @@ const CustomerServiceAndPrice = () => {
   const handleBooking = () => {
     // Scroll to top before navigating
     window.scrollTo(0, 0);
-    navigate("/customerappointments/addappointment");
+    navigate("/appointments/addappointment");
   };
 
   const handleOpenReviews = (idx) => {

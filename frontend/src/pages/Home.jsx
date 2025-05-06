@@ -18,6 +18,7 @@ import Service4 from "../images/service-4.png";
 import Service5 from "../images/service-5.png";
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import RegisterModal from "../lib/components/Auth/RegisterModal";
 import LoginModal from "../lib/components/Auth/LoginModal";
 import { FaArrowUp, FaPhoneAlt, FaPhone, FaStar } from "react-icons/fa";
@@ -244,7 +245,9 @@ function FloatingButtons() {
 const Home = () => {
   const { onOpenRegister, isRegisterOpen, onCloseRegister } =
     useOutletContext?.() || {};
+  const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
+
   const handleOpenLogin = () => {
     setShowLogin(true);
     onCloseRegister?.();
@@ -306,6 +309,7 @@ const Home = () => {
                     fontWeight="bold"
                     px={8}
                     _hover={{ bg: "#17408B" }}
+                    onClick={() => navigate("/appointments")}
                   >
                     ĐẶT LỊCH NGAY
                   </Button>
