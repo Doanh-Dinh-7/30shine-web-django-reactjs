@@ -9,10 +9,22 @@ import {
   Flex,
   useDisclosure,
   Heading,
+  Icon,
+  Textarea,
+  useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
 } from "@chakra-ui/react";
+import { StarIcon } from "@chakra-ui/icons";
 import PaymentDrawer from "./PaymentDrawer";
 import RefundDrawer from "./RefundDrawer";
 
+// Dữ liệu hóa đơn mẫu có review
 const dummyInvoices = [
   {
     MaHD: "HD001",
@@ -37,6 +49,22 @@ const dummyInvoices = [
     TongTien: 100000,
     ChietKhau: 0,
     TrangThaiTT: "Đã thanh toán",
+    reviewed: true,
+    review: {
+      star: 5,
+      content:
+        "Dịch vụ tuyệt vời! Nhân viên thân thiện, cắt tóc đẹp, không gian sạch sẽ.",
+    },
+  },
+  {
+    MaHD: "HD004",
+    NgayLapHD: "10:00 01/03/2025",
+    DịchVu: "Cắt tóc",
+    TongTien: 80000,
+    ChietKhau: 0,
+    TrangThaiTT: "Đã thanh toán",
+    reviewed: false,
+    review: null,
   },
 ];
 
@@ -49,6 +77,13 @@ const CustomerInvoices = () => {
 
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showQR, setShowQR] = useState(false);
+
+  // State cho modal đánh giá
+  const [reviewModal, setReviewModal] = useState(false);
+  const [reviewStar, setReviewStar] = useState(5);
+  const [reviewContent, setReviewContent] = useState("");
+  const [reviewingInvoice, setReviewingInvoice] = useState(null);
+  const toast = useToast();
 
   const {
     isOpen: isPaymentOpen,
@@ -83,8 +118,45 @@ const CustomerInvoices = () => {
     onRefundOpen();
   };
 
+  // Đánh giá hóa đơn
+  const openReviewModal = (inv) => {
+    setReviewingInvoice(inv);
+    setReviewStar(5);
+    setReviewContent("");
+    setReviewModal(true);
+  };
+  const closeReviewModal = () => {
+    setReviewModal(false);
+    setReviewingInvoice(null);
+  };
+  const handleSubmitReview = () => {
+    if (!reviewStar || reviewStar < 1 || reviewStar > 5) {
+      toast({ title: "Vui lòng chọn số sao từ 1 đến 5", status: "warning" });
+      return;
+    }
+    if (!reviewContent.trim()) {
+      toast({ title: "Vui lòng nhập nội dung đánh giá", status: "warning" });
+      return;
+    }
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.MaHD === reviewingInvoice.MaHD
+          ? {
+              ...inv,
+              reviewed: true,
+              review: { star: reviewStar, content: reviewContent },
+            }
+          : inv
+      )
+    );
+    toast({ title: "Gửi đánh giá thành công!", status: "success" });
+    closeReviewModal();
+  };
+
   const filteredInvoices = invoices.filter((inv) => {
-    const matchesSearch = inv.DịchVu.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = inv.DịchVu.toLowerCase().includes(
+      search.toLowerCase()
+    );
     const [time, dateStr] = inv.NgayLapHD.split(" ");
     const [day, month, year] = dateStr.split("/");
 
@@ -175,6 +247,40 @@ const CustomerInvoices = () => {
             <Text fontWeight="bold">
               Tổng tiền: {inv.TongTien.toLocaleString()} VND
             </Text>
+            {/* Hiển thị đánh giá nếu có */}
+            {inv.TrangThaiTT === "Đã thanh toán" &&
+              inv.reviewed &&
+              inv.review && (
+                <Box
+                  mt={3}
+                  p={3}
+                  bg="gray.50"
+                  borderRadius="md"
+                  borderWidth={"1px"}
+                  borderColor="yellow.200"
+                >
+                  <Flex align="center" mb={1}>
+                    {Array(5)
+                      .fill(0)
+                      .map((_, i) => (
+                        <Icon
+                          as={StarIcon}
+                          key={i}
+                          color={
+                            i < inv.review.star ? "yellow.400" : "gray.300"
+                          }
+                          boxSize={5}
+                        />
+                      ))}
+                    <Text ml={2} fontWeight="bold" color="blue.700">
+                      {inv.review.star}/5
+                    </Text>
+                  </Flex>
+                  <Text color="gray.700" fontStyle="italic">
+                    "{inv.review.content}"
+                  </Text>
+                </Box>
+              )}
             <Flex gap={3} mt={3}>
               {inv.TrangThaiTT === "Chưa thanh toán" && (
                 <Button colorScheme="blue" onClick={() => handlePay(inv)}>
@@ -184,10 +290,60 @@ const CustomerInvoices = () => {
               <Button colorScheme="blue" onClick={() => handleRefund(inv)}>
                 Hoàn tiền
               </Button>
+              {/* Nếu đã thanh toán và chưa đánh giá thì hiện nút đánh giá */}
+              {inv.TrangThaiTT === "Đã thanh toán" && !inv.reviewed && (
+                <Button
+                  colorScheme="yellow"
+                  onClick={() => openReviewModal(inv)}
+                >
+                  Đánh giá
+                </Button>
+              )}
             </Flex>
           </Box>
         ))}
       </SimpleGrid>
+
+      {/* Modal đánh giá */}
+      <Modal isOpen={reviewModal} onClose={closeReviewModal} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Đánh giá dịch vụ</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text mb={2}>Chọn số sao:</Text>
+            <Flex mb={4}>
+              {Array(5)
+                .fill(0)
+                .map((_, i) => (
+                  <Icon
+                    as={StarIcon}
+                    key={i}
+                    boxSize={8}
+                    color={i < reviewStar ? "yellow.400" : "gray.300"}
+                    cursor="pointer"
+                    onClick={() => setReviewStar(i + 1)}
+                  />
+                ))}
+            </Flex>
+            <Text mb={2}>Nội dung đánh giá:</Text>
+            <Textarea
+              value={reviewContent}
+              onChange={(e) => setReviewContent(e.target.value)}
+              placeholder="Nhập cảm nhận của bạn về dịch vụ..."
+              rows={4}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleSubmitReview}>
+              Gửi đánh giá
+            </Button>
+            <Button variant="ghost" onClick={closeReviewModal}>
+              Hủy
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       <PaymentDrawer
         isOpen={isPaymentOpen}
