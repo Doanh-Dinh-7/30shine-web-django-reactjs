@@ -28,60 +28,70 @@ const ServiceAndPrice = () => {
       TenDV: "Cắt tóc nam",
       GiaDV: "100000",
       ChitietDV: "Cắt tóc, gội đầu, massage vai gáy, tư vấn kiểu tóc phù hợp với khuôn mặt",
+      ThoiGianLam: "45"
     },
     {
       MaDV: "DV002",
       TenDV: "Nhuộm tóc cao cấp",
       GiaDV: "300000",
       ChitietDV: "Nhuộm tóc với sản phẩm cao cấp, tư vấn màu phù hợp, chăm sóc da đầu",
+      ThoiGianLam: "120"
     },
     {
       MaDV: "DV003",
       TenDV: "Uốn tóc Hàn Quốc",
       GiaDV: "250000",
       ChitietDV: "Uốn tóc theo công nghệ Hàn Quốc, tư vấn kiểu phù hợp, chăm sóc tóc đặc biệt",
+      ThoiGianLam: "150"
     },
     {
       MaDV: "DV004",
       TenDV: "Gội đầu dưỡng sinh",
       GiaDV: "100000",
       ChitietDV: "Gội đầu bằng sản phẩm thảo dược, massage vai gáy 15 phút, massage mặt thư giãn",
+      ThoiGianLam: "30"
     },
     {
       MaDV: "DV005",
       TenDV: "Cạo râu và massage mặt",
       GiaDV: "50000",
       ChitietDV: "Cạo râu sạch sẽ, massage mặt thư giãn, đắp mặt nạ dưỡng da",
+      ThoiGianLam: "40"
     },
     {
       MaDV: "DV006",
       TenDV: "Combo cắt gội VIP",
       GiaDV: "150000",
       ChitietDV: "Cắt tóc, gội đầu, massage vai gáy, tạo kiểu, chăm sóc da mặt cơ bản",
+      ThoiGianLam: "90"
     },
     {
       MaDV: "DV007",
       TenDV: "Nhuộm tóc thời trang",
       GiaDV: "400000",
       ChitietDV: "Nhuộm tóc highlight, ombre hoặc balayage, tư vấn phong cách phù hợp",
+      ThoiGianLam: "180"
     },
     {
       MaDV: "DV008",
       TenDV: "Phục hồi tóc",
       GiaDV: "200000",
       ChitietDV: "Phục hồi tóc hư tổn bằng sản phẩm cao cấp, chăm sóc da đầu chuyên sâu",
+      ThoiGianLam: "60"
     },
     {
       MaDV: "DV009",
       TenDV: "Tẩy tóc",
       GiaDV: "350000",
       ChitietDV: "Tẩy tóc an toàn, bảo vệ da đầu, tư vấn quy trình chăm sóc sau tẩy",
+      ThoiGianLam: "150"
     },
     {
       MaDV: "DV010",
       TenDV: "Combo chăm sóc toàn diện",
       GiaDV: "500000",
       ChitietDV: "Cắt tóc, gội đầu, massage toàn thân 30 phút, chăm sóc da mặt cao cấp",
+      ThoiGianLam: "120"
     }
   ]);
 
