@@ -15,7 +15,7 @@ import { FiSearch, FiPlus } from "react-icons/fi";
 import EmployeeTable from "../lib/components/Employees/EmployeeTable";
 import EmployeeDetail from "../lib/components/Employees/EmployeeDetail";
 import EmployeeFormDrawer from "../lib/components/Employees/EmployeeFormDrawer";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   getAllEmployees,
   createEmployee,
@@ -70,6 +70,7 @@ const Employees = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setFilteredEmployees(employees);
@@ -204,16 +205,27 @@ const Employees = () => {
           </InputLeftElement>
           <Input placeholder="Tìm kiếm nhân viên" onChange={handleSearch} />
         </InputGroup>
-
-        <Button
-          leftIcon={<FiPlus />}
-          color="white"
-          borderRadius="md"
-          px={5}
-          onClick={handleAddEmployee}
-        >
-          Thêm nhân viên
-        </Button>
+        <Flex gap={3}>
+          <Button
+            colorScheme="blue"
+            color="white"
+            borderRadius="md"
+            px={5}
+            fontWeight="bold"
+            onClick={() => navigate("/employees/schedule")}
+          >
+            Xem lịch làm việc
+          </Button>
+          <Button
+            leftIcon={<FiPlus />}
+            color="white"
+            borderRadius="md"
+            px={5}
+            onClick={handleAddEmployee}
+          >
+            Thêm nhân viên
+          </Button>
+        </Flex>
       </Flex>
 
       <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">

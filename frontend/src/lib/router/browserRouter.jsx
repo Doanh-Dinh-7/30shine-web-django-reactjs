@@ -30,6 +30,10 @@ export const router = createBrowserRouter([
         element: <Employees />,
       },
       {
+        path: "/employees/schedule",
+        element: <EmployeeSchedule />,
+      },
+      {
         path: "/employees/schedule/:maNV",
         element: <EmployeeSchedule />,
       },
@@ -59,7 +63,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/CustomerInvoices",
-        element: <CustomerInvoices />
+        element: <CustomerInvoices />,
       },
       {
         path: "/customerserviceandprice",

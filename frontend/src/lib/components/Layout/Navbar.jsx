@@ -1,4 +1,3 @@
-// src/components/Layout/Navbar.jsx
 import {
   Avatar,
   Box,
@@ -19,10 +18,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import {
-  FiChevronDown,
-  FiMenu,
-} from "react-icons/fi";
+import { FiChevronDown, FiMenu } from "react-icons/fi";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import Logo from "../../../../public/logo_30shine.png";
@@ -55,7 +51,6 @@ const NavItem = ({ children, to, onClose }) => {
           }}
           onClick={onClose}
         >
-          {/* <Icon mr="2" fontSize="16" as={icon} /> */}
           {children}
         </Flex>
       )}
@@ -69,19 +64,125 @@ NavItem.propTypes = {
   onClose: PropTypes.func,
 };
 
-const Navbar = () => {
+const Navbar = ({ onOpenRegister }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [authModal, setAuthModal] = useState(null); // "login" | "register" | "forgot"
   const isMobile = useBreakpointValue({ base: true, md: false });
   const isTablet = useBreakpointValue({ base: false, md: true, lg: false });
   const role = localStorage.getItem("role");
 
+  const handleOpenRegister = () => {
+    if (onOpenRegister) onOpenRegister();
+    else setAuthModal("register");
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("role");
-    window.location.reload();
+    window.location.href = "/";
   };
 
   const renderNavItems = () => {
+    const navs = [
+      { label: "Trang chủ", to: "/" },
+      { label: "Đặt lịch hẹn", to: "/appointments" },
+      { label: "Dịch vụ", to: "/services" },
+    ];
+
+    const customerNavs = [
+      { label: "Trang chủ", to: "/" },
+      { label: "Đặt lịch hẹn", to: "/appointments" },
+      { label: "Dịch vụ", to: "/services" },
+      { label: "Hoá đơn", to: "/invoices" },
+    ];
+
+    const managerNavs = [
+      { label: "Trang chủ", to: "/" },
+      { label: "Lịch hẹn", to: "/appointments" },
+      { label: "Dịch vụ & Giá cả", to: "/services" },
+      { label: "Khách hàng", to: "/customers" },
+      { label: "Đánh giá & Phản hồi", to: "/feedback" },
+      { label: "Nhân viên", to: "/employees" },
+      { label: "Hoá đơn", to: "/invoices" },
+    ];
+
+    if (role === "quan ly") {
+      // Giao diện sau khi đăng nhập cho quản lý
+      if (isMobile) {
+        return (
+          <Popover isOpen={isOpen} onClose={onClose} placement="bottom-end">
+            <PopoverTrigger>
+              <Button
+                leftIcon={<FiMenu />}
+                variant="ghost"
+                onClick={onOpen}
+                color="gray.600"
+                _hover={{ bg: "blue.50", color: "blue.500" }}
+              >
+                Menu
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent w="200px">
+              <PopoverBody p={0}>
+                <VStack align="stretch" spacing={0}>
+                  {managerNavs.map((nav) => (
+                    <NavItem key={nav.to} to={nav.to} onClose={onClose}>
+                      {nav.label}
+                    </NavItem>
+                  ))}
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        );
+      }
+      if (isTablet || !isMobile) {
+        return managerNavs.map((nav) => (
+          <NavItem key={nav.to} to={nav.to}>
+            {nav.label}
+          </NavItem>
+        ));
+      }
+    }
+
+    if (role === "khach hang") {
+      // Giao diện trước khi đăng nhập
+      if (isMobile) {
+        return (
+          <Popover isOpen={isOpen} onClose={onClose} placement="bottom-start">
+            <PopoverTrigger>
+              <Button
+                leftIcon={<FiMenu />}
+                variant="ghost"
+                onClick={onOpen}
+                color="gray.600"
+                _hover={{ bg: "blue.50", color: "blue.500" }}
+              >
+                Menu
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent w="200px">
+              <PopoverBody p={0}>
+                <VStack align="stretch" spacing={0}>
+                  {customerNavs.map((nav) => (
+                    <NavItem key={nav.to} to={nav.to} onClose={onClose}>
+                      {nav.label}
+                    </NavItem>
+                  ))}
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        );
+      }
+
+      return customerNavs.map((nav) => (
+        <NavItem key={nav.to} to={nav.to}>
+          {nav.label}
+        </NavItem>
+      ));
+    }
+
+    // Giao diện trước khi đăng nhập
     if (isMobile) {
       return (
         <Popover isOpen={isOpen} onClose={onClose} placement="bottom-start">
@@ -99,27 +200,11 @@ const Navbar = () => {
           <PopoverContent w="200px">
             <PopoverBody p={0}>
               <VStack align="stretch" spacing={0}>
-                <NavItem to="/" onClose={onClose}>
-                  Trang chủ
-                </NavItem>
-                <NavItem to="/appointments" onClose={onClose}>
-                  Lịch hẹn
-                </NavItem>
-                <NavItem to="/services" onClose={onClose}>
-                  Dịch vụ & Giá cả
-                </NavItem>
-                <NavItem to="/customers" onClose={onClose}>
-                  Khách hàng
-                </NavItem>
-                <NavItem to="/feedback" onClose={onClose}>
-                  Đánh giá & Phản hồi
-                </NavItem>
-                <NavItem to="/employees" onClose={onClose}>
-                  Nhân viên
-                </NavItem>
-                <NavItem to="/invoices" onClose={onClose}>
-                  Hoá đơn
-                </NavItem>
+                {navs.map((nav) => (
+                  <NavItem key={nav.to} to={nav.to} onClose={onClose}>
+                    {nav.label}
+                  </NavItem>
+                ))}
               </VStack>
             </PopoverBody>
           </PopoverContent>
@@ -127,49 +212,11 @@ const Navbar = () => {
       );
     }
 
-    if (isTablet) {
-      return (
-        <>
-          <NavItem to="/">Trang chủ</NavItem>
-          <NavItem to="/appointments">Lịch hẹn</NavItem>
-          <NavItem to="/services">Dịch vụ & Giá cả</NavItem>
-          <NavItem to="/customers">Khách hàng</NavItem>
-          <Popover placement="bottom-start">
-            <PopoverTrigger>
-              <Button
-                rightIcon={<FiChevronDown />}
-                variant="ghost"
-                color="gray.600"
-                _hover={{ bg: "blue.50", color: "blue.500" }}
-              >
-                Thêm
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent w="200px">
-              <PopoverBody p={0}>
-                <VStack align="stretch" spacing={0}>
-                  <NavItem to="/feedback">Đánh giá & Phản hồi</NavItem>
-                  <NavItem to="/employees">Nhân viên</NavItem>
-                  <NavItem to="/invoices">Hoá đơn</NavItem>
-                </VStack>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-        </>
-      );
-    }
-
-    return (
-      <>
-        <NavItem to="/">Trang chủ</NavItem>
-        <NavItem to="/appointments">Lịch hẹn</NavItem>
-        <NavItem to="/services">Dịch vụ & Giá cả</NavItem>
-        <NavItem to="/customers">Khách hàng</NavItem>
-        <NavItem to="/feedback">Đánh giá & Phản hồi</NavItem>
-        <NavItem to="/employees">Nhân viên</NavItem>
-        <NavItem to="/invoices">Hoá đơn</NavItem>
-      </>
-    );
+    return navs.map((nav) => (
+      <NavItem key={nav.to} to={nav.to}>
+        {nav.label}
+      </NavItem>
+    ));
   };
 
   return (
@@ -183,12 +230,20 @@ const Navbar = () => {
       <Flex h="full" mx="8" align="center" justify="space-between">
         <Flex align="center">
           <Image src={Logo} alt="30Shine" h="8" mr="8" />
-          <Flex gap="4">{renderNavItems()}</Flex>
         </Flex>
-
+        {role === "quan ly" && (
+          <Flex flex={1} justify="center">
+            {renderNavItems()}
+          </Flex>
+        )}
+        {role !== "quan ly" && (
+          <Flex flex={1} justify="center">
+            {renderNavItems()}
+          </Flex>
+        )}
         <Flex align="center" gap="4">
-          <NotificationPopover />
-          {role === "quan ly" ? (
+          {role === "quan ly" && <NotificationPopover />}
+          {role === "quan ly" || role === "khach hang" ? (
             <Menu>
               <MenuButton
                 as={Flex}
@@ -208,7 +263,7 @@ const Navbar = () => {
                       Đinh Sỹ Quốc Doanh
                     </Text>
                     <Text fontSize="xs" color="gray.500">
-                      Admin
+                      {role === "quan ly" ? "Quản lý" : "Khách hàng"}
                     </Text>
                   </Box>
                   <FiChevronDown size="1em" style={{ marginLeft: "8px" }} />
@@ -224,7 +279,6 @@ const Navbar = () => {
             </Menu>
           ) : (
             <Flex gap={2}>
-              {/* Nút nếu chưa đăng nhập */}
               <Button
                 bg="#2A50FC"
                 color="white"
@@ -237,7 +291,7 @@ const Navbar = () => {
                 variant="outline"
                 borderColor="transparent"
                 color="#2A50FC"
-                onClick={() => setAuthModal("register")}
+                onClick={handleOpenRegister}
                 _hover={{ bg: "gray.100" }}
               >
                 Đăng ký
@@ -245,12 +299,15 @@ const Navbar = () => {
             </Flex>
           )}
 
-          {/* Các modal */}
           <LoginModal
             isOpen={authModal === "login"}
             onClose={() => setAuthModal(null)}
-            onSwitchRegister={() => setAuthModal("register")}
+            onSwitchRegister={handleOpenRegister}
             onSwitchForgot={() => setAuthModal("forgot")}
+            onLoginSuccess={() => {
+              localStorage.setItem("role", "quan ly");
+              window.location.reload();
+            }}
           />
           <RegisterModal
             isOpen={authModal === "register"}
@@ -266,6 +323,12 @@ const Navbar = () => {
       </Flex>
     </Box>
   );
+};
+
+Navbar.propTypes = {
+  onScroll: PropTypes.func,
+  onOpenRegister: PropTypes.func,
+  activeSection: PropTypes.string,
 };
 
 export default Navbar;

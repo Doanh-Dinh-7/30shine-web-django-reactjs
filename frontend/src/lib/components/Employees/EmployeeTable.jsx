@@ -79,7 +79,6 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
             <Th>Địa chỉ</Th>
             <Th>Số điện thoại</Th>
             <Th>Tác vụ</Th>
-            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -114,16 +113,6 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
                     onClick={() => onViewEmployee(employee.MaNV)}
                   />
                 </HStack>
-              </Td>
-              <Td>
-                <Link
-                  href={`/employees/schedule/${employee.MaNV}`}
-                  fontSize="sm"
-                  color="gray.500"
-                  _hover={{ color: "blue.600", textDecoration: "underline" }}
-                >
-                  Xem lịch làm việc
-                </Link>
               </Td>
             </Tr>
           ))}
