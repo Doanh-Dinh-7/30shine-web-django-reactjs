@@ -14,6 +14,7 @@ import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import "../../../assets/styles/paginate.css";
+import PropTypes from "prop-types";
 
 const ServiceAndPriceTable = ({ services, onEditService, onDeleteService }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -35,7 +36,8 @@ const ServiceAndPriceTable = ({ services, onEditService, onDeleteService }) => {
             <Th width="120px">Mã dịch vụ</Th>
             <Th width="200px">Tên dịch vụ</Th>
             <Th width="150px">Giá dịch vụ</Th>
-            <Th>Chi tiết dịch vụ</Th>
+            <Th>Mô tả dịch vụ</Th>
+            <Th width="150px">Thời gian làm (phút)</Th>
             <Th width="120px">Tác vụ</Th>
           </Tr>
         </Thead>
@@ -48,6 +50,7 @@ const ServiceAndPriceTable = ({ services, onEditService, onDeleteService }) => {
                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.GiaDV)}
               </Td>
               <Td>{service.ChitietDV}</Td>
+              <Td width="150px" textAlign="center">{service.ThoiGianLam || "30"}</Td>
               <Td width="120px">
                 <HStack spacing={2}>
                   <IconButton
@@ -95,6 +98,20 @@ const ServiceAndPriceTable = ({ services, onEditService, onDeleteService }) => {
       </Flex>
     </Box>
   );
+};
+
+ServiceAndPriceTable.propTypes = {
+  services: PropTypes.arrayOf(
+    PropTypes.shape({
+      MaDV: PropTypes.string.isRequired,
+      TenDV: PropTypes.string.isRequired,
+      GiaDV: PropTypes.string.isRequired,
+      ChitietDV: PropTypes.string.isRequired,
+      ThoiGianLam: PropTypes.string,
+    })
+  ).isRequired,
+  onEditService: PropTypes.func.isRequired,
+  onDeleteService: PropTypes.func.isRequired,
 };
 
 export default ServiceAndPriceTable; 
