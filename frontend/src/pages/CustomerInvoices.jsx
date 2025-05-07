@@ -9,12 +9,14 @@ import {
   Flex,
   useDisclosure,
   Heading,
+  Icon,
   useToast,
 } from "@chakra-ui/react";
 import PaymentDrawer from "../lib/components/Invoices/PaymentDrawer";
 import RefundDrawer from "../lib/components/Invoices/RefundDrawer";
 import RatingModal from "../lib/components/Invoices/CustomerRatingModal";
-
+import { StarIcon } from "@chakra-ui/icons";
+// Dữ liệu hóa đơn mẫu có review
 const dummyInvoices = [
   {
     MaHD: "HD001",
@@ -39,6 +41,22 @@ const dummyInvoices = [
     TongTien: 100000,
     ChietKhau: 0,
     TrangThaiTT: "Đã thanh toán",
+    reviewed: true,
+    review: {
+      star: 5,
+      content:
+        "Dịch vụ tuyệt vời! Nhân viên thân thiện, cắt tóc đẹp, không gian sạch sẽ.",
+    },
+  },
+  {
+    MaHD: "HD004",
+    NgayLapHD: "10:00 01/03/2025",
+    DịchVu: "Cắt tóc",
+    TongTien: 80000,
+    ChietKhau: 0,
+    TrangThaiTT: "Đã thanh toán",
+    reviewed: false,
+    review: null,
   },
 ];
 
@@ -89,15 +107,34 @@ const CustomerInvoices = () => {
     onRefundOpen();
   };
 
-  const handleOpenRating = () => {
+  // Đánh giá hóa đơn
+  const openReviewModal = (inv) => {
+    setSelectedInvoice(inv);
     setRatingValue(5);
     setRatingContent("");
     setRatingOpen(true);
   };
 
-  const handleSubmitRating = () => {
-    // TODO: Gửi rating lên server nếu cần, có thể dùng ratingInvoice
-    setRatingOpen(false);
+  const handleSubmitReview = () => {
+    if (!ratingValue || ratingValue < 1 || ratingValue > 5) {
+      toast({ title: "Vui lòng chọn số sao từ 1 đến 5", status: "warning" });
+      return;
+    }
+    if (!ratingContent.trim()) {
+      toast({ title: "Vui lòng nhập nội dung đánh giá", status: "warning" });
+      return;
+    }
+    setInvoices((prev) =>
+      prev.map((inv) =>
+        inv.MaHD === selectedInvoice.MaHD
+          ? {
+              ...inv,
+              reviewed: true,
+              review: { star: ratingValue, content: ratingContent },
+            }
+          : inv
+      )
+    );
     toast({
       title: "Cảm ơn bạn đã đánh giá!",
       description: `Bạn đã đánh giá ${ratingValue} sao${
@@ -107,6 +144,8 @@ const CustomerInvoices = () => {
       duration: 4000,
       isClosable: true,
     });
+    setRatingOpen(false);
+    setSelectedInvoice(null);
   };
 
   const filteredInvoices = invoices.filter((inv) => {
@@ -175,7 +214,7 @@ const CustomerInvoices = () => {
         </Flex>
       </Flex>
 
-      <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md" >
+      <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
         <SimpleGrid columns={[1, 2, 3]} spacing={4}>
           {filteredInvoices.map((inv) => (
             <Box
@@ -206,6 +245,40 @@ const CustomerInvoices = () => {
               <Text fontWeight="bold">
                 Tổng tiền: {inv.TongTien.toLocaleString()} VND
               </Text>
+              {/* Hiển thị đánh giá nếu có */}
+              {inv.TrangThaiTT === "Đã thanh toán" &&
+                inv.reviewed &&
+                inv.review && (
+                  <Box
+                    mt={3}
+                    p={3}
+                    bg="gray.50"
+                    borderRadius="md"
+                    borderWidth={"1px"}
+                    borderColor="yellow.200"
+                  >
+                    <Flex align="center" mb={1}>
+                      {Array(5)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Icon
+                            as={StarIcon}
+                            key={i}
+                            color={
+                              i < inv.review.star ? "yellow.400" : "gray.300"
+                            }
+                            boxSize={5}
+                          />
+                        ))}
+                      <Text ml={2} fontWeight="bold" color="blue.700">
+                        {inv.review.star}/5
+                      </Text>
+                    </Flex>
+                    <Text color="gray.700" fontStyle="italic">
+                      &quot;{inv.review.content}&quot;
+                    </Text>
+                  </Box>
+                )}
               <Flex gap={3} mt={3}>
                 {inv.TrangThaiTT === "Chưa thanh toán" && (
                   <Button colorScheme="blue" onClick={() => handlePay(inv)}>
@@ -215,8 +288,12 @@ const CustomerInvoices = () => {
                 <Button colorScheme="red" onClick={() => handleRefund(inv)}>
                   Hoàn tiền
                 </Button>
-                {inv.TrangThaiTT === "Đã thanh toán" && (
-                  <Button colorScheme="yellow" onClick={handleOpenRating}>
+                {/* Nếu đã thanh toán và chưa đánh giá thì hiện nút đánh giá */}
+                {inv.TrangThaiTT === "Đã thanh toán" && !inv.reviewed && (
+                  <Button
+                    colorScheme="yellow"
+                    onClick={() => openReviewModal(inv)}
+                  >
                     Đánh giá
                   </Button>
                 )}
@@ -230,7 +307,7 @@ const CustomerInvoices = () => {
       <RatingModal
         isOpen={isRatingOpen}
         onClose={() => setRatingOpen(false)}
-        onSubmit={handleSubmitRating}
+        onSubmit={handleSubmitReview}
         value={ratingValue}
         onChange={setRatingValue}
         content={ratingContent}

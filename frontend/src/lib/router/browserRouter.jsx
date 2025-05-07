@@ -33,6 +33,10 @@ export const router = createBrowserRouter([
         element: <Employees />,
       },
       {
+        path: "/employees/schedule",
+        element: <EmployeeSchedule />,
+      },
+      {
         path: "/employees/schedule/:maNV",
         element: <EmployeeSchedule />,
       },
