@@ -21,7 +21,8 @@ const CustomerAppointments = () => {
   const [showOnlyPending, setShowOnlyPending] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
-  const { appointments, setAppointments } = useOutletContext();
+  const { appointments: rawAppointments, setAppointments } = useOutletContext();
+  const appointments = rawAppointments || [];
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -47,7 +48,9 @@ const CustomerAppointments = () => {
     if (selectedAppointment) {
       setAppointments(
         appointments.map((app) =>
-          app.MaLH === selectedAppointment.MaLH ? { ...formData, MaLH: selectedAppointment.MaLH } : app
+          app.MaLH === selectedAppointment.MaLH
+            ? { ...formData, MaLH: selectedAppointment.MaLH }
+            : app
         )
       );
       toast({
@@ -63,7 +66,8 @@ const CustomerAppointments = () => {
   };
 
   const handleAddNewAppointment = () => {
-    navigate("/customerappointments/addappointment");
+    window.scrollTo(0, 0);
+    navigate("/appointments/addappointment");
   };
 
   const filteredAppointments = appointments
@@ -73,8 +77,9 @@ const CustomerAppointments = () => {
         appointment.SDT.includes(searchQuery) ||
         appointment.LoaiDV.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .filter((appointment) => 
-      !showOnlyPending || appointment.TrangThai === "Chờ hoàn thành"
+    .filter(
+      (appointment) =>
+        !showOnlyPending || appointment.TrangThai === "Chờ hoàn thành"
     )
     .sort((a, b) => {
       const dateTimeA = `${a.TGHen} ${a.GioKhachDen}`;
@@ -95,7 +100,10 @@ const CustomerAppointments = () => {
           <InputLeftElement pointerEvents="none">
             <FiSearch color="gray.400" />
           </InputLeftElement>
-          <Input placeholder="Tìm kiếm lịch hẹn" onChange={handleSearchChange} />
+          <Input
+            placeholder="Tìm kiếm lịch hẹn"
+            onChange={handleSearchChange}
+          />
         </InputGroup>
 
         <Flex gap={2}>
@@ -146,4 +154,4 @@ const CustomerAppointments = () => {
   );
 };
 
-export default CustomerAppointments; 
+export default CustomerAppointments;
