@@ -50,7 +50,9 @@ const MAX_APPOINTMENTS_PER_SLOT = 2; // Số lượng tối đa lịch hẹn cho
 const CustomerAddAppointment = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { appointments, setAppointments } = useOutletContext();
+  const { appointments: rawAppointments, setAppointments } = useOutletContext() || {};
+  const appointments = rawAppointments || [];
+
   const [formData, setFormData] = useState({
     TenKH: "",
     SDT: "",
@@ -84,6 +86,14 @@ const CustomerAddAppointment = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleDateChange = (e) => {
+    const { value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      TGHen: value,
     }));
   };
 
@@ -122,7 +132,9 @@ const CustomerAddAppointment = () => {
     };
 
     // Add new appointment to the list
-    setAppointments([...appointments, newAppointment]);
+    if (setAppointments) {
+      setAppointments([...appointments, newAppointment]);
+    }
 
     toast({
       title: "Thành công",
@@ -132,7 +144,7 @@ const CustomerAddAppointment = () => {
       isClosable: true,
     });
     window.scrollTo(0, 0);
-    navigate("/customerappointments");
+    navigate("/appointments");
   };
 
   return (
@@ -215,7 +227,7 @@ const CustomerAddAppointment = () => {
             <Input
               name="TGHen"
               value={formData.TGHen}
-              onChange={handleInputChange}
+              onChange={handleDateChange}
               type="date"
               min={new Date().toISOString().split("T")[0]}
             />
