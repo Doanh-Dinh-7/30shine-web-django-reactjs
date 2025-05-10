@@ -25,8 +25,10 @@ const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
 
   const handleLogin = () => {
     if (username === "admin") {
+      localStorage.setItem("MaNguoiDung", "admin");
       localStorage.setItem("role", "quan ly");
     } else {
+      localStorage.setItem("username", "admin");
       localStorage.setItem("role", "khach hang");
     }
     onClose();

@@ -91,7 +91,7 @@
 │   │   │   │   ├── Employees/        # Thư mục chứa component phục vụ trang Employees
 │   │   │   │   └── <span style="color:#5805f0; font-weight:bold;">*Tên trang chính/</span>     <span style="color:#d73a49; font-weight:bold;"># ⚠️ CHÚ Ý/</span>
 │   │   │   │ 
-│   │   │   ├── controller/           # Xử lý API
+│   │   │   ├── service/           # Xử lý API
 │   │   │   ├── router/               # Cấu hình routing
 │   │   │   └── theme/                # Cấu hình giao diện
 │   │   │   

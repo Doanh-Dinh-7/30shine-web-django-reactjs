@@ -15,7 +15,7 @@ import {
   HStack,
   Divider,
 } from "@chakra-ui/react";
-import { getEmployeeDetail } from "../../controller/employeesController";
+import { getEmployeeDetail } from "../../service/employees";
 
 const EmployeeDetail = ({ isOpen, onClose, employeeId }) => {
   const [employee, setEmployee] = useState(null);
