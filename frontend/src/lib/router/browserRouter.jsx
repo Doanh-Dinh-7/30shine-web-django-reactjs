@@ -11,7 +11,6 @@ import AppointmentWrapper from "./AppointmentWrapper";
 import ServiceAndPriceWrapper from "./ServiceAndPrice";
 import InvoiceWrapper from "./InvoiceWrapper";
 import UserProfile from "../../pages/UserProfile";
-import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
 
 export const router = createBrowserRouter([
   {
@@ -30,10 +29,6 @@ export const router = createBrowserRouter([
       {
         path: "/employees/schedule",
         element: <EmployeeScheduleGeneral />,
-      },
-      {
-        path: "/employees/:maNV",
-        element: <EmployeeSchedule />,
       },
       {
         path: "/feedback",

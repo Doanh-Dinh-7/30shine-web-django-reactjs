@@ -16,8 +16,8 @@ class LichLamViec(models.Model):
     MaLLV = models.AutoField(primary_key=True)
     MaNV = models.ForeignKey(NhanVien, on_delete=models.CASCADE, related_name='lich_lam_viec')
     NgayLam = models.DateField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    GioBatDau = models.TimeField()
+    GioKetThuc = models.TimeField()
 
     def __str__(self):
         return f"LLV {self.MaLLV} - NV {self.MaNV.HoTenNV}"

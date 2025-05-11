@@ -11,13 +11,17 @@ import {
   Flex,
   HStack,
 } from "@chakra-ui/react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import "../../../assets/styles/paginate.css";
 
-const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment, showMaKH }) => {
+const AppointmentTable = ({
+  appointments,
+  onDeleteAppointment,
+  showMaKH,
+}) => {
   const [currentPage, setCurrentPage] = useState(0);
   const appointmentsPerPage = 5;
   const pageCount = Math.ceil(appointments.length / appointmentsPerPage);
@@ -42,7 +46,13 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
 
   return (
     <Box>
-      <Table variant="simple" colorScheme="blue" size="md" bg="white" style={{ tableLayout: 'fixed' }}>
+      <Table
+        variant="simple"
+        colorScheme="blue"
+        size="md"
+        bg="white"
+        style={{ tableLayout: "fixed" }}
+      >
         <Thead>
           <Tr>
             {showMaKH && <Th width="100px">Mã khách hàng</Th>}
@@ -75,14 +85,6 @@ const AppointmentTable = ({ appointments, onEditAppointment, onDeleteAppointment
               </Td>
               <Td width="100px">
                 <HStack spacing={2}>
-                  <IconButton
-                    icon={<FiEdit2 />}
-                    variant="ghost"
-                    colorScheme="blue"
-                    onClick={() => onEditAppointment(appointment)}
-                    aria-label="Edit"
-                    size="sm"
-                  />
                   <IconButton
                     icon={<FiTrash2 />}
                     variant="ghost"
@@ -141,4 +143,4 @@ AppointmentTable.propTypes = {
   showMaKH: PropTypes.bool.isRequired,
 };
 
-export default AppointmentTable; 
+export default AppointmentTable;

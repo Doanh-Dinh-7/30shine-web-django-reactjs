@@ -114,7 +114,7 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
                     isRound
                     onClick={() => onViewEmployee(employee.MaNV)}
                   />
-                  <IconButton
+                  {/* <IconButton
                     icon={<FiCalendar />}
                     size="sm"
                     variant="ghost"
@@ -122,7 +122,7 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
                     aria-label="Xem lịch làm việc của nhân viên"
                     isRound
                     onClick={() => navigate(`/employees/${employee.MaNV}`)}
-                  />
+                  /> */}
                 </HStack>
               </Td>
             </Tr>

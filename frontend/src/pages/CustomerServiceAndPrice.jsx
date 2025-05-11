@@ -44,7 +44,7 @@ const services = [
   {
     TenDV: "Cắt gội Combo 2",
     MoTa: ["Combo cắt kỹ", "Combo gội massage cổ vai gáy"],
-    ThoiGian: "55 Phút",
+    ThoiGian: 55,
     Gia: "300.000đ",
     image: service4,
   },
@@ -256,7 +256,7 @@ const CustomerServiceAndPrice = () => {
                       </Box>
                     }
                   >
-                    {service.ThoiGian}
+                    {service.ThoiGian} Phút
                   </Button>
                   <Text fontSize="lg" fontWeight="bold" color="blue.700">
                     {service.Gia}
@@ -325,11 +325,13 @@ const CustomerServiceAndPrice = () => {
                     </Text>
                     {Array(5)
                       .fill("")
-                      .map((_, j) => (
+                      .map((_, soSao) => (
                         <Icon
                           as={StarIcon}
-                          key={j}
-                          color={j < review.rating ? "yellow.400" : "gray.300"}
+                          key={soSao}
+                          color={
+                            soSao < review.rating ? "yellow.400" : "gray.300"
+                          }
                           boxSize={4}
                         />
                       ))}
