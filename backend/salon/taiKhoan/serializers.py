@@ -10,20 +10,27 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    sdt = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'password', 'sdt']
 
     def create(self, validated_data):
+        sdt = validated_data.pop('sdt')
+        
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password']
         )
-        # Tạo KhachHang với HoTenKH = username, các trường khác để trống
-        KhachHang.objects.create(user=user, HoTenKH=user.username)
+        
+        KhachHang.objects.create(user=user, HoTenKH=user.username, SDT=sdt)
         return user
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password = serializers.CharField() 
+    password = serializers.CharField()
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField()
+    new_password = serializers.CharField() 

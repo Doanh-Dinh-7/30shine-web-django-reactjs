@@ -4,4 +4,4 @@ from .models import DichVu
 class DichVuSerializer(serializers.ModelSerializer):
     class Meta:
         model = DichVu
-        fields = ['MaDV', 'TenDV', 'MoTa', 'GiaTien', 'ThoiGianLamDV'] 
+        fields = ['MaDV', 'TenDV', 'MoTa', 'GiaTien', 'ThoiGianLamDV', 'AnhDaiDien'] 
