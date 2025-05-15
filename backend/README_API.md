@@ -115,7 +115,7 @@ Lưu ý: Đảm bảo bạn đang ở trong môi trường ảo (virtual environ
 - `POST /api/nhan-vien/lich-lam-viec/` : Thêm lịch làm việc mới
   - Body:
     ```json
-    {"MaNV": 1, "NgayLam": "2024-06-01", "CaLam": "Sáng"}
+    {"MaNV": 1, "NgayLam": "2024-06-01", "GioBatDau": "8:00", "GioKetThuc": "12:00"}
     ```
 - `GET /api/nhan-vien/lich-lam-viec/{MaLLV}/` : Xem chi tiết lịch làm việc
 - `PUT /api/nhan-vien/lich-lam-viec/{MaLLV}/` : Sửa lịch làm việc
