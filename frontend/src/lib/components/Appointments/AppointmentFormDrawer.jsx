@@ -140,14 +140,13 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="full">
                 {isManager && (
                   <GridItem colSpan={2}>
-                    <FormControl>
+                    <FormControl isRequired>
                       <FormLabel fontWeight="bold">Mã khách hàng:</FormLabel>
                       <Input
                         name="MaKH"
-                        value={formData.MaKH || ""}
-                        readOnly
-                        bg="gray.100"
-                        placeholder={appointment ? "Mã khách hàng của lịch hẹn" : "Mã khách hàng sẽ được tạo tự động"}
+                        value={formData.MaKH}
+                        onChange={handleChange}
+                        placeholder="Nhập mã khách hàng"
                       />
                     </FormControl>
                   </GridItem>
