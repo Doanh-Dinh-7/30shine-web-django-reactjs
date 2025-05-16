@@ -14,9 +14,11 @@ import {
   Tooltip,
   IconButton,
   Flex,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import LoginModal from "../Auth/LoginModal";
 
 const SERVICES = [
   { id: 1, name: "Cắt tóc nam", price: 100000 },
@@ -51,6 +53,8 @@ const CustomerAddAppointment = () => {
   const toast = useToast();
   const { appointments: rawAppointments, setAppointments } = useOutletContext() || {};
   const appointments = rawAppointments || [];
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const role = localStorage.getItem("role");
 
   const [formData, setFormData] = useState({
     TenKH: "",
@@ -96,7 +100,13 @@ const CustomerAddAppointment = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!role) {
+      onOpen(); // Mở modal đăng nhập nếu chưa đăng nhập
+      return;
+    }
+
     // Validate form data
     if (
       !formData.TenKH ||
@@ -161,6 +171,18 @@ const CustomerAddAppointment = () => {
           Đặt lịch giữ chỗ
         </Heading>
       </Flex>
+
+      {!role && (
+        <Text 
+          color="red.500" 
+          textAlign="center" 
+          fontSize="lg" 
+          fontWeight="bold" 
+          mb={4}
+        >
+          Bạn cần đăng nhập để đặt lịch
+        </Text>
+      )}
 
       <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
         <VStack spacing={4} align="stretch">
@@ -286,6 +308,15 @@ const CustomerAddAppointment = () => {
       <Box bg="gray.100" p={4} borderRadius="md" textAlign="center" mt={4}>
         <Text>Cắt xong trả tiền, huỷ lịch không sao</Text>
       </Box>
+
+      <LoginModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onLoginSuccess={() => {
+          localStorage.setItem("role", "khach hang");
+          window.location.reload();
+        }}
+      />
     </Box>
   );
 };
