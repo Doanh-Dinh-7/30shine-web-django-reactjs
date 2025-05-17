@@ -20,7 +20,7 @@ class LichHenSerializer(serializers.ModelSerializer):
 
         # 1. Kiểm tra nhân viên tồn tại
         if not NhanVien.objects.filter(HoTenNV=nhan_vien).exists():
-            raise serializers.ValidationError("Nhân viên không tồn tại.")
+            raise serializers.ValidationError("Nhân viên không tồn tại.") #Trả về text
 
         # 2. Kiểm tra dịch vụ tồn tại
         if not DichVu.objects.filter(TenDV=loai_dv).exists():

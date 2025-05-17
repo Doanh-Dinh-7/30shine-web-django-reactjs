@@ -9,14 +9,11 @@ import {
   Heading,
   useToast,
 } from "@chakra-ui/react";
-import { FiSearch, FiPlus, FiFilter } from "react-icons/fi";
-import AppointmentFormDrawer from "../lib/components/Appointments/AppointmentFormDrawer";
+import { FiSearch, FiFilter } from "react-icons/fi";
 import AppointmentTable from "../lib/components/Appointments/AppointmentTable";
 
 const Appointments = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showOnlyPending, setShowOnlyPending] = useState(false);
   const toast = useToast();
   const [appointments, setAppointments] = useState([
@@ -30,6 +27,7 @@ const Appointments = () => {
       LoaiDV: "Cắt tóc nam",
       NhanVien: "Nguyễn Văn A",
       TrangThai: "Chờ hoàn thành",
+      GhiChu: "Khách hàng yêu cầu cắt ngắn",
     },
     {
       MaKH: "KH002",
@@ -136,11 +134,6 @@ const Appointments = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleEdit = (appointment) => {
-    setSelectedAppointment(appointment);
-    setIsModalOpen(true);
-  };
-
   const handleDelete = (maLH) => {
     setAppointments(appointments.filter((app) => app.MaLH !== maLH));
     toast({
@@ -150,27 +143,6 @@ const Appointments = () => {
       duration: 3000,
       isClosable: true,
     });
-  };
-
-  const handleSubmit = (formData) => {
-    if (selectedAppointment) {
-      // Update existing appointment
-      setAppointments(
-        appointments.map((app) =>
-          app.MaLH === selectedAppointment.MaLH ? { ...formData, MaLH: selectedAppointment.MaLH } : app
-        )
-      );
-    } else {
-      // Add new appointment
-      const maxNumber = appointments.reduce((max, app) => {
-        const num = parseInt(app.MaLH.replace('LH', ''));
-        return num > max ? num : max;
-      }, 0);
-      const newNumber = (maxNumber + 1).toString().padStart(3, '0');
-      const newMaLH = `LH${newNumber}`;
-      setAppointments([...appointments, { ...formData, MaLH: newMaLH }]);
-    }
-    setIsModalOpen(false);
   };
 
   const filteredAppointments = appointments
@@ -205,47 +177,24 @@ const Appointments = () => {
           <Input placeholder="Tìm kiếm lịch hẹn" onChange={handleSearchChange} />
         </InputGroup>
 
-        <Flex gap={2}>
-          <Button
-            leftIcon={<FiFilter />}
-            colorScheme={showOnlyPending ? "blue" : "gray"}
-            color="white"
-            borderRadius="md"
-            px={5}
-            onClick={() => setShowOnlyPending(!showOnlyPending)}
-          >
-            Lọc trạng thái
-          </Button>
-
-          <Button
-            leftIcon={<FiPlus />}
-            colorScheme="blue"
-            color="white"
-            borderRadius="md"
-            px={5}
-            onClick={() => setIsModalOpen(true)}
-          >
-            Thêm lịch hẹn
-          </Button>
-        </Flex>
+        <Button
+          leftIcon={<FiFilter />}
+          colorScheme={showOnlyPending ? "blue" : "gray"}
+          color="white"
+          borderRadius="md"
+          px={5}
+          onClick={() => setShowOnlyPending(!showOnlyPending)}
+        >
+          Lọc trạng thái
+        </Button>
       </Flex>
 
       <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
         <AppointmentTable
           appointments={filteredAppointments}
-          onEditAppointment={handleEdit}
           onDeleteAppointment={handleDelete}
-          showMaKH={true}
         />
       </Box>
-
-      <AppointmentFormDrawer
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        appointment={selectedAppointment}
-        onSubmit={handleSubmit}
-        isManager={true}
-      />
     </Box>
   );
 };

@@ -21,3 +21,4 @@ class ChiTietHoaDon(models.Model):
 
     def __str__(self):
         return f"CTHD {self.MaCTHD} - HĐ {self.MaHD.id}"
+

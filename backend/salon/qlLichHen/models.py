@@ -1,18 +1,18 @@
 from django.db import models
 from qlKhachHang.models import KhachHang
 from qlDichVu.models import DichVu
+from qlNhanVien.models import LichLamViec
 
 class LichHen(models.Model):
     MaLH = models.AutoField(primary_key=True)
-    MaKH = models.CharField(max_length=20)  # Mã khách hàng
-    TenKH = models.CharField(max_length=100)  # Tên khách hàng
-    SDT = models.CharField(max_length=20)  # Số điện thoại
-    TGHen = models.CharField(max_length=20)  # Thời gian hẹn (có thể dùng DateField nếu muốn)
-    GioKhachDen = models.CharField(max_length=10)  # Giờ khách đến
-    LoaiDV = models.CharField(max_length=100)  # Loại dịch vụ
-    NhanVien = models.CharField(max_length=100)  # Nhân viên phụ trách
-    TrangThai = models.CharField(max_length=50)  # Trạng thái
+    MaKH = models.ForeignKey(KhachHang, on_delete=models.CASCADE, related_name='lich_hen')
+    MaDV = models.ForeignKey(DichVu, on_delete=models.CASCADE, related_name='lich_hen')
+    MaLLV = models.ForeignKey(LichLamViec, on_delete=models.CASCADE, related_name='lich_hen')
+    NgayDatLich = models.DateField()
     GioDatLich = models.TimeField()
+    GioKhachDen = models.TimeField(blank=True, null=True)
+    TrangThai = models.CharField(max_length=50)
+    GhiChu = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"Lịch hẹn {self.MaLH} - {self.TenKH}"
+        return f"Lịch hẹn {self.MaLH} - {self.MaKH.HoTenKH}"
