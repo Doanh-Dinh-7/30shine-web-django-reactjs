@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import NhanVienViewSet, LichLamViecViewSet
 
 router = DefaultRouter()
-router.register(r'', NhanVienViewSet, basename='nhanvien')
+router.register(r'nhan-vien', NhanVienViewSet, basename='nhanvien')
 router.register(r'lich-lam-viec', LichLamViecViewSet, basename='lichlamviec')
 
 urlpatterns = [
