@@ -81,7 +81,7 @@ def create_sample_data():
             MaLLV=random.choice(lich_lam_viecs),
             NgayDatLich=datetime.now().date() + timedelta(days=i),
             GioDatLich=datetime.strptime('09:00', '%H:%M').time(),
-            TrangThai='Đã xác nhận'
+            TrangThai=1
         )
 
     # Tạo HoaDon và ChiTietHoaDon
@@ -90,7 +90,7 @@ def create_sample_data():
         hd = HoaDon.objects.create(
             MaKH=kh,
             TongTien=0,
-            TrangThaiTT='Đã thanh toán'
+            TrangThaiTT=0
         )
         
         # Tạo chi tiết hóa đơn

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'qlDichVu',
     'cloudinary',
     'cloudinary_storage',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

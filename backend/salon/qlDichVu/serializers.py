@@ -14,3 +14,4 @@ class DichVuSerializer(serializers.ModelSerializer):
         # Loại bỏ trường danh_gia khỏi validated_data nếu có
         validated_data.pop('danh_gia', None)
         return super().update(instance, validated_data) 
+    
