@@ -5,7 +5,7 @@ class LichHenListSerializer(serializers.ModelSerializer):
     MaKH = serializers.SerializerMethodField()
     TenKH = serializers.SerializerMethodField()
     SDT = serializers.SerializerMethodField()
-    TGHen = serializers.DateField(source='NgayDatLich')
+    NgayDatLich = serializers.DateField(source='NgayDatLich')
     GioKhachDen = serializers.TimeField()
     LoaiDV = serializers.SerializerMethodField()
     NhanVien = serializers.SerializerMethodField()
@@ -15,7 +15,7 @@ class LichHenListSerializer(serializers.ModelSerializer):
     class Meta:
         model = LichHen
         fields = [
-            'MaLH', 'MaKH', 'MaNV', 'TenKH', 'SDT', 'TGHen', 'GioKhachDen',
+            'MaLH', 'MaKH', 'MaNV', 'TenKH', 'SDT', 'NgayDatLich', 'GioKhachDen',
             'LoaiDV', 'NhanVien', 'TrangThai', 'GioDatLich'
         ]
 
