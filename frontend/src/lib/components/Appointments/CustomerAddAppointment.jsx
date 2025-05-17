@@ -64,6 +64,7 @@ const CustomerAddAppointment = () => {
     LoaiDV: "",
     NhanVien: "",
     TrangThai: "Chờ hoàn thành",
+    GhiChu: "",
   });
 
   // Scroll to top when component mounts
@@ -297,6 +298,16 @@ const CustomerAddAppointment = () => {
                 </option>
               ))}
             </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Ghi chú</FormLabel>
+            <Input
+              name="GhiChu"
+              value={formData.GhiChu}
+              onChange={handleInputChange}
+              placeholder="Nhập ghi chú (nếu có)"
+            />
           </FormControl>
           
           <Button colorScheme="blue" size="lg" onClick={handleSubmit} mt={4}>
