@@ -5,7 +5,7 @@ export const BASE_URL =
 
 export const getAllEmployees = async () => {
   try {
-    const res = await fetch(BASE_URL + "/employees");
+    const res = await fetch(BASE_URL + "/nhan-vien/");
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.error);
@@ -18,7 +18,7 @@ export const getAllEmployees = async () => {
 
 export const getEmployeeDetail = async (employeeId) => {
   try {
-    const res = await fetch(BASE_URL + "/employees/" + employeeId);
+    const res = await fetch(BASE_URL + "/nhan-vien/" + employeeId + "/");
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.error);
@@ -31,7 +31,7 @@ export const getEmployeeDetail = async (employeeId) => {
 
 export const createEmployee = async (employeeData) => {
   try {
-    const res = await fetch(BASE_URL + "/employees", {
+    const res = await fetch(BASE_URL + "/nhan-vien/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ export const createEmployee = async (employeeData) => {
 
 export const updateEmployee = async (employeeId, employeeData) => {
   try {
-    const res = await fetch(BASE_URL + "/employees/" + employeeId, {
+    const res = await fetch(BASE_URL + "/nhan-vien/" + employeeId + "/", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -69,22 +69,9 @@ export const updateEmployee = async (employeeId, employeeData) => {
 
 export const deleteEmployee = async (employeeId) => {
   try {
-    const res = await fetch(BASE_URL + "/employees/" + employeeId, {
+    const res = await fetch(BASE_URL + "/nhan-vien/" + employeeId + "/", {
       method: "DELETE",
     });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error);
-    }
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const getDepartmentList = async () => {
-  try {
-    const res = await fetch(BASE_URL + "/departments");
     const data = await res.json();
     if (!res.ok) {
       throw new Error(data.error);
