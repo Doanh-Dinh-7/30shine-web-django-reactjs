@@ -158,16 +158,16 @@ def create_sample_data():
     #     hd.TongTien = tong_tien
     #     hd.save()
 
-    # # Tạo DanhGia
-    # hoa_dons = HoaDon.objects.all()
-    # for i in range(5):
-    #     DanhGia.objects.create(
-    #         MaKH=random.choice(khach_hangs),
-    #         NoiDung=f'Đánh giá mẫu {i+1}',
-    #         DiemDanhGia=random.randint(3, 5),
-    #         MaDV=random.choice(dich_vus),
-    #         MaHD=random.choice(hoa_dons)
-    #     )
+    # Tạo DanhGia
+    hoa_dons = HoaDon.objects.all()
+    for i in range(5):
+        DanhGia.objects.create(
+            MaKH=random.choice(khach_hangs),
+            NoiDung=f'Đánh giá mẫu {i+1}',
+            DiemDanhGia=random.randint(3, 5),
+            MaDV=random.choice(dich_vus),
+            MaHD=random.choice(hoa_dons)
+        )
 
     # Tạo ThongBao
     nhan_viens = NhanVien.objects.all()

@@ -10,19 +10,23 @@ import {
   Box,
   Flex,
   HStack,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { FiTrash2 } from "react-icons/fi";
+import { FiTrash2, FiFileText } from "react-icons/fi";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import PropTypes from "prop-types";
 import "../../../assets/styles/paginate.css";
+import NoteModal from "./NoteModal";
 
 const AppointmentTable = ({
   appointments,
   onDeleteAppointment,
-  showMaKH,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedNote, setSelectedNote] = useState("");
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const appointmentsPerPage = 5;
   const pageCount = Math.ceil(appointments.length / appointmentsPerPage);
   const startIndex = currentPage * appointmentsPerPage;
@@ -33,14 +37,31 @@ const AppointmentTable = ({
     setCurrentPage(event.selected);
   };
 
+  const handleViewNote = (note, appointmentId) => {
+    setSelectedNote(note);
+    setSelectedAppointmentId(appointmentId);
+    onOpen();
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
-      case "Chờ hoàn thành":
+      case 0:
         return "yellow";
-      case "Đã hoàn thành":
+      case 1:
         return "green";
       default:
         return "gray";
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 0:
+        return "Chờ xác nhận";
+      case 1:
+        return "Đã hoàn thành";
+      default:
+        return "Không xác định";
     }
   };
 
@@ -55,7 +76,6 @@ const AppointmentTable = ({
       >
         <Thead>
           <Tr>
-            {showMaKH && <Th width="100px">Mã khách hàng</Th>}
             <Th width="100px">Mã lịch hẹn</Th>
             <Th width="150px">Tên khách hàng</Th>
             <Th width="120px">Số điện thoại</Th>
@@ -68,23 +88,30 @@ const AppointmentTable = ({
           </Tr>
         </Thead>
         <Tbody>
-          {paginatedAppointments.map((appointment, index) => (
-            <Tr key={index} _hover={{ bg: "gray.100" }}>
-              {showMaKH && <Td width="100px">{appointment.MaKH}</Td>}
+          {paginatedAppointments.map((appointment) => (
+            <Tr key={appointment.MaLH} _hover={{ bg: "gray.100" }}>
               <Td width="100px">{appointment.MaLH}</Td>
-              <Td width="150px">{appointment.TenKH}</Td>
+              <Td width="150px">{appointment.HoTenKH}</Td>
               <Td width="120px">{appointment.SDT}</Td>
-              <Td width="120px">{appointment.TGHen}</Td>
-              <Td width="120px">{appointment.GioKhachDen}</Td>
-              <Td width="150px">{appointment.LoaiDV}</Td>
-              <Td width="150px">{appointment.NhanVien}</Td>
+              <Td width="120px">{new Date(appointment.NgayDatLich).toLocaleDateString('vi-VN')}</Td>
+              <Td width="120px">{appointment.GioKhachDen || 'Chưa đến'}</Td>
+              <Td width="150px">{appointment.TenDV}</Td>
+              <Td width="150px">{appointment.TenNV}</Td>
               <Td width="130px">
                 <Badge colorScheme={getStatusColor(appointment.TrangThai)}>
-                  {appointment.TrangThai}
+                  {getStatusText(appointment.TrangThai)}
                 </Badge>
               </Td>
               <Td width="100px">
                 <HStack spacing={2}>
+                  <IconButton
+                    icon={<FiFileText />}
+                    variant="ghost"
+                    colorScheme="blue"
+                    onClick={() => handleViewNote(appointment.GhiChu || "Không có ghi chú", appointment.MaLH)}
+                    aria-label="View Note"
+                    size="sm"
+                  />
                   <IconButton
                     icon={<FiTrash2 />}
                     variant="ghost"
@@ -99,6 +126,13 @@ const AppointmentTable = ({
           ))}
         </Tbody>
       </Table>
+
+      <NoteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        note={selectedNote}
+        appointmentId={selectedAppointmentId}
+      />
 
       <Flex mt={5} justify="center">
         <ReactPaginate
@@ -127,20 +161,18 @@ const AppointmentTable = ({
 AppointmentTable.propTypes = {
   appointments: PropTypes.arrayOf(
     PropTypes.shape({
-      MaKH: PropTypes.string,
-      MaLH: PropTypes.string.isRequired,
-      TenKH: PropTypes.string.isRequired,
+      MaLH: PropTypes.number.isRequired,
+      HoTenKH: PropTypes.string.isRequired,
       SDT: PropTypes.string.isRequired,
-      TGHen: PropTypes.string.isRequired,
-      GioKhachDen: PropTypes.string.isRequired,
-      LoaiDV: PropTypes.string.isRequired,
-      NhanVien: PropTypes.string.isRequired,
-      TrangThai: PropTypes.string.isRequired,
+      NgayDatLich: PropTypes.string.isRequired,
+      GioKhachDen: PropTypes.string,
+      TenDV: PropTypes.string.isRequired,
+      TenNV: PropTypes.string.isRequired,
+      TrangThai: PropTypes.number.isRequired,
+      GhiChu: PropTypes.string,
     })
   ).isRequired,
-  onEditAppointment: PropTypes.func.isRequired,
   onDeleteAppointment: PropTypes.func.isRequired,
-  showMaKH: PropTypes.bool.isRequired,
 };
 
 export default AppointmentTable;

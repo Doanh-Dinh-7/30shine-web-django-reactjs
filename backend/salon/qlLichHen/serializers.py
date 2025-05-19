@@ -9,9 +9,23 @@ class LichHenSerializer(serializers.ModelSerializer):
     GioDatLich = serializers.TimeField(required=False)
     TrangThai = serializers.IntegerField(required=False)
     GhiChu = serializers.CharField(required=False)
+    
+    # Thêm các trường hiển thị
+    HoTenKH = serializers.CharField(source='MaKH.HoTenKH', read_only=True)
+    SDT = serializers.CharField(source='MaKH.SDT', read_only=True)
+    TenDV = serializers.CharField(source='MaDV.TenDV', read_only=True)
+    TenNV = serializers.CharField(source='MaLLV.MaNV.HoTenNV', read_only=True)
+
     class Meta:
         model = LichHen
-        fields = ['MaLH', 'MaKH', 'MaDV', 'MaLLV', 'NgayDatLich', 'GioDatLich', 'GioKhachDen', 'TrangThai', 'GhiChu'] 
+        fields = [
+            # Các trường gốc của model
+            'MaLH', 'MaKH', 'MaDV', 'MaLLV',
+            'NgayDatLich', 'GioDatLich', 'GioKhachDen',
+            'TrangThai', 'GhiChu',
+            # Các trường hiển thị thêm
+            'HoTenKH', 'SDT', 'TenDV', 'TenNV'
+        ]
 
     def create(self, validated_data):
         # Lấy MaLLV
@@ -29,17 +43,29 @@ class LichHenSerializer(serializers.ModelSerializer):
                 if llv.GioBatDau and llv.GioKetThuc:
                     if not (llv.GioBatDau <= gio_khach_den <= llv.GioKetThuc):
                         raise serializers.ValidationError({'GioKhachDen': f'Giờ khách đến phải nằm trong khoảng {llv.GioBatDau} đến {llv.GioKetThuc}.'})
-            # Kiểm tra khoảng cách 60 phút với các lịch hẹn trước đó cùng MaLLV và TrangThai=0
-            lich_hen_truoc = LichHen.objects.filter(MaLLV=ma_llv, TrangThai=0, NgayDatLich=ngay_dat_lich).order_by('GioKhachDen')
-            if lich_hen_truoc.exists():
-                lh_cu = lich_hen_truoc.first()
-                gio_cu = lh_cu.GioKhachDen
-                gio_moi = validated_data.get('GioKhachDen') or timezone.now().time()
-                # Chuyển sang datetime để so sánh
-                dt_cu = datetime.combine(ngay_dat_lich, gio_cu)
-                dt_moi = datetime.combine(ngay_dat_lich, gio_moi)
-                if abs((dt_moi - dt_cu).total_seconds()) < 3600:
-                    raise serializers.ValidationError({'GioKhachDen': 'Lịch hẹn mới phải cách lịch hẹn trước đó ít nhất 60 phút.'})
+            
+            # Kiểm tra khoảng cách 60 phút trước và sau với các lịch hẹn trước đó
+            gio_moi = validated_data.get('GioKhachDen') or timezone.now().time()
+            dt_moi = datetime.combine(ngay_dat_lich, gio_moi)
+            
+            # Tính thời gian bắt đầu và kết thúc của khoảng thời gian cần kiểm tra
+            dt_bat_dau = dt_moi - timedelta(minutes=60)
+            dt_ket_thuc = dt_moi + timedelta(minutes=60)
+            
+            # Kiểm tra xem có lịch hẹn nào trong khoảng thời gian này không
+            lich_hen_trung = LichHen.objects.filter(
+                MaLLV=ma_llv,
+                TrangThai=0,
+                NgayDatLich=ngay_dat_lich,
+                GioKhachDen__gte=dt_bat_dau.time(),
+                GioKhachDen__lte=dt_ket_thuc.time()
+            ).exists()
+            
+            if lich_hen_trung:
+                raise serializers.ValidationError({
+                    'GioKhachDen': 'Nhân viên đã có lịch hẹn trong khoảng thời gian 1 tiếng'
+                })
+
         # Xử lý mặc định
         if 'GioDatLich' not in validated_data or validated_data['GioDatLich'] is None:
             validated_data['GioDatLich'] = timezone.now().time()
