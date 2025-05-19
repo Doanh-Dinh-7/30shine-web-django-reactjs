@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from qlDanhGia.models import DanhGia
 from qlDanhGia.serializers import DanhGiaSerializer
+from rest_framework import status
 
 # Create your views here.
 
@@ -24,3 +25,12 @@ class DichVuViewSet(viewsets.ModelViewSet):
             dv_data['danh_gia'] = danh_gia_data
             data.append(dv_data)
         return Response(data)
+
+    @action(detail=True, methods=['delete'], url_path='delete')
+    def delete_dichvu(self, request, pk=None):
+        try:
+            dichvu = self.get_object()
+            dichvu.delete()
+            return Response({'message': 'Xoá dịch vụ thành công!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'message': f'Xoá dịch vụ thất bại: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)

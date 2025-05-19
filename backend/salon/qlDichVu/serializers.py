@@ -1,42 +1,17 @@
 from rest_framework import serializers
 from .models import DichVu
-from qlDanhGia.models import DanhGia
 from qlDanhGia.serializers import DanhGiaSerializer
 
 class DichVuSerializer(serializers.ModelSerializer):
-    GiaTienFormatted = serializers.SerializerMethodField()
-    ThoiGianFormatted = serializers.SerializerMethodField()
-    danh_gia = serializers.SerializerMethodField()
-
+    danh_gia = DanhGiaSerializer(source='danh_gia_set', many=True, read_only=True)
+    
     class Meta:
         model = DichVu
-        fields = [
-            'MaDV', 
-            'TenDV', 
-            'MoTa', 
-            'GiaTien', 
-            'GiaTienFormatted',
-            'ThoiGianLamDV',
-            'ThoiGianFormatted',
-            'AnhDichVu',
-            'danh_gia'
-        ]
+        fields = ['MaDV', 'TenDV', 'MoTa', 'GiaTien', 'ThoiGianLamDV', 'AnhDaiDien', 'danh_gia']
+        read_only_fields = ['MaDV']  # MaDV là khóa chính nên chỉ đọc
 
-    def get_GiaTienFormatted(self, obj):
-        """Format giá tiền theo định dạng tiền tệ Việt Nam"""
-        return f"{obj.GiaTien:,.0f} VNĐ"
-
-    def get_ThoiGianFormatted(self, obj):
-        """Format thời gian làm dịch vụ"""
-        if obj.ThoiGianLamDV < 60:
-            return f"{obj.ThoiGianLamDV} phút"
-        else:
-            hours = obj.ThoiGianLamDV // 60
-            minutes = obj.ThoiGianLamDV % 60
-            if minutes == 0:
-                return f"{hours} giờ"
-            return f"{hours} giờ {minutes} phút"
-
-    def get_danh_gia(self, obj):
-        qs = DanhGia.objects.filter(MaDV=obj, DiemDanhGia__gte=3.5).order_by('-NgayDanhGia')[:5]
-        return DanhGiaSerializer(qs, many=True).data 
+    def update(self, instance, validated_data):
+        # Loại bỏ trường danh_gia khỏi validated_data nếu có
+        validated_data.pop('danh_gia', None)
+        return super().update(instance, validated_data) 
+    

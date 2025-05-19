@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Input,
@@ -8,156 +8,82 @@ import {
   Button,
   Heading,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { FiSearch, FiFilter } from "react-icons/fi";
 import AppointmentTable from "../lib/components/Appointments/AppointmentTable";
+import axios from "axios";
 
 const Appointments = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showOnlyPending, setShowOnlyPending] = useState(false);
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
-  const [appointments, setAppointments] = useState([
-    {
-      MaKH: "KH001",
-      MaLH: "LH001",
-      TenKH: "Nguyễn Văn An",
-      SDT: "0912345678",
-      TGHen: "2024-03-22",
-      GioKhachDen: "09:30",
-      LoaiDV: "Cắt tóc nam",
-      NhanVien: "Nguyễn Văn A",
-      TrangThai: "Chờ hoàn thành",
-      GhiChu: "Khách hàng yêu cầu cắt ngắn",
-    },
-    {
-      MaKH: "KH002",
-      MaLH: "LH002",
-      TenKH: "Trần Thị Bình",
-      SDT: "0923456789",
-      TGHen: "2024-03-22",
-      GioKhachDen: "10:00",
-      LoaiDV: "Nhuộm tóc",
-      NhanVien: "Trần Thị B",
-      TrangThai: "Chờ hoàn thành",
-    },
-    {
-      MaKH: "KH001",
-      MaLH: "LH003",
-      TenKH: "Nguyễn Văn An",
-      SDT: "0912345678",
-      TGHen: "2024-03-21",
-      GioKhachDen: "14:30",
-      LoaiDV: "Combo cắt gội",
-      NhanVien: "Phạm Văn C",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH003",
-      MaLH: "LH004",
-      TenKH: "Phạm Thị Dung",
-      SDT: "0945678901",
-      TGHen: "2024-03-21",
-      GioKhachDen: "15:00",
-      LoaiDV: "Uốn tóc",
-      NhanVien: "Nguyễn Văn D",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH004",
-      MaLH: "LH005",
-      TenKH: "Hoàng Văn Em",
-      SDT: "0956789012",
-      TGHen: "2024-03-20",
-      GioKhachDen: "13:30",
-      LoaiDV: "Gội đầu",
-      NhanVien: "Trần Thị E",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH002",
-      MaLH: "LH006",
-      TenKH: "Trần Thị Bình",
-      SDT: "0923456789",
-      TGHen: "2024-03-20",
-      GioKhachDen: "14:00",
-      LoaiDV: "Nhuộm tóc",
-      NhanVien: "Trần Thị F",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH005",
-      MaLH: "LH007",
-      TenKH: "Vũ Văn Giang",
-      SDT: "0978901234",
-      TGHen: "2024-03-19",
-      GioKhachDen: "16:00",
-      LoaiDV: "Cắt tóc nam",
-      NhanVien: "Nguyễn Văn G",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH006",
-      MaLH: "LH008",
-      TenKH: "Đỗ Thị Hương",
-      SDT: "0989012345",
-      TGHen: "2024-03-19",
-      GioKhachDen: "16:30",
-      LoaiDV: "Uốn tóc",
-      NhanVien: "Trần Thị H",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH007",
-      MaLH: "LH009",
-      TenKH: "Bùi Văn Khoa",
-      SDT: "0990123456",
-      TGHen: "2024-03-18",
-      GioKhachDen: "11:00",
-      LoaiDV: "Combo cắt gội",
-      NhanVien: "Nguyễn Văn I",
-      TrangThai: "Đã hoàn thành",
-    },
-    {
-      MaKH: "KH008",
-      MaLH: "LH010",
-      TenKH: "Lý Thị Mai",
-      SDT: "0912345679",
-      TGHen: "2024-03-18",
-      GioKhachDen: "11:30",
-      LoaiDV: "Nhuộm tóc",
-      NhanVien: "Trần Thị J",
-      TrangThai: "Đã hoàn thành",
+  const [appointments, setAppointments] = useState([]);
+
+  // Hàm lấy dữ liệu từ API
+  const fetchAppointments = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://localhost:8000/api/lich-hen/');
+      setAppointments(response.data);
+    } catch (error) {
+      toast({
+        title: "Lỗi khi tải dữ liệu",
+        description: "Không thể kết nối đến máy chủ",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  // Gọi API khi component mount
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  const handleDelete = (maLH) => {
-    setAppointments(appointments.filter((app) => app.MaLH !== maLH));
-    toast({
-      title: "Xóa thành công",
-      description: "Lịch hẹn đã được xóa",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+  const handleDelete = async (maLH) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/lich-hen/${maLH}/`);
+      setAppointments(appointments.filter((app) => app.MaLH !== maLH));
+      toast({
+        title: "Xóa thành công",
+        description: "Lịch hẹn đã được xóa",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Lỗi khi xóa",
+        description: "Không thể xóa lịch hẹn",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const filteredAppointments = appointments
     .filter(
       (appointment) =>
-        appointment.TenKH.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        appointment.HoTenKH.toLowerCase().includes(searchQuery.toLowerCase()) ||
         appointment.SDT.includes(searchQuery) ||
-        appointment.LoaiDV.toLowerCase().includes(searchQuery.toLowerCase())
+        appointment.TenDV.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .filter((appointment) => 
-      !showOnlyPending || appointment.TrangThai === "Chờ hoàn thành"
+      !showOnlyPending || appointment.TrangThai === 0
     )
     .sort((a, b) => {
-      const dateTimeA = `${a.TGHen} ${a.GioKhachDen}`;
-      const dateTimeB = `${b.TGHen} ${b.GioKhachDen}`;
+      const dateTimeA = `${a.NgayDatLich} ${a.GioKhachDen}`;
+      const dateTimeB = `${b.NgayDatLich} ${b.GioKhachDen}`;
       return new Date(dateTimeB) - new Date(dateTimeA);
     });
 
@@ -190,10 +116,16 @@ const Appointments = () => {
       </Flex>
 
       <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
-        <AppointmentTable
-          appointments={filteredAppointments}
-          onDeleteAppointment={handleDelete}
-        />
+        {loading ? (
+          <Flex justify="center" align="center" h="200px">
+            <Spinner size="xl" color="blue.500" />
+          </Flex>
+        ) : (
+          <AppointmentTable
+            appointments={filteredAppointments}
+            onDeleteAppointment={handleDelete}
+          />
+        )}
       </Box>
     </Box>
   );

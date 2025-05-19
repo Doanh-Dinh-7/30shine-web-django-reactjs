@@ -45,12 +45,23 @@ const AppointmentTable = ({
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Chờ hoàn thành":
+      case 0:
         return "yellow";
-      case "Đã hoàn thành":
+      case 1:
         return "green";
       default:
         return "gray";
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 0:
+        return "Chờ xác nhận";
+      case 1:
+        return "Đã hoàn thành";
+      default:
+        return "Không xác định";
     }
   };
 
@@ -77,18 +88,18 @@ const AppointmentTable = ({
           </Tr>
         </Thead>
         <Tbody>
-          {paginatedAppointments.map((appointment, index) => (
-            <Tr key={index} _hover={{ bg: "gray.100" }}>
+          {paginatedAppointments.map((appointment) => (
+            <Tr key={appointment.MaLH} _hover={{ bg: "gray.100" }}>
               <Td width="100px">{appointment.MaLH}</Td>
-              <Td width="150px">{appointment.TenKH}</Td>
+              <Td width="150px">{appointment.HoTenKH}</Td>
               <Td width="120px">{appointment.SDT}</Td>
-              <Td width="120px">{appointment.TGHen}</Td>
-              <Td width="120px">{appointment.GioKhachDen}</Td>
-              <Td width="150px">{appointment.LoaiDV}</Td>
-              <Td width="150px">{appointment.NhanVien}</Td>
+              <Td width="120px">{new Date(appointment.NgayDatLich).toLocaleDateString('vi-VN')}</Td>
+              <Td width="120px">{appointment.GioKhachDen || 'Chưa đến'}</Td>
+              <Td width="150px">{appointment.TenDV}</Td>
+              <Td width="150px">{appointment.TenNV}</Td>
               <Td width="130px">
                 <Badge colorScheme={getStatusColor(appointment.TrangThai)}>
-                  {appointment.TrangThai}
+                  {getStatusText(appointment.TrangThai)}
                 </Badge>
               </Td>
               <Td width="100px">
@@ -150,14 +161,14 @@ const AppointmentTable = ({
 AppointmentTable.propTypes = {
   appointments: PropTypes.arrayOf(
     PropTypes.shape({
-      MaLH: PropTypes.string.isRequired,
-      TenKH: PropTypes.string.isRequired,
+      MaLH: PropTypes.number.isRequired,
+      HoTenKH: PropTypes.string.isRequired,
       SDT: PropTypes.string.isRequired,
-      TGHen: PropTypes.string.isRequired,
-      GioKhachDen: PropTypes.string.isRequired,
-      LoaiDV: PropTypes.string.isRequired,
-      NhanVien: PropTypes.string.isRequired,
-      TrangThai: PropTypes.string.isRequired,
+      NgayDatLich: PropTypes.string.isRequired,
+      GioKhachDen: PropTypes.string,
+      TenDV: PropTypes.string.isRequired,
+      TenNV: PropTypes.string.isRequired,
+      TrangThai: PropTypes.number.isRequired,
       GhiChu: PropTypes.string,
     })
   ).isRequired,

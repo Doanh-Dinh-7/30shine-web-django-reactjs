@@ -1,5 +1,41 @@
 # API Endpoint Backend 30Shine
 
+## Tạo dữ liệu mẫu
+Để tạo dữ liệu mẫu cho hệ thống, thực hiện các bước sau:
+
+1. Xóa database hiện tại (nếu có):
+```bash
+cd backend/salon
+del db.sqlite3
+```
+
+2. Tạo migrations:
+```bash
+python manage.py makemigrations
+```
+
+3. Áp dụng migrations:
+```bash
+python manage.py migrate
+```
+
+4. Tạo dữ liệu mẫu:
+```bash
+python create_sample_data.py
+```
+
+Sau khi chạy xong, hệ thống sẽ có:
+- 5 tài khoản khách hàng (username: khachhang1-5, password: password123)
+- 5 tài khoản nhân viên (username: nhanvien1-5, password: password123)
+- 5 dịch vụ mẫu
+- 5 lịch hẹn mẫu
+- 5 hóa đơn mẫu (mỗi hóa đơn có 1-3 chi tiết)
+- 5 đánh giá mẫu
+- 5 thông báo mẫu
+- Lịch làm việc cho mỗi nhân viên trong 5 ngày tiếp theo
+
+Lưu ý: Đảm bảo bạn đang ở trong môi trường ảo (virtual environment) của dự án và đã cài đặt đầy đủ các dependencies trước khi thực hiện các lệnh trên. 
+
 ## 1. Tài khoản (Đăng ký, Đăng nhập)
 - `POST /api/tai-khoan/dang-ky/`
   - Body:
@@ -79,7 +115,7 @@
 - `POST /api/nhan-vien/lich-lam-viec/` : Thêm lịch làm việc mới
   - Body:
     ```json
-    {"MaNV": 1, "NgayLam": "2024-06-01", "CaLam": "Sáng"}
+    {"MaNV": 1, "NgayLam": "2024-06-01", "GioBatDau": "8:00", "GioKetThuc": "12:00"}
     ```
 - `GET /api/nhan-vien/lich-lam-viec/{MaLLV}/` : Xem chi tiết lịch làm việc
 - `PUT /api/nhan-vien/lich-lam-viec/{MaLLV}/` : Sửa lịch làm việc
@@ -193,4 +229,6 @@
       "MaDV": 1,
       "MaHD": 3
     }
-    ``` 
+    ```
+
+---

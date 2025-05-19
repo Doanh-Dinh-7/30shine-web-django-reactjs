@@ -304,7 +304,7 @@ const CustomerAddAppointment = () => {
             <FormLabel>Ghi chú</FormLabel>
             <Input
               name="GhiChu"
-              value={formData.GhiChu}
+              value={formData.GhiChu || ""}
               onChange={handleInputChange}
               placeholder="Nhập ghi chú (nếu có)"
             />
