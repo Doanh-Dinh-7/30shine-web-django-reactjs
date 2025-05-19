@@ -14,35 +14,36 @@ import {
   Tooltip,
   IconButton,
   Flex,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import LoginModal from "../Auth/LoginModal";
 
 const SERVICES = [
   { id: 1, name: "Cắt tóc nam", price: 100000 },
-  { id: 2, name: "Nhuộm tóc", price: 500000 },
-  { id: 3, name: "Combo cắt gội", price: 150000 },
-  { id: 4, name: "Uốn tóc", price: 700000 },
+  { id: 2, name: "Cắt tóc nữ", price: 500000 },
+  { id: 3, name: "Nhuộm tóc toàn bộ", price: 150000 },
+  { id: 4, name: "Uốn tóc tự nhiên", price: 700000 },
 ];
 
 const STAFF_LIST = [
-  { id: "NV001", name: "Nguyễn Văn A" },
-  { id: "NV002", name: "Trần Thị B" },
-  { id: "NV003", name: "Phạm Văn C" },
-  { id: "NV004", name: "Lê Thị D" },
-  { id: "NV005", name: "Hoàng Văn E" },
+  { id: "NV001", name: "Nhân viên 1" },
+  { id: "NV002", name: "Nhân viên 2" },
+  { id: "NV003", name: "Nhân viên 3" },
+  { id: "NV004", name: "Nhân viên 4" },
+  { id: "NV005", name: "Nhân viên 5" },
 ];
 
 const TIME_SLOTS = [
-  ["08h00", "09h00", "10h00", "11h00", "12h00"],
-  ["08h20", "09h20", "10h20", "11h20", "12h20"],
-  ["08h40", "09h40", "10h40", "11h40", "12h40"],
-  ["13h00", "14h00", "15h00", "16h00", "17h00"],
-  ["13h20", "14h20", "15h20", "16h20", "17h20"],
-  ["13h40", "14h40", "15h40", "16h40", "17h40"],
-  ["18h00", "19h00", "20h00", "21h00", "22h00"],
-  ["18h20", "19h20", "20h20", "21h20", "22h20"],
-  ["18h40", "19h40", "20h40", "21h40", "22h40"],
+  ["08h00", "08h20", "08h40", "09h00", "09h20", "09h40"],
+  ["10h00", "10h20", "10h40", "11h00", "11h20", "11h40"],
+  ["12h00", "12h20", "12h40", "13h00", "13h20", "13h40"],
+  ["14h00", "14h20", "14h40", "15h00", "15h20", "15h40"],
+  ["16h00", "16h20", "16h40", "17h00", "17h20", "17h40"],
+  ["18h00", "18h20", "18h40", "19h00", "19h20", "19h40"],
+  ["20h00", "20h20", "20h40", "21h00", "21h20", "21h40"],
+  ["22h00", "22h20", "22h40", "23h00", "23h20", "23h40"],
 ];
 
 const MAX_APPOINTMENTS_PER_SLOT = 2; // Số lượng tối đa lịch hẹn cho mỗi khung giờ
@@ -50,7 +51,11 @@ const MAX_APPOINTMENTS_PER_SLOT = 2; // Số lượng tối đa lịch hẹn cho
 const CustomerAddAppointment = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { appointments, setAppointments } = useOutletContext();
+  const { appointments: rawAppointments, setAppointments } = useOutletContext() || {};
+  const appointments = rawAppointments || [];
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const role = localStorage.getItem("role");
+
   const [formData, setFormData] = useState({
     TenKH: "",
     SDT: "",
@@ -59,6 +64,7 @@ const CustomerAddAppointment = () => {
     LoaiDV: "",
     NhanVien: "",
     TrangThai: "Chờ hoàn thành",
+    GhiChu: "",
   });
 
   // Scroll to top when component mounts
@@ -87,7 +93,21 @@ const CustomerAddAppointment = () => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleDateChange = (e) => {
+    const { value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      TGHen: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!role) {
+      onOpen(); // Mở modal đăng nhập nếu chưa đăng nhập
+      return;
+    }
+
     // Validate form data
     if (
       !formData.TenKH ||
@@ -122,7 +142,9 @@ const CustomerAddAppointment = () => {
     };
 
     // Add new appointment to the list
-    setAppointments([...appointments, newAppointment]);
+    if (setAppointments) {
+      setAppointments([...appointments, newAppointment]);
+    }
 
     toast({
       title: "Thành công",
@@ -132,7 +154,7 @@ const CustomerAddAppointment = () => {
       isClosable: true,
     });
     window.scrollTo(0, 0);
-    navigate("/customerappointments");
+    navigate("/appointments");
   };
 
   return (
@@ -150,6 +172,18 @@ const CustomerAddAppointment = () => {
           Đặt lịch giữ chỗ
         </Heading>
       </Flex>
+
+      {!role && (
+        <Text 
+          color="red.500" 
+          textAlign="center" 
+          fontSize="lg" 
+          fontWeight="bold" 
+          mb={4}
+        >
+          Bạn cần đăng nhập để đặt lịch
+        </Text>
+      )}
 
       <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
         <VStack spacing={4} align="stretch">
@@ -195,27 +229,11 @@ const CustomerAddAppointment = () => {
           </FormControl>
 
           <FormControl isRequired>
-            <FormLabel>Nhân viên phụ trách</FormLabel>
-            <Select
-              name="NhanVien"
-              value={formData.NhanVien}
-              onChange={handleInputChange}
-              placeholder="Chọn nhân viên"
-            >
-              {STAFF_LIST.map((staff) => (
-                <option key={staff.id} value={staff.name}>
-                  {staff.name}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl isRequired>
             <FormLabel>Ngày hẹn</FormLabel>
             <Input
               name="TGHen"
               value={formData.TGHen}
-              onChange={handleInputChange}
+              onChange={handleDateChange}
               type="date"
               min={new Date().toISOString().split("T")[0]}
             />
@@ -225,7 +243,7 @@ const CustomerAddAppointment = () => {
             <FormLabel>Giờ hẹn</FormLabel>
             <VStack spacing={2} align="stretch">
               {TIME_SLOTS.map((row, rowIndex) => (
-                <SimpleGrid key={rowIndex} columns={5} spacing={2}>
+                <SimpleGrid key={rowIndex} columns={6} spacing={2}>
                   {row.map((time) => {
                     const isFull = isTimeSlotFull(time);
                     return (
@@ -266,6 +284,32 @@ const CustomerAddAppointment = () => {
             </VStack>
           </FormControl>
 
+          <FormControl isRequired>
+            <FormLabel>Nhân viên phụ trách</FormLabel>
+            <Select
+              name="NhanVien"
+              value={formData.NhanVien}
+              onChange={handleInputChange}
+              placeholder="Chọn nhân viên"
+            >
+              {STAFF_LIST.map((staff) => (
+                <option key={staff.id} value={staff.name}>
+                  {staff.name}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel>Ghi chú</FormLabel>
+            <Input
+              name="GhiChu"
+              value={formData.GhiChu || ""}
+              onChange={handleInputChange}
+              placeholder="Nhập ghi chú (nếu có)"
+            />
+          </FormControl>
+          
           <Button colorScheme="blue" size="lg" onClick={handleSubmit} mt={4}>
             Đặt lịch
           </Button>
@@ -275,6 +319,15 @@ const CustomerAddAppointment = () => {
       <Box bg="gray.100" p={4} borderRadius="md" textAlign="center" mt={4}>
         <Text>Cắt xong trả tiền, huỷ lịch không sao</Text>
       </Box>
+
+      <LoginModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onLoginSuccess={() => {
+          localStorage.setItem("role", "khach hang");
+          window.location.reload();
+        }}
+      />
     </Box>
   );
 };

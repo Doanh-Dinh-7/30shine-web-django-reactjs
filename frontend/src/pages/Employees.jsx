@@ -11,7 +11,7 @@ import {
   useToast,
   Spinner,
 } from "@chakra-ui/react";
-import { FiSearch, FiPlus } from "react-icons/fi";
+import { FiSearch, FiPlus, FiCalendar } from "react-icons/fi";
 import EmployeeTable from "../lib/components/Employees/EmployeeTable";
 import EmployeeDetail from "../lib/components/Employees/EmployeeDetail";
 import EmployeeFormDrawer from "../lib/components/Employees/EmployeeFormDrawer";
@@ -20,7 +20,7 @@ import {
   getAllEmployees,
   createEmployee,
   updateEmployee,
-} from "../lib/controller/employeesController";
+} from "../lib/service/employees";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -182,6 +182,7 @@ const Employees = () => {
         </InputGroup>
         <Flex gap={3}>
           <Button
+            leftIcon={<FiCalendar />}
             colorScheme="blue"
             color="white"
             borderRadius="md"
@@ -194,6 +195,7 @@ const Employees = () => {
           <Button
             leftIcon={<FiPlus />}
             color="white"
+            colorScheme="blue"
             borderRadius="md"
             px={5}
             onClick={handleAddEmployee}

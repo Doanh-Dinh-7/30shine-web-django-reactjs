@@ -31,13 +31,14 @@ const STAFF_LIST = [
 
 const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManager }) => {
   const [formData, setFormData] = React.useState({
+    MaKH: "",
     TenKH: "",
     SDT: "",
     TGHen: "",
     GioKhachDen: "",
     LoaiDV: "",
     TrangThai: "Chờ hoàn thành",
-    NhanVien: "", // Thêm trường nhân viên
+    NhanVien: "",
   });
 
   const toast = useToast();
@@ -46,23 +47,25 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
   React.useEffect(() => {
     if (appointment) {
       setFormData({
+        MaKH: appointment.MaKH || "",
         TenKH: appointment.TenKH || "",
         SDT: appointment.SDT || "",
         TGHen: appointment.TGHen || "",
         GioKhachDen: appointment.GioKhachDen || "",
         LoaiDV: appointment.LoaiDV || "",
         TrangThai: appointment.TrangThai || "Chờ hoàn thành",
-        NhanVien: appointment.NhanVien || "", // Thêm trường nhân viên
+        NhanVien: appointment.NhanVien || "",
       });
     } else {
       setFormData({
+        MaKH: "",
         TenKH: "",
         SDT: "",
         TGHen: "",
         GioKhachDen: "",
         LoaiDV: "",
         TrangThai: "Chờ hoàn thành",
-        NhanVien: "", // Thêm trường nhân viên
+        NhanVien: "",
       });
     }
   }, [appointment, isManager]);
@@ -141,9 +144,9 @@ const AppointmentFormDrawer = ({ isOpen, onClose, appointment, onSubmit, isManag
                       <FormLabel fontWeight="bold">Mã khách hàng:</FormLabel>
                       <Input
                         name="MaKH"
-                        value={formData.MaKH || ""}
+                        value={formData.MaKH}
                         onChange={handleChange}
-                        placeholder="Nhập mã khách hàng (ví dụ: KH001)"
+                        placeholder="Nhập mã khách hàng"
                       />
                     </FormControl>
                   </GridItem>

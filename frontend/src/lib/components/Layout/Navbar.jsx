@@ -270,7 +270,9 @@ const Navbar = ({ onOpenRegister }) => {
                 </Flex>
               </MenuButton>
               <MenuList>
-                <MenuItem>Thông tin cá nhân</MenuItem>
+                <MenuItem>
+                  <NavLink to={"/profile"}>Thông tin cá nhân</NavLink>
+                </MenuItem>
                 <MenuItem>Đổi mật khẩu</MenuItem>
                 <MenuItem color="red.500" onClick={handleLogout}>
                   Đăng xuất

@@ -31,7 +31,7 @@ const InvoiceEditForm = ({ invoice, onUpdate }) => {
   const handleAddService = () => {
     setFormData((prev) => ({
       ...prev,
-      DichVu: [...(prev.DichVu || []), { tenDichVu: "", soLuong: 1 }]
+      DichVu: [...(prev.DichVu || []), { TenDV: "", SoLuong: 1 }]
     }));
   };
 
@@ -43,7 +43,7 @@ const InvoiceEditForm = ({ invoice, onUpdate }) => {
   const handleSubmit = () => {
     // Validate dịch vụ
     const hasInvalidService = (formData.DichVu || []).some(
-      (dv) => !dv.tenDichVu.trim() || dv.soLuong < 1
+      (dv) => !dv.TenDV.trim() || dv.SoLuong < 1
     );
     if (hasInvalidService) {
       toast({
@@ -75,16 +75,16 @@ const InvoiceEditForm = ({ invoice, onUpdate }) => {
             <HStack key={index} spacing={3}>
               <Input
                 placeholder="Tên dịch vụ"
-                value={dv.tenDichVu}
-                onChange={(e) => handleServiceChange(index, "tenDichVu", e.target.value)}
+                value={dv.TenDV}
+                onChange={(e) => handleServiceChange(index, "TenDV", e.target.value)}
               />
               <Input
                 placeholder="Số lượng"
                 type="number"
                 min={1}
                 maxW="100px"
-                value={dv.soLuong}
-                onChange={(e) => handleServiceChange(index, "soLuong", e.target.value)}
+                value={dv.SoLuong}
+                onChange={(e) => handleServiceChange(index, "SoLuong", e.target.value)}
               />
               {formData.DichVu.length > 1 && (
                 <Button size="sm" colorScheme="red" variant="ghost" onClick={() => handleRemoveService(index)}>

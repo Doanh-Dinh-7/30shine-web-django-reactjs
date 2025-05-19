@@ -1,22 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "../../pages/Error";
-import Home from "../../pages/Home";
 import Employees from "../../pages/Employees";
 import Layout from "../../lib/components/Layout/Layout";
-import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
+import EmployeeScheduleGeneral from "../components/Employees/EmployeeScheduleGeneral";
 import Rating from "../../pages/Rating";
 import Customers from "../../pages/Customers";
-import ServiceAndPrice from "../../pages/ServiceAndPrice";
-import Appointments from "../../pages/Appointments";
-import Invoices from "../../pages/Invoices";
 import HomeWrapper from "./HomeWrapper ";
-import CustomerInvoices from "../../pages/CustomerInvoices";
-import CustomerAppointments from "../../pages/CustomerAppointments";
-import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
 import CustomerAddAppointment from "../components/Appointments/CustomerAddAppointment";
 import AppointmentWrapper from "./AppointmentWrapper";
 import ServiceAndPriceWrapper from "./ServiceAndPrice";
 import InvoiceWrapper from "./InvoiceWrapper";
+import UserProfile from "../../pages/UserProfile";
 
 export const router = createBrowserRouter([
   {
@@ -34,11 +28,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/employees/schedule",
-        element: <EmployeeSchedule />,
-      },
-      {
-        path: "/employees/schedule/:maNV",
-        element: <EmployeeSchedule />,
+        element: <EmployeeScheduleGeneral />,
       },
       {
         path: "/feedback",
@@ -76,6 +66,10 @@ export const router = createBrowserRouter([
       //   path: "/CustomerInvoices",
       //   element: <CustomerInvoices />,
       // },
+      {
+        path: "/profile",
+        element: <UserProfile />,
+      },
     ],
   },
 ]);

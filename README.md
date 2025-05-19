@@ -1,6 +1,10 @@
 # 30shine-web-django-reactjs
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Tác giả:** Đinh Sỹ Quốc Doanh, Nguyễn Anh Tú, Nguyễn Hoàng, Lê Đức Kiên, Lê Nguyễn Ngọc Tú Hương.
+
+"Deployment platform"[https://30shine-web-django-reactjs.vercel.app/]
 
 ## 1. Cấu trúc thư mục dự án
 
@@ -91,7 +95,7 @@
 │   │   │   │   ├── Employees/        # Thư mục chứa component phục vụ trang Employees
 │   │   │   │   └── <span style="color:#5805f0; font-weight:bold;">*Tên trang chính/</span>     <span style="color:#d73a49; font-weight:bold;"># ⚠️ CHÚ Ý/</span>
 │   │   │   │ 
-│   │   │   ├── controller/           # Xử lý API
+│   │   │   ├── service/           # Xử lý API
 │   │   │   ├── router/               # Cấu hình routing
 │   │   │   └── theme/                # Cấu hình giao diện
 │   │   │   
