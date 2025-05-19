@@ -16,31 +16,47 @@ import PaymentDrawer from "../lib/components/Invoices/PaymentDrawer";
 import RefundDrawer from "../lib/components/Invoices/RefundDrawer";
 import RatingModal from "../lib/components/Invoices/CustomerRatingModal";
 import { StarIcon } from "@chakra-ui/icons";
-// Dữ liệu hóa đơn mẫu có review
+
+// Quy ước trạng thái:
+// TrangThaiTT: 0 = Chưa thanh toán, 1 = Đã thanh toán chưa đánh giá, 2 = Đã đánh giá
+// TrangThaiHT: 0 = Chưa hoàn tiền, 1 = Đã yêu cầu, 2 = Đồng ý hoàn tiền, 3 = Từ chối hoàn tiền
+
 const dummyInvoices = [
   {
     MaHD: "HD001",
     NgayLapHD: "14:30 22/05/2025",
-    DịchVu: "Cắt tóc, uốn tóc",
+    DichVu: [
+      { TenDV: "Cắt tóc", SoLuong: 1 },
+      { TenDV: "Uốn tóc", SoLuong: 2 },
+    ],
     TongTien: 100000,
     ChietKhau: 0,
-    TrangThaiTT: "Chưa thanh toán",
+    TrangThaiTT: 0,
+    TrangThaiHT: 0,
   },
   {
     MaHD: "HD002",
     NgayLapHD: "15:30 12/04/2025",
-    DịchVu: "Cắt tóc, uốn tóc",
+    DichVu: [
+      { TenDV: "Cắt tóc", SoLuong: 1 },
+      { TenDV: "Uốn tóc", SoLuong: 1 },
+    ],
     TongTien: 100000,
     ChietKhau: 0,
-    TrangThaiTT: "Chưa thanh toán",
+    TrangThaiTT: 0,
+    TrangThaiHT: 0,
   },
   {
     MaHD: "HD003",
     NgayLapHD: "11:30 03/03/2025",
-    DịchVu: "Cắt tóc, uốn tóc",
+    DichVu: [
+      { TenDV: "Cắt tóc", SoLuong: 1 },
+      { TenDV: "Uốn tóc", SoLuong: 1 },
+    ],
     TongTien: 100000,
     ChietKhau: 0,
-    TrangThaiTT: "Đã thanh toán",
+    TrangThaiTT: 2,
+    TrangThaiHT: 0,
     reviewed: true,
     review: {
       star: 5,
@@ -51,10 +67,11 @@ const dummyInvoices = [
   {
     MaHD: "HD004",
     NgayLapHD: "10:00 01/03/2025",
-    DịchVu: "Cắt tóc",
+    DichVu: [{ TenDV: "Cắt tóc", SoLuong: 1 }],
     TongTien: 80000,
     ChietKhau: 0,
-    TrangThaiTT: "Đã thanh toán",
+    TrangThaiTT: 1,
+    TrangThaiHT: 0,
     reviewed: false,
     review: null,
   },
@@ -96,7 +113,7 @@ const CustomerInvoices = () => {
     setShowQR(true);
     const updated = invoices.map((inv) =>
       inv.MaHD === selectedInvoice.MaHD
-        ? { ...inv, TrangThaiTT: "Đã thanh toán" }
+        ? { ...inv, TrangThaiTT: 1 } // chuyển sang đã thanh toán chưa đánh giá
         : inv
     );
     setInvoices(updated);
@@ -107,7 +124,6 @@ const CustomerInvoices = () => {
     onRefundOpen();
   };
 
-  // Đánh giá hóa đơn
   const openReviewModal = (inv) => {
     setSelectedInvoice(inv);
     setRatingValue(5);
@@ -131,6 +147,7 @@ const CustomerInvoices = () => {
               ...inv,
               reviewed: true,
               review: { star: ratingValue, content: ratingContent },
+              TrangThaiTT: 2, // Đã đánh giá
             }
           : inv
       )
@@ -149,9 +166,10 @@ const CustomerInvoices = () => {
   };
 
   const filteredInvoices = invoices.filter((inv) => {
-    const matchesSearch = inv.DịchVu.toLowerCase().includes(
-      search.toLowerCase()
+    const matchesSearch = inv.DichVu?.some((dv) =>
+      dv.TenDV.toLowerCase().includes(search.toLowerCase())
     );
+
     const [, dateStr] = inv.NgayLapHD.split(" ");
     const [day, month, year] = dateStr.split("/");
 
@@ -229,7 +247,7 @@ const CustomerInvoices = () => {
               <Text fontWeight="bold" mb={2}>
                 {inv.NgayLapHD}
               </Text>
-              {inv.TrangThaiTT === "Đã thanh toán" && (
+              {inv.TrangThaiTT === 1 && (
                 <Text
                   position="absolute"
                   right={4}
@@ -240,56 +258,60 @@ const CustomerInvoices = () => {
                   Đã thanh toán
                 </Text>
               )}
-              <Text>Dịch vụ: {inv.DịchVu}</Text>
+              <Box>
+                <Text fontWeight="semibold">Dịch vụ:</Text>
+                {inv.DichVu?.map((dv, idx) => (
+                  <Text key={idx}>
+                    - {dv.TenDV} (Số lượng: {dv.SoLuong})
+                  </Text>
+                ))}
+              </Box>
               <Text>Chiết khấu: {inv.ChietKhau.toLocaleString()} VND</Text>
               <Text fontWeight="bold">
                 Tổng tiền: {inv.TongTien.toLocaleString()} VND
               </Text>
               {/* Hiển thị đánh giá nếu có */}
-              {inv.TrangThaiTT === "Đã thanh toán" &&
-                inv.reviewed &&
-                inv.review && (
-                  <Box
-                    mt={3}
-                    p={3}
-                    bg="gray.50"
-                    borderRadius="md"
-                    borderWidth={"1px"}
-                    borderColor="yellow.200"
-                  >
-                    <Flex align="center" mb={1}>
-                      {Array(5)
-                        .fill(0)
-                        .map((_, i) => (
-                          <Icon
-                            as={StarIcon}
-                            key={i}
-                            color={
-                              i < inv.review.star ? "yellow.400" : "gray.300"
-                            }
-                            boxSize={5}
-                          />
-                        ))}
-                      <Text ml={2} fontWeight="bold" color="blue.700">
-                        {inv.review.star}/5
-                      </Text>
-                    </Flex>
-                    <Text color="gray.700" fontStyle="italic">
-                      &quot;{inv.review.content}&quot;
+              {inv.TrangThaiTT === 2 && inv.reviewed && inv.review && (
+                <Box
+                  mt={3}
+                  p={3}
+                  bg="gray.50"
+                  borderRadius="md"
+                  borderWidth={"1px"}
+                  borderColor="yellow.200"
+                >
+                  <Flex align="center" mb={1}>
+                    {Array(5)
+                      .fill(0)
+                      .map((_, i) => (
+                        <Icon
+                          as={StarIcon}
+                          key={i}
+                          color={i < inv.review.star ? "yellow.400" : "gray.300"}
+                          boxSize={5}
+                        />
+                      ))}
+                    <Text ml={2} fontWeight="bold" color="blue.700">
+                      {inv.review.star}/5
                     </Text>
-                  </Box>
-                )}
+                  </Flex>
+                  <Text color="gray.700" fontStyle="italic">
+                    &quot;{inv.review.content}&quot;
+                  </Text>
+                </Box>
+              )}
               <Flex gap={3} mt={3}>
-                {inv.TrangThaiTT === "Chưa thanh toán" && (
+                {inv.TrangThaiTT === 0 && (
                   <Button colorScheme="blue" onClick={() => handlePay(inv)}>
                     Thanh toán
                   </Button>
                 )}
-                <Button colorScheme="red" onClick={() => handleRefund(inv)}>
-                  Hoàn tiền
-                </Button>
-                {/* Nếu đã thanh toán và chưa đánh giá thì hiện nút đánh giá */}
-                {inv.TrangThaiTT === "Đã thanh toán" && !inv.reviewed && (
+                {(inv.TrangThaiTT === 1 || inv.TrangThaiTT === 2) && (
+                  <Button colorScheme="red" onClick={() => handleRefund(inv)}>
+                    Hoàn tiền
+                  </Button>
+                )}
+                {inv.TrangThaiTT === 1 && !inv.reviewed && (
                   <Button
                     colorScheme="yellow"
                     onClick={() => openReviewModal(inv)}
@@ -303,7 +325,6 @@ const CustomerInvoices = () => {
         </SimpleGrid>
       </Box>
 
-      {/* Modal đánh giá */}
       <RatingModal
         isOpen={isRatingOpen}
         onClose={() => setRatingOpen(false)}

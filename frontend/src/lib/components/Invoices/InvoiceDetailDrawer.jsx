@@ -7,6 +7,7 @@ import {
   import InvoiceTransaction from "./InvoiceTransaction";
   
   const InvoiceDetailDrawer = ({ isOpen, onClose, invoice, onUpdate }) => {
+    if (!invoice) return null;
     const [tabIndex, setTabIndex] = useState(3); // Mặc định là tab "Chỉnh sửa"
   
     const now = new Date();

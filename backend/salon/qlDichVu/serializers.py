@@ -7,7 +7,7 @@ class DichVuSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = DichVu
-        fields = ['MaDV', 'TenDV', 'MoTa', 'GiaTien', 'ThoiGianLamDV', 'AnhDaiDien', 'danh_gia']
+        fields = ['MaDV', 'TenDV', 'MoTa', 'GiaTien', 'ThoiGianLamDV', 'AnhDaiDien', 'danh_gia']  # AnhDaiDien: đường dẫn ảnh trên Cloudinary
         read_only_fields = ['MaDV']  # MaDV là khóa chính nên chỉ đọc
 
     def update(self, instance, validated_data):

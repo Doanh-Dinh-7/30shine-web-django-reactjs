@@ -2,8 +2,6 @@ import os
 import django
 import random
 from datetime import datetime, timedelta
-from django.utils import timezone
-
 
 # Cấu hình Django settings trước khi import models
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'salon.settings')
@@ -86,36 +84,20 @@ def create_sample_data():
             TrangThai=1
         )
 
-    hinh_thuc_tt_choices = [0, 1, 2]  # tương ứng với Chuyển khoản NH, Tiền mặt, Khác
-    trang_thai_tt_choices = [0, 1, 2]
-    trang_thai_ht_choices = [0, 1, 2, 3]
-
+    # Tạo HoaDon và ChiTietHoaDon
     for i in range(5):
         kh = random.choice(khach_hangs)
-        
-        ngay_lap_hd = timezone.now() - timedelta(days=random.randint(1, 30))
-        thoi_gian_tt = ngay_lap_hd + timedelta(hours=random.randint(1, 48))
-
-        # Khởi tạo hóa đơn với tiền tạm là 0
         hd = HoaDon.objects.create(
             MaKH=kh,
             TongTien=0,
-            NgayLapHD=ngay_lap_hd,
-            SoTienThanhToan=0,
-            HinhThucThanhToan=random.choice(hinh_thuc_tt_choices),
-            ThoiGianThanhToan=thoi_gian_tt,
-            TrangThaiTT=random.choice(trang_thai_tt_choices),
-            TrangThaiHT=random.choice(trang_thai_ht_choices),
-            GhiChu=f"Hoá đơn mẫu số {i+1}"
+            TrangThaiTT=0
         )
         
         # Tạo chi tiết hóa đơn
         tong_tien = 0
-        so_luong_chi_tiet = random.randint(1, 4)  # mỗi hóa đơn có 1-4 chi tiết
-        
-        for _ in range(so_luong_chi_tiet):
+        for _ in range(random.randint(1, 3)):
             dv = random.choice(dich_vus)
-            so_luong = random.randint(1, 3)
+            so_luong = random.randint(1, 2)
             thanh_tien = dv.GiaTien * so_luong
             tong_tien += thanh_tien
             
@@ -126,37 +108,8 @@ def create_sample_data():
                 SoLuong=so_luong
             )
         
-        # Cập nhật lại tổng tiền và số tiền thanh toán (giả sử khách thanh toán toàn bộ)
         hd.TongTien = tong_tien
-        hd.SoTienThanhToan = tong_tien
         hd.save()
-
-    # # Tạo HoaDon và ChiTietHoaDon
-    # for i in range(5):
-    #     kh = random.choice(khach_hangs)
-    #     hd = HoaDon.objects.create(
-    #         MaKH=kh,
-    #         TongTien=0,
-    #         TrangThaiTT=0
-    #     )
-        
-    #     # Tạo chi tiết hóa đơn
-    #     tong_tien = 0
-    #     for _ in range(random.randint(1, 3)):
-    #         dv = random.choice(dich_vus)
-    #         so_luong = random.randint(1, 2)
-    #         thanh_tien = dv.GiaTien * so_luong
-    #         tong_tien += thanh_tien
-            
-    #         ChiTietHoaDon.objects.create(
-    #             MaHD=hd,
-    #             MaDV=dv,
-    #             ThanhTien=thanh_tien,
-    #             SoLuong=so_luong
-    #         )
-        
-    #     hd.TongTien = tong_tien
-    #     hd.save()
 
     # Tạo DanhGia
     hoa_dons = HoaDon.objects.all()

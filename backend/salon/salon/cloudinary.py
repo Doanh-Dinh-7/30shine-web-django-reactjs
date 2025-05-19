@@ -1,15 +1,15 @@
 import cloudinary
 import cloudinary.uploader
-from .settings import settings
+from django.conf import settings
 
 # Configure Cloudinary
 cloudinary.config(
-    cloud_name=settings.CLOUDINARY_CLOUD_NAME,
-    api_key=settings.CLOUDINARY_API_KEY,
-    api_secret=settings.CLOUDINARY_API_SECRET
+    cloud_name=settings.CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=settings.CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=settings.CLOUDINARY_STORAGE['API_SECRET']
 )
 
-async def upload_image(file, folder="social_media"):
+def upload_image(file, folder="social_media"):
     """
     Upload an image to Cloudinary
     
