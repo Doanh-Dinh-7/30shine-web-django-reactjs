@@ -22,8 +22,8 @@ import {
           </HStack>
           {invoice.DichVu && invoice.DichVu.map((dv, index) => (
             <HStack key={index} w="full" justifyContent="space-between">
-              <Text>{dv.tenDichVu}</Text>
-              <Text>Số lượng: {dv.soLuong}</Text>
+              <Text>{dv.TenDV}</Text>
+              <Text>Số lượng: {dv.SoLuong}</Text>
             </HStack>
           ))}
 

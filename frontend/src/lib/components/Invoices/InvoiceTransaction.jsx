@@ -7,42 +7,77 @@ import {
   HStack,
   Radio,
   RadioGroup,
-  Text
+  Text,
+  Select,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const InvoiceTransaction = ({ invoice, onUpdate }) => {
-  const [mode, setMode] = useState("payment"); // "payment" or "refund"
+  const [mode, setMode] = useState("payment"); // "payment" hoặc "refund"
 
   // Payment fields
-  const [soTienTT, setSoTienTT] = useState(invoice?.TongTien || "");
-  const [hinhThucTT, setHinhThucTT] = useState("Chuyển khoản NH");
+  const [soTienThanhToan, setSoTienThanhToan] = useState(
+    invoice?.SoTienThanhToan || invoice?.TongTien || ""
+  );
+  const [hinhThucThanhToan, setHinhThucThanhToan] = useState(
+    invoice?.HinhThucThanhToan || "Chuyển khoản NH"
+  );
   const [ghiChu, setGhiChu] = useState(invoice?.NoiDung || "");
 
   // Refund fields
-  const [lyDoKhachH, setLyDoKhachH] = useState("");
-  const [soTienHoan, setSoTienHoan] = useState(invoice.TongTien || "");
-  const [hinhThucHoan, setHinhThucHoan] = useState("Chuyển khoản NH");
-  const [lyDoQly, setLyDoQly] = useState("");
+  const [lyDoKhachH, setLyDoKhachH] = useState(invoice?.LyDoKhachH || "");
+  const [soTienHoan, setSoTienHoan] = useState(invoice?.TongTien || "");
+  const [hinhThucHoan, setHinhThucHoan] = useState(
+    invoice?.HinhThucHoan || "Chuyển khoản NH"
+  );
+  const [lyDoQly, setLyDoQly] = useState(invoice?.LyDoQly || "");
+  const [trangThaiHoanTien, setTrangThaiHoanTien] = useState(
+    invoice?.TrangThaiHT !== undefined ? invoice.TrangThaiHT : ""
+  );
+  const [thoiGianThanhToan, setThoiGianThanhToan] = useState(
+    invoice?.ThoiGianThanhToan || ""
+  );
+  const [thoiGianHoan, setThoiGianHoan] = useState(invoice?.ThoiGianHoan || "");
+
+  useEffect(() => {
+    setSoTienThanhToan(invoice?.SoTienThanhToan || invoice?.TongTien || "");
+    setHinhThucThanhToan(invoice?.HinhThucThanhToan || "Chuyển khoản NH");
+    setGhiChu(invoice?.NoiDung || "");
+    setLyDoKhachH(invoice?.LyDoKhachH || "");
+    setSoTienHoan(invoice?.TongTien || "");
+    setHinhThucHoan(invoice?.HinhThucHoan || "Chuyển khoản NH");
+    setLyDoQly(invoice?.LyDoQly || "");
+    setTrangThaiHoanTien(
+      invoice?.TrangThaiHT !== undefined ? invoice.TrangThaiHT : ""
+    );
+    setThoiGianThanhToan(invoice?.ThoiGianThanhToan || "");
+    setThoiGianHoan(invoice?.ThoiGianHoan || "");
+  }, [invoice]);
 
   const handleSubmit = () => {
     if (mode === "payment") {
       onUpdate({
         ...invoice,
-        TongTien: soTienTT,
-        HinhThucThanhToan: hinhThucTT,
+        SoTienThanhToan: soTienThanhToan,
+        HinhThucThanhToan: hinhThucThanhToan,
         NoiDung: ghiChu,
-        TrangThaiTT: "đã thanh toán"
+        TrangThaiTT: 1, // đã thanh toán (chưa đánh giá)
+        ThoiGianThanhToan: thoiGianThanhToan || new Date().toISOString(),
       });
     } else {
+      if (trangThaiHoanTien === "") {
+        alert("Vui lòng chọn trạng thái đồng ý hoặc không đồng ý hoàn tiền.");
+        return;
+      }
       onUpdate({
         ...invoice,
-        TrangThaiHT: "đã hoàn",
+        TrangThaiHT: Number(trangThaiHoanTien), // lưu dạng số
         YeuCauHoanTien: true,
         SoTienHoan: soTienHoan,
         HinhThucHoan: hinhThucHoan,
         LyDoKhachH: lyDoKhachH,
-        LyDoQly: lyDoQly
+        LyDoQly: lyDoQly,
+        ThoiGianHoan: thoiGianHoan || new Date().toISOString(),
       });
     }
   };
@@ -61,11 +96,17 @@ const InvoiceTransaction = ({ invoice, onUpdate }) => {
           <Text fontWeight="bold">Xác nhận khách đã thanh toán</Text>
           <FormControl>
             <FormLabel>Số tiền thanh toán</FormLabel>
-            <Input value={soTienTT} onChange={(e) => setSoTienTT(e.target.value)} />
+            <Input
+              value={soTienThanhToan}
+              onChange={(e) => setSoTienThanhToan(e.target.value)}
+            />
           </FormControl>
           <FormControl>
             <FormLabel>Hình thức thanh toán</FormLabel>
-            <Input value={hinhThucTT} onChange={(e) => setHinhThucTT(e.target.value)} />
+            <Input
+              value={hinhThucThanhToan}
+              onChange={(e) => setHinhThucThanhToan(e.target.value)}
+            />
           </FormControl>
           <FormControl>
             <FormLabel>Ghi chú</FormLabel>
@@ -91,10 +132,23 @@ const InvoiceTransaction = ({ invoice, onUpdate }) => {
             <FormLabel>Lý do quản lý</FormLabel>
             <Input value={lyDoQly} onChange={(e) => setLyDoQly(e.target.value)} />
           </FormControl>
+          <FormControl>
+            <FormLabel>Quyết định</FormLabel>
+            <Select
+              placeholder="Chọn trạng thái"
+              value={trangThaiHoanTien}
+              onChange={(e) => setTrangThaiHoanTien(e.target.value)}
+            >
+              <option value={2}>Đồng ý hoàn tiền</option>
+              <option value={3}>Không đồng ý hoàn tiền</option>
+            </Select>
+          </FormControl>
         </>
       )}
 
-      <Button colorScheme="blue" onClick={handleSubmit}>Lưu</Button>
+      <Button colorScheme="blue" onClick={handleSubmit}>
+        Lưu
+      </Button>
     </VStack>
   );
 };
