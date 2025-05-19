@@ -92,16 +92,14 @@ const EmployeeScheduleGeneral = () => {
     const fetchSchedule = async () => {
       setLoading(true);
       try {
-        const from = monday.toISOString().slice(0, 10);
-        const to = sunday.toISOString().slice(0, 10);
         const res = await fetch(
-          `/api/qlNhanVien/lich-lam-viec/?NgayLam__gte=${from}&NgayLam__lte=${to}`
+          "http://127.0.0.1:8000/api/nhan-vien/lich-lam-viec/by-week/?week=0"
         );
         if (!res.ok) throw new Error("Không thể tải lịch làm việc");
         const data = await res.json();
         const empMap = {};
         let colorIdx = 0;
-        for (const item of data) {
+        for (const item of data.data) {
           const maNV = item.MaNV;
           if (!empMap[maNV]) {
             empMap[maNV] = {
@@ -124,6 +122,7 @@ const EmployeeScheduleGeneral = () => {
         }
         if (!ignore) setEmployees(Object.values(empMap));
       } catch (err) {
+        console.log(err);
         if (!ignore) setEmployees([]);
       } finally {
         if (!ignore) setLoading(false);
@@ -133,7 +132,7 @@ const EmployeeScheduleGeneral = () => {
     return () => {
       ignore = true;
     };
-  }, [monday, sunday]);
+  }, []);
 
   // Reload lại tuần hiện tại
   const reloadSchedule = () => {
@@ -152,7 +151,7 @@ const EmployeeScheduleGeneral = () => {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await fetch("/api/qlNhanVien/lich-lam-viec/import-csv/", {
+      const res = await fetch("/api/nhan-vien/lich-lam-viec/import-csv/", {
         method: "POST",
         body: formData,
       });
