@@ -8,12 +8,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email']
 
 class KhachHangSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True )
     Email = serializers.EmailField(required=False)
 
     class Meta:
         model = KhachHang
-        fields = ['MaKH', 'user', 'HoTenKH', 'SDT', 'Email', 'DiaChi', 'AnhDaiDien']
+        fields = ['MaKH', 'user', 'HoTenKH', 'SDT', 'Email', 'DiaChi', 'AnhDaiDien']  # AnhDaiDien: đường dẫn ảnh trên Cloudinary
 
     def create(self, validated_data):
         user_data = validated_data.pop('user', None)
