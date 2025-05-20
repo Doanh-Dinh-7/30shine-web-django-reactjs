@@ -132,7 +132,11 @@ const InvoiceTable = ({
                   </HStack>
                 </Td>
                 <Td>
-                  {(invoice.TrangThaiHT === 2 || invoice.TrangThaiHT === 3) && (
+                  {invoice.TrangThaiHT === 1 ? (
+                    <HStack>
+                      <FaDotCircle color="red" />
+                    </HStack>
+                  ) : (invoice.TrangThaiHT === 2 || invoice.TrangThaiHT === 3) && (
                     <HStack>
                       <FaDotCircle color={invoice.TrangThaiHT === 2 ? "green" : "red"} />
                       <Text fontSize="sm" color={invoice.TrangThaiHT === 2 ? "green.600" : "red.600"}>

@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const trangThaiTTOptions = [
   { value: 0, label: "Chưa thanh toán" },
@@ -46,10 +47,65 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
     TrangThaiTT: 0,
     TrangThaiHT: 0,
     GhiChu: "",
-    chi_tiet: [{ MaDV: 1, TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
+    chi_tiet: [{ TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
   });
-
+  const [services, setServices] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const toast = useToast();
+
+  // Lấy danh sách dịch vụ từ API
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/dich-vu/");
+        setServices(response.data);
+      } catch (error) {
+        toast({
+          title: "Lỗi",
+          description: "Không thể tải danh sách dịch vụ.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+    fetchServices();
+  }, [toast]);
+
+  // Lấy danh sách khách hàng từ API khi mở drawer
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/khach-hang/");
+        setCustomers(response.data);
+      } catch (error) {
+        toast({
+          title: "Lỗi",
+          description: "Không thể tải danh sách khách hàng.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+    fetchCustomers();
+  }, [toast]);
+
+  // Cập nhật HoTenKH khi MaKH thay đổi
+  useEffect(() => {
+    if (formData.MaKH) {
+      const customer = customers.find((c) => c.MaKH === Number(formData.MaKH));
+      setFormData((prev) => ({
+        ...prev,
+        HoTenKH: customer ? customer.HoTenKH : "Khách hàng không tồn tại",
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        HoTenKH: "",
+      }));
+    }
+  }, [formData.MaKH, customers]);
 
   // Tính toán TongTien dựa trên chi_tiet
   const calculateTotal = (chi_tiet) => {
@@ -74,32 +130,35 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: Number(value),
-    }));
+  const handleSelectChange = (index, value) => {
+    const selectedService = services.find((s) => s.TenDV === value);
+    const updatedChiTiet = [...formData.chi_tiet];
+    updatedChiTiet[index] = {
+      ...updatedChiTiet[index],
+      TenDV: value,
+      ThanhTien: selectedService
+        ? (parseFloat(selectedService.GiaTien) * updatedChiTiet[index].SoLuong).toFixed(2)
+        : "0.00",
+    };
+    setFormData((prev) => ({ ...prev, chi_tiet: updatedChiTiet }));
   };
 
   const handleServiceChange = (index, field, value) => {
     const updatedChiTiet = [...formData.chi_tiet];
-    updatedChiTiet[index][field] =
-      field === "SoLuong"
-        ? Number(value)
-        : field === "ThanhTien"
-        ? parseFloat(value).toFixed(2)
-        : value;
+    updatedChiTiet[index][field] = field === "SoLuong" ? Number(value) : value;
+    if (field === "SoLuong") {
+      const selectedService = services.find((s) => s.TenDV === updatedChiTiet[index].TenDV);
+      updatedChiTiet[index].ThanhTien = selectedService
+        ? (parseFloat(selectedService.GiaTien) * Number(value)).toFixed(2)
+        : "0.00";
+    }
     setFormData((prev) => ({ ...prev, chi_tiet: updatedChiTiet }));
   };
 
   const handleAddService = () => {
     setFormData((prev) => ({
       ...prev,
-      chi_tiet: [
-        ...prev.chi_tiet,
-        { MaDV: prev.chi_tiet.length + 1, TenDV: "", ThanhTien: "0.00", SoLuong: 1 },
-      ],
+      chi_tiet: [...prev.chi_tiet, { TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
     }));
   };
 
@@ -119,10 +178,17 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
         dv.SoLuong < 1
     );
 
-    if (!formData.MaKH || !formData.HoTenKH || hasInvalidService) {
+    if (
+      !formData.MaKH ||
+      formData.HoTenKH === "Khách hàng không tồn tại" ||
+      hasInvalidService
+    ) {
       toast({
         title: "Lỗi",
-        description: "Vui lòng nhập đầy đủ thông tin hợp lệ!",
+        description:
+          formData.HoTenKH === "Khách hàng không tồn tại"
+            ? "Khách hàng không tồn tại. Vui lòng kiểm tra Mã khách hàng!"
+            : "Vui lòng nhập đầy đủ thông tin hợp lệ!",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -136,7 +202,6 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
       LyDoKhachH: null,
       LyDoQly: null,
       chi_tiet: formData.chi_tiet.map((dv) => ({
-        MaDV: dv.MaDV,
         TenDV: dv.TenDV,
         ThanhTien: parseFloat(dv.ThanhTien).toFixed(2),
         SoLuong: dv.SoLuong,
@@ -185,18 +250,25 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
             <VStack spacing={5} align="stretch">
               <FormControl isRequired>
                 <HStack>
-                  <FormLabel minW="14vw">Họ và tên khách hàng</FormLabel>
+                  <FormLabel minW="14vw">Mã khách hàng</FormLabel>
                   <Input
-                    name="HoTenKH"
-                    value={formData.HoTenKH}
+                    name="MaKH"
+                    value={formData.MaKH}
                     onChange={handleChange}
+                    type="number"
                   />
                 </HStack>
               </FormControl>
               <FormControl isRequired>
                 <HStack>
-                  <FormLabel minW="14vw">Mã khách hàng</FormLabel>
-                  <Input name="MaKH" value={formData.MaKH} onChange={handleChange} />
+                  <FormLabel minW="14vw">Họ và tên khách hàng</FormLabel>
+                  <Input
+                    name="HoTenKH"
+                    value={formData.HoTenKH}
+                    isReadOnly
+                    bg={formData.HoTenKH === "Khách hàng không tồn tại" ? "red.100" : "gray.100"}
+                    color={formData.HoTenKH === "Khách hàng không tồn tại" ? "red.600" : "black"}
+                  />
                 </HStack>
               </FormControl>
 
@@ -208,21 +280,27 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
                   <VStack spacing={2} flex={1} align="stretch">
                     {formData.chi_tiet.map((dv, index) => (
                       <HStack key={index} spacing={3}>
-                        <Input
-                          placeholder="Tên dịch vụ"
+                        <Select
+                          placeholder="Chọn dịch vụ"
                           value={dv.TenDV}
-                          onChange={(e) =>
-                            handleServiceChange(index, "TenDV", e.target.value)
-                          }
-                        />
+                          onChange={(e) => handleSelectChange(index, e.target.value)}
+                        >
+                          <option value="" disabled>
+                            Chọn dịch vụ
+                          </option>
+                          {services.map((service) => (
+                            <option key={service.MaDV} value={service.TenDV}>
+                              {service.TenDV}
+                            </option>
+                          ))}
+                        </Select>
                         <Input
                           placeholder="Thành tiền"
                           type="number"
                           step="0.01"
                           value={dv.ThanhTien}
-                          onChange={(e) =>
-                            handleServiceChange(index, "ThanhTien", e.target.value)
-                          }
+                          isReadOnly
+                          bg="gray.100"
                         />
                         <Input
                           placeholder="Số lượng"
@@ -285,7 +363,12 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
                   <Select
                     name="TrangThaiTT"
                     value={formData.TrangThaiTT}
-                    onChange={handleSelectChange}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        TrangThaiTT: Number(e.target.value),
+                      }))
+                    }
                     maxW="200px"
                   >
                     {trangThaiTTOptions.map((opt) => (
@@ -303,7 +386,12 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
                   <Select
                     name="TrangThaiHT"
                     value={formData.TrangThaiHT}
-                    onChange={handleSelectChange}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        TrangThaiHT: Number(e.target.value),
+                      }))
+                    }
                     maxW="200px"
                   >
                     {trangThaiHTOptions.map((opt) => (
