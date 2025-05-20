@@ -28,5 +28,6 @@ class DanhGiaViewSet(viewsets.ModelViewSet):
         diem = danh_gia.DiemDanhGia
         thoi_gian = datetime.now()
         noi_dung = f"Khách hàng {ten_khach_hang} đã đánh giá {diem} ⭐"
-        ThongBao.objects.create(NoiDung=noi_dung, ThoiGian=thoi_gian, MaDG=danh_gia.MaDG)
+        ThongBao.objects.create(NoiDung=noi_dung, ThoiGian=thoi_gian, MaDG=danh_gia)
         send_notification(noi_dung) 
+        return Response({"message": "Đánh giá đã được tạo thành công"}, status=status.HTTP_200_OK)

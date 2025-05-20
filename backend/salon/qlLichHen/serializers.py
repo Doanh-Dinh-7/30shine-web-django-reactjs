@@ -6,7 +6,8 @@ from datetime import datetime, timedelta
  
 class LichHenSerializer(serializers.ModelSerializer):
     NgayDatLich = serializers.DateField(required=False)
-    GioDatLich = serializers.TimeField(required=False)
+    GioDatLich = serializers.TimeField(required=False, format='%H:%M:%S')
+    GioKhachDen = serializers.TimeField(required=False, format='%H:%M:%S')
     TrangThai = serializers.IntegerField(required=False)
     GhiChu = serializers.CharField(required=False)
     
