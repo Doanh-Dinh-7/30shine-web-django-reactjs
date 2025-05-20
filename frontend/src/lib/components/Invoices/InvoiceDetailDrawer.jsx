@@ -7,7 +7,6 @@ import {
   DrawerBody,
   Tabs,
   TabList,
-  TabPanels,
   Tab,
   TabPanel,
   Box,
@@ -15,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import InvoiceEditForm from "./InvoiceEditForm";
-import InvoiceTransaction from "./InvoiceTransaction";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 
@@ -64,30 +62,11 @@ const InvoiceDetailDrawer = ({ isOpen, onClose, invoice, onUpdate }) => {
         </Box>
         <DrawerCloseButton />
 
-        <DrawerBody p={0}>
-          <Tabs
-            index={tabIndex}
-            onChange={setTabIndex}
-            isFitted
-            variant="enclosed-colored"
-          >
-            <TabList bg="gray.50">
-              <Tab>🧾 Thanh toán</Tab>
-              <Tab>✏️ Chỉnh sửa</Tab>
-            </TabList>
-
-            <TabPanels>
-              <TabPanel p={6}>
-                <InvoiceTransaction invoice={invoice} onUpdate={onUpdate} />
-              </TabPanel>
-              <TabPanel p={6}>
-                <InvoiceEditForm invoice={invoice} onUpdate={handleUpdate} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+        <DrawerBody p={6}>
+          <InvoiceEditForm invoice={invoice} onUpdate={handleUpdate} />
         </DrawerBody>
-      </DrawerContent>
-    </Drawer>
+      </DrawerBody>
+    </DrawerContent>
   );
 };
 
