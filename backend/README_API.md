@@ -1,5 +1,41 @@
 # API Endpoint Backend 30Shine
 
+## Tạo dữ liệu mẫu
+Để tạo dữ liệu mẫu cho hệ thống, thực hiện các bước sau:
+
+1. Xóa database hiện tại (nếu có):
+```bash
+cd backend/salon
+del db.sqlite3
+```
+
+2. Tạo migrations:
+```bash
+python manage.py makemigrations
+```
+
+3. Áp dụng migrations:
+```bash
+python manage.py migrate
+```
+
+4. Tạo dữ liệu mẫu:
+```bash
+python create_sample_data.py
+```
+
+Sau khi chạy xong, hệ thống sẽ có:
+- 5 tài khoản khách hàng (username: khachhang1-5, password: password123)
+- 5 tài khoản nhân viên (username: nhanvien1-5, password: password123)
+- 5 dịch vụ mẫu
+- 5 lịch hẹn mẫu
+- 5 hóa đơn mẫu (mỗi hóa đơn có 1-3 chi tiết)
+- 5 đánh giá mẫu
+- 5 thông báo mẫu
+- Lịch làm việc cho mỗi nhân viên trong 5 ngày tiếp theo
+
+Lưu ý: Đảm bảo bạn đang ở trong môi trường ảo (virtual environment) của dự án và đã cài đặt đầy đủ các dependencies trước khi thực hiện các lệnh trên. 
+
 ## 1. Tài khoản (Đăng ký, Đăng nhập)
 - `POST /api/tai-khoan/dang-ky/`
   - Body:
@@ -11,6 +47,21 @@
   - Body:
     ```json
     {"username": "user1", "password": "123456"}
+    ```
+
+## 1.1 Đổi mật khẩu
+- `POST /api/tai-khoan/doi-mat-khau/`
+  - Body:
+    ```json
+    {"old_password": "123456", "new_password": "654321"}
+    ```
+
+## 1.2 Thông tin tài khoản (profile)
+- `GET /api/tai-khoan/profile/` : Lấy thông tin tài khoản
+- `PUT /api/tai-khoan/profile/` : Cập nhật thông tin tài khoản
+  - Body ví dụ:
+    ```json
+    {"email": "user1@example.com", "first_name": "A", "last_name": "B"}
     ```
 
 ---
@@ -64,7 +115,7 @@
 - `POST /api/nhan-vien/lich-lam-viec/` : Thêm lịch làm việc mới
   - Body:
     ```json
-    {"MaNV": 1, "NgayLam": "2024-06-01", "CaLam": "Sáng"}
+    {"MaNV": 1, "NgayLam": "2024-06-01", "GioBatDau": "8:00", "GioKetThuc": "12:00"}
     ```
 - `GET /api/nhan-vien/lich-lam-viec/{MaLLV}/` : Xem chi tiết lịch làm việc
 - `PUT /api/nhan-vien/lich-lam-viec/{MaLLV}/` : Sửa lịch làm việc
@@ -81,6 +132,34 @@
 - `GET /api/dich-vu/{MaDV}/` : Xem chi tiết dịch vụ
 - `PUT /api/dich-vu/{MaDV}/` : Sửa dịch vụ
 - `DELETE /api/dich-vu/{MaDV}/` : Xóa dịch vụ
+
+## 5.1 Danh sách dịch vụ kèm đánh giá
+- `GET /api/dich-vu/dichvu_kem_danhgia/` : Lấy danh sách dịch vụ, mỗi dịch vụ có trường `danh_gia` là danh sách các đánh giá (bao gồm tên khách hàng)
+  - Response mẫu:
+    ```json
+    [
+      {
+        "MaDV": 1,
+        "TenDV": "Cắt tóc",
+        "MoTa": "Cắt tóc nam",
+        "GiaTien": 100000,
+        "ThoiGianLamDV": 30,
+        "AnhDaiDien": "...",
+        "danh_gia": [
+          {
+            "MaDG": 1,
+            "MaKH": 2,
+            "ten_khach_hang": "Nguyễn Văn A",
+            "NgayDanhGia": "2024-06-01",
+            "NoiDung": "Rất hài lòng!",
+            "DiemDanhGia": 5,
+            "MaDV": 1,
+            "MaHD": 3
+          }
+        ]
+      }
+    ]
+    ```
 
 ---
 ## 6. Hóa đơn
@@ -133,8 +212,23 @@
 - `POST /api/danh-gia/` : Thêm đánh giá mới
   - Body:
     ```json
-    {"MaKH": 1, "NoiDung": "Rất hài lòng!", "DiemDanhGia": 5}
+    {"MaKH": 1, "NoiDung": "Rất hài lòng!", "DiemDanhGia": 5, "MaDV": 1, "MaHD": 3}
     ```
 - `GET /api/danh-gia/{MaDG}/` : Xem chi tiết đánh giá
 - `PUT /api/danh-gia/{MaDG}/` : Sửa đánh giá
-- `DELETE /api/danh-gia/{MaDG}/` : Xóa đánh giá 
+- `DELETE /api/danh-gia/{MaDG}/` : Xóa đánh giá
+  - Response mẫu:
+    ```json
+    {
+      "MaDG": 1,
+      "MaKH": 1,
+      "ten_khach_hang": "Nguyễn Văn A",
+      "NgayDanhGia": "2024-06-01",
+      "NoiDung": "Rất hài lòng!",
+      "DiemDanhGia": 5,
+      "MaDV": 1,
+      "MaHD": 3
+    }
+    ```
+
+---

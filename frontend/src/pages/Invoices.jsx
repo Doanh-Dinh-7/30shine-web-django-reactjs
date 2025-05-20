@@ -27,49 +27,50 @@ const hoaDonList = [
   {
     MaHD: "HD001",
     MaKH: "KH0001",
-    DichVu: [{ tenDichVu: "Cắt tóc", soLuong: 1 }],
+    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
     TongTien: "200.000",
     ThoiGianThanhToan: "10:00 22/06/2024",
-    TrangThaiTT: "chưa thanh toán",
-    TrangThaiHT: "chưa hoàn",
+    TrangThaiTT: 0, // chưa thanh toán
+    TrangThaiHT: 0, // chưa hoàn
   },
   {
     MaHD: "HD002",
     MaKH: "KH0002",
-    DichVu: [{ tenDichVu: "Cắt tóc", soLuong: 1 }],
+    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
     TongTien: "300.000",
     ThoiGianThanhToan: "9:00 23/02/2025",
-    TrangThaiTT: "chưa thanh toán",
-    TrangThaiHT: "chưa hoàn",
+    TrangThaiTT: 0,
+    TrangThaiHT: 0,
   },
   {
     MaHD: "HD003",
     MaKH: "KH0003",
-    DichVu: [{ tenDichVu: "Cắt tóc", soLuong: 1 }],
+    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
     TongTien: "200.000",
     ThoiGianThanhToan: "12:20 05/02/2025",
-    TrangThaiTT: "chưa thanh toán",
-    TrangThaiHT: "chưa hoàn",
+    TrangThaiTT: 0,
+    TrangThaiHT: 0,
   },
   {
     MaHD: "HD006",
     MaKH: "KH0006",
-    DichVu: [{ tenDichVu: "Cắt tóc", soLuong: 1 }],
+    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
     TongTien: "100.000",
     ThoiGianThanhToan: "16:30 05/02/2025",
-    TrangThaiTT: "đã thanh toán",
-    TrangThaiHT: "chưa hoàn",
+    TrangThaiTT: 1, // đã thanh toán
+    TrangThaiHT: 0,
   },
   {
     MaHD: "HD007",
     MaKH: "KH0007",
-    DichVu: [{ tenDichVu: "Cắt tóc", soLuong: 1 }],
+    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
     TongTien: "300.000",
     ThoiGianThanhToan: "16:30 05/02/2025",
-    TrangThaiTT: "đã thanh toán",
-    TrangThaiHT: "đã hoàn",
+    TrangThaiTT: 1,
+    TrangThaiHT: 2, // đã hoàn
   },
 ];
+
 
 const parseDate = (str) => {
   const [time, date] = str.split(" ");
@@ -249,14 +250,15 @@ const Invoices = () => {
         onSubmit={handleSubmit}
         invoices={invoices}
       />
-      {selectedInvoice && (
+        {selectedInvoice != null && detailDrawer.isOpen && (
         <InvoiceDetailDrawer
           isOpen={detailDrawer.isOpen}
           onClose={detailDrawer.onClose}
           invoice={selectedInvoice}
           onUpdate={handleUpdateFromDetail}
-        />
-      )}
+          />
+        )}
+
       {invoiceToPrint && (
         <Drawer
           isOpen={printDrawer.isOpen}

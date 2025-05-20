@@ -17,13 +17,15 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
-import { deleteEmployee } from "../../controller/employeesController";
+import { FiEye, FiEdit2, FiTrash2, FiCalendar } from "react-icons/fi";
+import { deleteEmployee } from "../../service/employees";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import "../../../assets/styles/paginate.css";
+import { useNavigate } from "react-router-dom";
 
 const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
+  const navigate = useNavigate();
   const toast = useToast();
   const [currentPage, setCurrentPage] = useState(0); // State cho trang hiện tại
   const pageSize = 3; // Số nhân viên mỗi trang (có thể thay đổi)
@@ -79,7 +81,6 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
             <Th>Địa chỉ</Th>
             <Th>Số điện thoại</Th>
             <Th>Tác vụ</Th>
-            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -113,17 +114,16 @@ const EmployeeTable = ({ employees, onViewEmployee, onEditEmployee }) => {
                     isRound
                     onClick={() => onViewEmployee(employee.MaNV)}
                   />
+                  {/* <IconButton
+                    icon={<FiCalendar />}
+                    size="sm"
+                    variant="ghost"
+                    colorScheme="blue"
+                    aria-label="Xem lịch làm việc của nhân viên"
+                    isRound
+                    onClick={() => navigate(`/employees/${employee.MaNV}`)}
+                  /> */}
                 </HStack>
-              </Td>
-              <Td>
-                <Link
-                  href={`/employees/schedule/${employee.MaNV}`}
-                  fontSize="sm"
-                  color="gray.500"
-                  _hover={{ color: "blue.600", textDecoration: "underline" }}
-                >
-                  Xem lịch làm việc
-                </Link>
               </Td>
             </Tr>
           ))}

@@ -8,6 +8,7 @@ class KhachHang(models.Model):
     SDT = models.CharField(max_length=20)
     Email = models.EmailField(max_length=255)
     DiaChi = models.CharField(max_length=255, blank=True, null=True)
+    AnhDaiDien = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.HoTenKH

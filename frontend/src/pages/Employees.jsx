@@ -11,58 +11,19 @@ import {
   useToast,
   Spinner,
 } from "@chakra-ui/react";
-import { FiSearch, FiPlus } from "react-icons/fi";
+import { FiSearch, FiPlus, FiCalendar } from "react-icons/fi";
 import EmployeeTable from "../lib/components/Employees/EmployeeTable";
 import EmployeeDetail from "../lib/components/Employees/EmployeeDetail";
 import EmployeeFormDrawer from "../lib/components/Employees/EmployeeFormDrawer";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   getAllEmployees,
   createEmployee,
   updateEmployee,
-} from "../lib/controller/employeesController";
+} from "../lib/service/employees";
 
 const Employees = () => {
-  // Tạo mockup data nhân viên: MaNV, HoTenNV, SDT, Email, ChucVu.
-  const mockupData = [
-    {
-      MaNV: "NV001",
-      HoTenNV: "Nguyễn Doanh",
-      GioiTinh: 0,
-      DiaChi: "01 An Hoà 4",
-      SDT: "0387631548",
-      Email: "dinhsyquocdoanh@gmail.com",
-      ChucVu: "Nhân viên",
-    },
-    {
-      MaNV: "NV002",
-      HoTenNV: "Nguyễn Anh Tú",
-      GioiTinh: 0,
-      DiaChi: "01 An Hoà 4",
-      SDT: "0387631548",
-      Email: "dinhsyquocdoanh@gmail.com",
-      ChucVu: "Nhân viên",
-    },
-    {
-      MaNV: "NV003",
-      HoTenNV: "Nguyễn Hoàng",
-      GioiTinh: 0,
-      DiaChi: "01 An Hoà 4",
-      SDT: "0387631548",
-      Email: "dinhsyquocdoanh@gmail.com",
-      ChucVu: "Nhân viên",
-    },
-    {
-      MaNV: "NV004",
-      HoTenNV: "Nguyễn Kiên",
-      GioiTinh: 0,
-      DiaChi: "01 An Hoà 4",
-      SDT: "0387631548",
-      Email: "dinhsyquocdoanh@gmail.com",
-      ChucVu: "Nhân viên",
-    },
-  ];
-  const [employees, setEmployees] = useState(mockupData);
+  const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -70,34 +31,35 @@ const Employees = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setFilteredEmployees(employees);
   }, [employees]);
 
-  // // Gọi API lấy danh sách nhân viên
-  // useEffect(() => {
-  //   const fetchEmployees = async () => {
-  //     try {
-  //       const response = await getAllEmployees();
-  //       setEmployees(response);
-  //       setFilteredEmployees(response);
-  //     } catch (error) {
-  //       console.error("Error fetching employees:", error);
-  //       toast({
-  //         title: "Error",
-  //         description: "Cannot load employee list",
-  //         status: "error",
-  //         duration: 3000,
-  //         isClosable: true,
-  //       });
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchEmployees();
-  // }, [toast]);
+  // Gọi API lấy danh sách nhân viên
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      setLoading(true);
+      try {
+        const response = await getAllEmployees();
+        setEmployees(response);
+        setFilteredEmployees(response);
+      } catch (error) {
+        console.error("Error fetching employees:", error);
+        toast({
+          title: "Lỗi",
+          description: "Không thể tải danh sách nhân viên",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEmployees();
+  }, [toast]);
 
   const handleViewEmployee = (employeeId) => {
     setSelectedEmployeeId(employeeId);
@@ -125,20 +87,34 @@ const Employees = () => {
   };
 
   const handleSubmitEmployee = async (formData) => {
-    // try {
-    //   if (selectedEmployee) {
-    //     // Cập nhật nhân viên
-    //     await updateEmployee(selectedEmployee.employeeID, formData);
-    //   } else {
-    //     // Thêm nhân viên mới
-    //     await createEmployee(formData);
-    //   }
-    //   handleCloseFormModal();
-    //   window.location.reload();
-    // } catch (error) {
-    //   console.error("Error submitting employee:", error);
-    //   throw error;
-    // }
+    try {
+      if (selectedEmployee) {
+        // Cập nhật nhân viên
+        await updateEmployee(selectedEmployee.MaNV, formData);
+        toast({ title: "Cập nhật thành công", status: "success" });
+      } else {
+        // Thêm nhân viên mới
+        await createEmployee(formData);
+        toast({ title: "Thêm nhân viên thành công", status: "success" });
+      }
+      handleCloseFormModal();
+      // Reload lại danh sách nhân viên
+      setLoading(true);
+      const response = await getAllEmployees();
+      setEmployees(response);
+      setFilteredEmployees(response);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error submitting employee:", error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể lưu nhân viên",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      throw error;
+    }
   };
 
   const handleSearch = (event) => {
@@ -204,16 +180,29 @@ const Employees = () => {
           </InputLeftElement>
           <Input placeholder="Tìm kiếm nhân viên" onChange={handleSearch} />
         </InputGroup>
-
-        <Button
-          leftIcon={<FiPlus />}
-          color="white"
-          borderRadius="md"
-          px={5}
-          onClick={handleAddEmployee}
-        >
-          Thêm nhân viên
-        </Button>
+        <Flex gap={3}>
+          <Button
+            leftIcon={<FiCalendar />}
+            colorScheme="blue"
+            color="white"
+            borderRadius="md"
+            px={5}
+            fontWeight="bold"
+            onClick={() => navigate("/employees/schedule")}
+          >
+            Xem lịch làm việc
+          </Button>
+          <Button
+            leftIcon={<FiPlus />}
+            color="white"
+            colorScheme="blue"
+            borderRadius="md"
+            px={5}
+            onClick={handleAddEmployee}
+          >
+            Thêm nhân viên
+          </Button>
+        </Flex>
       </Flex>
 
       <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">

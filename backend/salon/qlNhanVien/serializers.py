@@ -29,4 +29,4 @@ class NhanVienSerializer(serializers.ModelSerializer):
 class LichLamViecSerializer(serializers.ModelSerializer):
     class Meta:
         model = LichLamViec
-        fields = ['MaLLV', 'MaNV', 'NgayLam', 'CaLam'] 
+        fields = ['MaLLV', 'MaNV', 'NgayLam', 'GioBatDau', 'GioKetThuc'] 

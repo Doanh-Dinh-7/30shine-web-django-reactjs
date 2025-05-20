@@ -20,10 +20,17 @@ import { FiEye, FiEyeOff, FiLock, FiPhone } from "react-icons/fi";
 import { useState } from "react";
 
 const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
+  const [username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    localStorage.setItem("role", "quan ly");
+    if (username === "admin") {
+      localStorage.setItem("MaNguoiDung", "admin");
+      localStorage.setItem("role", "quan ly");
+    } else {
+      localStorage.setItem("username", "admin");
+      localStorage.setItem("role", "khach hang");
+    }
     onClose();
     window.location.reload();
   };
@@ -52,7 +59,11 @@ const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
               <InputLeftElement pointerEvents="none">
                 <Icon as={FiPhone} color="gray.400" />
               </InputLeftElement>
-              <Input placeholder="Nhập số điện thoại" />
+              <Input
+                placeholder="Nhập số điện thoại"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
             </InputGroup>
           </FormControl>
 

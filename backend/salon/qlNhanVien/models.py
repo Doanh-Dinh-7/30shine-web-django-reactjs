@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from rest_framework import serializers
+from datetime import datetime, timedelta
+from qlDichVu.models import DichVu
 
 class NhanVien(models.Model):
     MaNV = models.AutoField(primary_key=True)
@@ -16,7 +19,8 @@ class LichLamViec(models.Model):
     MaLLV = models.AutoField(primary_key=True)
     MaNV = models.ForeignKey(NhanVien, on_delete=models.CASCADE, related_name='lich_lam_viec')
     NgayLam = models.DateField()
-    CaLam = models.CharField(max_length=50)
+    GioBatDau = models.TimeField(null=True, blank=True)
+    GioKetThuc = models.TimeField(null=True, blank=True)
 
     def __str__(self):
         return f"LLV {self.MaLLV} - NV {self.MaNV.HoTenNV}"

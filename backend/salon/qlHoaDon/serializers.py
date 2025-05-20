@@ -12,10 +12,10 @@ class HoaDonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HoaDon
-        fields = ['id', 'MaKH', 'TongTien', 'NgayLapHD', 'TrangThaiTT', 'GhiChu', 'chi_tiet']
+        fields = ['MaHD', 'MaKH', 'TongTien', 'NgayLapHD', 'TrangThaiTT','TrangThaiHT', 'LyDoKhachH', 'LyDoQly', 'GhiChu', 'chi_tiet']
 
     def create(self, validated_data):
-        chi_tiet_data = validated_data.pop('chi_tiet')
+        chi_tiet_data = validated_data.pop('chi_tiet', [])
         hoa_don = HoaDon.objects.create(**validated_data)
         for ct in chi_tiet_data:
             ChiTietHoaDon.objects.create(MaHD=hoa_don, **ct)

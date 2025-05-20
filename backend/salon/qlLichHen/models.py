@@ -7,6 +7,7 @@ class LichHen(models.Model):
     MaLH = models.AutoField(primary_key=True)
     MaKH = models.ForeignKey(KhachHang, on_delete=models.CASCADE, related_name='lich_hen')
     MaDV = models.ForeignKey(DichVu, on_delete=models.CASCADE, related_name='lich_hen')
+    MaLLV = models.ForeignKey(LichLamViec, on_delete=models.CASCADE, related_name='lich_hen')
     NgayDatLich = models.DateField()
     GioDatLich = models.TimeField()
     GioKhachDen = models.TimeField()

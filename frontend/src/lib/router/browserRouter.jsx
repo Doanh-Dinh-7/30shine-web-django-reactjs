@@ -1,19 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "../../pages/Error";
-import Home from "../../pages/Home";
 import Employees from "../../pages/Employees";
 import Layout from "../../lib/components/Layout/Layout";
-import EmployeeSchedule from "../components/Employees/EmployeeSchedule";
+import EmployeeScheduleGeneral from "../components/Employees/EmployeeScheduleGeneral";
 import Rating from "../../pages/Rating";
 import Customers from "../../pages/Customers";
-import ServiceAndPrice from "../../pages/ServiceAndPrice";
-import Appointments from "../../pages/Appointments";
-import Invoices from "../../pages/Invoices";
 import HomeWrapper from "./HomeWrapper ";
-import CustomerInvoices from "../../lib/components/Invoices/CustomerInvoices";
-import CustomerAppointments from "../../pages/CustomerAppointments";
-import CustomerServiceAndPrice from "../../pages/CustomerServiceAndPrice";
-import AddAppointment from "../../pages/AddAppointment";
+import CustomerAddAppointment from "../components/Appointments/CustomerAddAppointment";
+import AppointmentWrapper from "./AppointmentWrapper";
+import ServiceAndPriceWrapper from "./ServiceAndPrice";
+import InvoiceWrapper from "./InvoiceWrapper";
+import UserProfile from "../../pages/UserProfile";
 
 export const router = createBrowserRouter([
   {
@@ -30,8 +27,8 @@ export const router = createBrowserRouter([
         element: <Employees />,
       },
       {
-        path: "/employees/schedule/:maNV",
-        element: <EmployeeSchedule />,
+        path: "/employees/schedule",
+        element: <EmployeeScheduleGeneral />,
       },
       {
         path: "/feedback",
@@ -43,31 +40,35 @@ export const router = createBrowserRouter([
       },
       {
         path: "/services",
-        element: <ServiceAndPrice />,
+        element: <ServiceAndPriceWrapper />,
       },
+      // {
+      //   path: "/customerservices",
+      //   element: <CustomerServiceAndPrice />,
+      // },
       {
         path: "/appointments",
-        element: <Appointments />,
+        element: <AppointmentWrapper />,
       },
       {
-        path: "/customerappointments",
-        element: <CustomerAppointments />,
+        path: "/appointments/addappointment",
+        element: <CustomerAddAppointment />,
       },
+      // {
+      //   path: "/customerappointments",
+      //   element: <CustomerAppointments />,
+      // },
       {
         path: "/invoices",
-        element: <Invoices />,
+        element: <InvoiceWrapper />,
       },
+      // {
+      //   path: "/CustomerInvoices",
+      //   element: <CustomerInvoices />,
+      // },
       {
-        path: "/CustomerInvoices",
-        element: <CustomerInvoices />
-      },
-      {
-        path: "/customerserviceandprice",
-        element: <CustomerServiceAndPrice />,
-      },
-      {
-        path: "/customerappointments/addappointment",
-        element: <AddAppointment />,
+        path: "/profile",
+        element: <UserProfile />,
       },
     ],
   },

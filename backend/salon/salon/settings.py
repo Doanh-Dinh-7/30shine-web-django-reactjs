@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
-from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,11 +49,16 @@ INSTALLED_APPS = [
     # 'qlSanPham', # Chưa cần
     'qlHoaDon',
     'qlDichVu',
+    'cloudinary',
+    'cloudinary_storage',
+    'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -135,13 +142,22 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME':  str(os.getenv("CLOUDINARY_CLOUD_NAME")),
+    'API_KEY': str(os.getenv("CLOUDINARY_API_KEY")),
+    'API_SECRET': str(os.getenv("CLOUDINARY_API_SECRET")),
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # 60 phút
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+APPEND_SLASH = False
+
+REST_FRAMEWORK = {
+      'DEFAULT_AUTHENTICATION_CLASSES': [
+          'rest_framework_simplejwt.authentication.JWTAuthentication',
+      ],
+  }
+
+# Add CORS settings
+CORS_ALLOW_ALL_ORIGINS = True  # Only for development
+CORS_ALLOW_CREDENTIALS = True

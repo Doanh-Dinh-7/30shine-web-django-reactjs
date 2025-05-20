@@ -15,16 +15,56 @@ const theme = extendTheme({
       100: "#bbbbbb",
       50: "#d9d9d9",
     },
+    blue: {
+      500: "#17408B",
+      600: "#2563EB",
+      700: "#1E40AF",
+      50: "#E5EDFF",
+    },
   },
   components: {
     Button: {
       variants: {
-        solid: {
-          bg: "blue",
-          color: "white",
-          _hover: {
-            bg: "blue.600",
-          },
+        solid: (props) => {
+          const { colorScheme } = props;
+          if (colorScheme === "blue") {
+            return {
+              bg: "blue.500",
+              color: "white",
+              _hover: {
+                bg: "blue.600",
+              },
+            };
+          }
+          if (colorScheme === "green") {
+            return {
+              bg: "green.500",
+              color: "white",
+              _hover: {
+                bg: "green.600",
+              },
+            };
+          }
+          if (colorScheme === "red") {
+            return {
+              bg: "red.500",
+              color: "white",
+              _hover: {
+                bg: "red.600",
+              },
+            };
+          }
+          if (colorScheme === "yellow") {
+            return {
+              bg: "yellow.400",
+              color: "black",
+              _hover: {
+                bg: "yellow.500",
+              },
+            };
+          }
+          // Trả về mặc định để Chakra tự xử lý các colorScheme khác
+          return {};
         },
       },
     },
@@ -37,10 +77,13 @@ const theme = extendTheme({
             textTransform: "none",
             letterSpacing: "normal",
             fontWeight: "medium",
+            // bg: "blue.50",
+            // color: "blue.800",
           },
           td: {
             borderBottom: "1px solid",
             borderColor: "blue.100",
+            // color: "blue.900",
           },
         },
       },

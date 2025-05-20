@@ -50,18 +50,7 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
-        khach_hang = getattr(user, 'khachhang', None)
-        data = {
-            "id": user.id,
-            "username": user.username,
-            "email": khach_hang.Email if khach_hang else user.email,
-            "first_name": user.first_name or (khach_hang.HoTenKH.split(' ')[0] if khach_hang and khach_hang.HoTenKH else ""),
-            "last_name": user.last_name or (" ".join(khach_hang.HoTenKH.split(' ')[1:]) if khach_hang and khach_hang.HoTenKH else ""),
-            "role": "Khách hàng",
-            "sdt": khach_hang.SDT if khach_hang else ""
-        }
-        return Response(data)
+        return Response(UserSerializer(request.user).data)
 
     def put(self, request):
         serializer = UserSerializer(request.user, data=request.data, partial=True)
@@ -121,4 +110,5 @@ class ForgotPasswordView(APIView):
                 user.save()
                 return Response({'success': 'Đã đặt lại mật khẩu thành công qua số điện thoại'})
             return Response({'success': 'Đã xác nhận số điện thoại'})
+
         return Response({'error': 'Phải nhập email hoặc số điện thoại'}, status=400)

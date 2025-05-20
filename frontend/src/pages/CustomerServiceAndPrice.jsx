@@ -30,42 +30,42 @@ const services = [
   {
     TenDV: "Cắt gội khoang thương gia",
     MoTa: ["Combo cắt kỹ", "Combo gội massage"],
-    ThoiGian: "50 Phút",
+    ThoiGian: 55,
     Gia: "350.000đ",
     image: service2,
   },
   {
     TenDV: "Cắt gội Combo 1",
     MoTa: ["Combo cắt kỹ", "Combo gội massage"],
-    ThoiGian: "45 Phút",
+    ThoiGian: 45,
     Gia: "250.000đ",
     image: service3,
   },
   {
     TenDV: "Cắt gội Combo 2",
     MoTa: ["Combo cắt kỹ", "Combo gội massage cổ vai gáy"],
-    ThoiGian: "55 Phút",
+    ThoiGian: 55,
     Gia: "300.000đ",
     image: service4,
   },
   {
     TenDV: "Cắt gội Combo 3",
     MoTa: ["Combo cắt kỹ", "Combo gội massage chăm sóc da"],
-    ThoiGian: "65 Phút",
+    ThoiGian: 65,
     Gia: "400.000đ",
     image: service5,
   },
   {
     TenDV: "Cắt gội Combo 4",
     MoTa: ["Combo cắt kỹ", "Combo gội massage bằng đá nóng"],
-    ThoiGian: "75 Phút",
+    ThoiGian: 75,
     Gia: "450.000đ",
     image: service6,
   },
   {
     TenDV: "Cắt gội Combo 5",
     MoTa: ["Combo cắt kỹ", "Combo gội massage lấy nhân mụn chuyên sâu"],
-    ThoiGian: "75 Phút",
+    ThoiGian: 75,
     Gia: "500.000đ",
     image: service7,
   },
@@ -185,7 +185,7 @@ const CustomerServiceAndPrice = () => {
   const handleBooking = () => {
     // Scroll to top before navigating
     window.scrollTo(0, 0);
-    navigate("/customerappointments/addappointment");
+    navigate("/appointments/addappointment");
   };
 
   const handleOpenReviews = (idx) => {
@@ -256,7 +256,7 @@ const CustomerServiceAndPrice = () => {
                       </Box>
                     }
                   >
-                    {service.ThoiGian}
+                    {service.ThoiGian} Phút
                   </Button>
                   <Text fontSize="lg" fontWeight="bold" color="blue.700">
                     {service.Gia}
@@ -325,11 +325,13 @@ const CustomerServiceAndPrice = () => {
                     </Text>
                     {Array(5)
                       .fill("")
-                      .map((_, j) => (
+                      .map((_, soSao) => (
                         <Icon
                           as={StarIcon}
-                          key={j}
-                          color={j < review.rating ? "yellow.400" : "gray.300"}
+                          key={soSao}
+                          color={
+                            soSao < review.rating ? "yellow.400" : "gray.300"
+                          }
                           boxSize={4}
                         />
                       ))}
