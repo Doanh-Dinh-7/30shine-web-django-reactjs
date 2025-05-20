@@ -4,4 +4,4 @@ from .models import ThongBao
 class ThongBaoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ThongBao
-        fields = ['MaTB', 'MaNV', 'ThoiGian', 'LoaiThongBao', 'NoiDung'] 
+        fields = ['MaTB', 'ThoiGian', 'LoaiThongBao', 'NoiDung', 'MaDG', 'MaLH'] 

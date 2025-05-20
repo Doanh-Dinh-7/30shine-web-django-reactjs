@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from pathlib import Path
 from dotenv import load_dotenv
 import os
+
 
 load_dotenv()
 
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'django_filters',
     'corsheaders',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +164,11 @@ REST_FRAMEWORK = {
 # Add CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  # Only for development
 CORS_ALLOW_CREDENTIALS = True
+
+ASGI_APPLICATION = 'salon.asgi.application'  
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+

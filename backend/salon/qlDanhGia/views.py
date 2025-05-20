@@ -3,6 +3,10 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import DanhGia
 from .serializers import DanhGiaSerializer
+from qlThongBao.models import ThongBao
+from qlThongBao.utils import send_notification
+from datetime import datetime
+
 
 # Create your views here.
 
@@ -17,3 +21,12 @@ class DanhGiaViewSet(viewsets.ModelViewSet):
             {"message": "Đánh giá đã được xoá thành công."},
             status=status.HTTP_200_OK
         )
+
+    def perform_create(self, serializer):
+        danh_gia = serializer.save()
+        ten_khach_hang = danh_gia.MaKH.HoTenKH
+        diem = danh_gia.DiemDanhGia
+        thoi_gian = datetime.now()
+        noi_dung = f"Khách hàng {ten_khach_hang} đã đánh giá {diem} ⭐"
+        ThongBao.objects.create(NoiDung=noi_dung, ThoiGian=thoi_gian, MaDG=danh_gia.MaDG)
+        send_notification(noi_dung) 

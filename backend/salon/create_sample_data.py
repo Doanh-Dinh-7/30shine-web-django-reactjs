@@ -76,12 +76,14 @@ def create_sample_data():
     lich_lam_viecs = LichLamViec.objects.all()
     
     for i in range(5):
+        gio_dat_lich = datetime.strptime('09:00', '%H:%M').time()
         LichHen.objects.create(
             MaKH=random.choice(khach_hangs),
             MaDV=random.choice(dich_vus),
             MaLLV=random.choice(lich_lam_viecs),
             NgayDatLich=datetime.now().date() + timedelta(days=i),
-            GioDatLich=datetime.strptime('09:00', '%H:%M').time(),
+            GioDatLich=gio_dat_lich,
+            GioKhachDen=gio_dat_lich,
             TrangThai=1
         )
 
@@ -159,6 +161,7 @@ def create_sample_data():
 
     # Tạo DanhGia
     hoa_dons = HoaDon.objects.all()
+    
     for i in range(5):
         DanhGia.objects.create(
             MaKH=random.choice(khach_hangs),
@@ -166,15 +169,6 @@ def create_sample_data():
             DiemDanhGia=random.randint(3, 5),
             MaDV=random.choice(dich_vus),
             MaHD=random.choice(hoa_dons)
-        )
-
-    # Tạo ThongBao
-    nhan_viens = NhanVien.objects.all()
-    for i in range(5):
-        ThongBao.objects.create(
-            MaNV=random.choice(nhan_viens),
-            LoaiThongBao='Thông báo mẫu',
-            NoiDung=f'Nội dung thông báo mẫu {i+1}'
         )
 
 if __name__ == '__main__':

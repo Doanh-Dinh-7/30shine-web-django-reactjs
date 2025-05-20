@@ -1,5 +1,46 @@
 # API Endpoint Backend 30Shine
 
+## Chạy project với Daphne (hỗ trợ WebSocket realtime)
+
+1. Cài đặt dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+2. Cài đặt Daphne (nếu chưa có):
+```bash
+pip install daphne
+```
+
+3. Chạy server bằng Daphne:
+```bash
+cd backend/salon
+# Chạy mặc định cổng 8000
+# daphne salon.asgi:application
+# Hoặc chỉ định cổng (ví dụ 8001)
+daphne -p 8000 salon.asgi:application
+```
+
+> **Lưu ý:** KHÔNG dùng `python manage.py runserver` nếu muốn test WebSocket realtime.
+
+---
+
+## WebSocket Thông báo realtime
+
+- **Endpoint:**
+  - `ws://localhost:8000/ws/thongbao/`
+- **Cách sử dụng:**
+  - Kết nối WebSocket tới endpoint trên (bằng Postman, Javascript, v.v)
+  - Khi có lịch hẹn mới, huỷ lịch hẹn, hoặc đánh giá mới, client sẽ nhận được thông báo realtime dạng:
+    ```json
+    {
+      "message": "Khách hàng Nguyễn Văn A đã đặt lịch hẹn lúc 14:00 ngày 2024-06-01"
+    }
+    ```
+  - Thông báo trả về là UTF-8, hiển thị đúng tiếng Việt và emoji ⭐
+
+---
+
 ## Tạo dữ liệu mẫu
 Để tạo dữ liệu mẫu cho hệ thống, thực hiện các bước sau:
 
