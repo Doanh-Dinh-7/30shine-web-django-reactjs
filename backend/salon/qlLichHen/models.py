@@ -10,9 +10,10 @@ class LichHen(models.Model):
     MaLLV = models.ForeignKey(LichLamViec, on_delete=models.CASCADE, related_name='lich_hen')
     NgayDatLich = models.DateField()
     GioDatLich = models.TimeField()
-    GioKhachDen = models.TimeField(blank=True, null=True)
-    TrangThai = models.CharField(max_length=50)
-    GhiChu = models.TextField(blank=True, null=True)
+    GioKhachDen = models.TimeField()
+    TrangThai = models.IntegerField(default=0)  # 0: Chưa xác nhận, 1: Đã hoàn thành
+    GhiChu = models.TextField(default='')
+    MaLLV = models.ForeignKey(LichLamViec, on_delete=models.CASCADE, related_name='lich_hen')
 
     def __str__(self):
         return f"Lịch hẹn {self.MaLH} - {self.MaKH.HoTenKH}"

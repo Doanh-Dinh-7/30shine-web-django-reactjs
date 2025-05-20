@@ -4,7 +4,6 @@ import random
 from datetime import datetime, timedelta
 from django.utils import timezone
 
-
 # Cấu hình Django settings trước khi import models
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'salon.settings')
 django.setup()

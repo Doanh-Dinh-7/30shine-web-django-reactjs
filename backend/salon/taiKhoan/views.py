@@ -110,4 +110,5 @@ class ForgotPasswordView(APIView):
                 user.save()
                 return Response({'success': 'Đã đặt lại mật khẩu thành công qua số điện thoại'})
             return Response({'success': 'Đã xác nhận số điện thoại'})
+
         return Response({'error': 'Phải nhập email hoặc số điện thoại'}, status=400)
