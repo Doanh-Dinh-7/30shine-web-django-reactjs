@@ -51,7 +51,9 @@ const Appointments = () => {
 
   const handleDelete = async (maLH) => {
     try {
-      await axios.delete(`http://localhost:8000/api/lich-hen/${maLH}/`);
+      console.log('Deleting appointment with ID:', maLH);
+      const response = await axios.delete(`http://localhost:8000/api/lich-hen/${maLH}/`);
+      console.log('Delete response:', response);
       setAppointments(appointments.filter((app) => app.MaLH !== maLH));
       toast({
         title: "Xóa thành công",
@@ -61,9 +63,40 @@ const Appointments = () => {
         isClosable: true,
       });
     } catch (error) {
+      console.error('Error deleting appointment:', error);
       toast({
         title: "Lỗi khi xóa",
-        description: "Không thể xóa lịch hẹn",
+        description: error.response?.data?.detail || "Không thể xóa lịch hẹn",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleComplete = async (maLH) => {
+    try {
+      console.log('Completing appointment with ID:', maLH);
+      const response = await axios.post(`http://localhost:8000/api/lich-hen/${maLH}/hoanthanh/`);
+      console.log('Complete response:', response);
+      
+      // Cập nhật trạng thái trong danh sách
+      setAppointments(appointments.map(app => 
+        app.MaLH === maLH ? { ...app, TrangThai: 1 } : app
+      ));
+      
+      toast({
+        title: "Hoàn thành",
+        description: "Lịch hẹn đã được đánh dấu hoàn thành",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error completing appointment:', error);
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.error || "Không thể hoàn thành lịch hẹn",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -124,6 +157,8 @@ const Appointments = () => {
           <AppointmentTable
             appointments={filteredAppointments}
             onDeleteAppointment={handleDelete}
+            onCompleteAppointment={handleComplete}
+            isManager={true}
           />
         )}
       </Box>
