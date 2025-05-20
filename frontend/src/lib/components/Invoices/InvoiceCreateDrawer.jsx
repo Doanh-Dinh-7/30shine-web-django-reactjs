@@ -15,96 +15,63 @@ import {
   VStack,
   useToast,
   Box,
-  HStack
+  HStack,
 } from "@chakra-ui/react";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 const trangThaiTTOptions = [
-  { value: 0, label: "chưa thanh toán" },
-  { value: 1, label: "đã thanh toán" },
-  { value: 2, label: "đã đánh giá" },
+  { value: 0, label: "Chưa thanh toán" },
+  { value: 1, label: "Đã thanh toán" },
+  { value: 2, label: "Đã đánh giá" },
 ];
 
 const trangThaiHTOptions = [
-  { value: 0, label: "chưa hoàn" },
-  { value: 1, label: "đã yêu cầu hoàn" },
-  { value: 2, label: "đã hoàn" },
-  { value: 3, label: "đã từ chối" },
+  { value: 0, label: "Chưa hoàn" },
+  { value: 1, label: "Đã yêu cầu hoàn" },
+  { value: 2, label: "Đã hoàn" },
+  { value: 3, label: "Đã từ chối" },
 ];
 
-const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
-  const formatDateTime = (date) => {
-    const hh = date.getHours().toString().padStart(2, "0");
-    const mm = date.getMinutes().toString().padStart(2, "0");
-    const dd = date.getDate().toString().padStart(2, "0");
-    const MM = (date.getMonth() + 1).toString().padStart(2, "0");
-    const yyyy = date.getFullYear();
-    return `${hh}:${mm} ${dd}/${MM}/${yyyy}`;
+const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
+  const formatDateTime = () => {
+    return new Date().toISOString(); // Định dạng ISO cho NgayLapHD
   };
 
   const [formData, setFormData] = useState({
     MaKH: "",
     HoTenKH: "",
-    GiaTien: "",
-    ChietKhau: "0",
-    TongTien: "",
-    NoiDung: "",
-    DichVu: [{ tenDichVu: "", soLuong: 1 }],
-    TrangThaiTT: 0, // kiểu số
-    TrangThaiHT: 0, // kiểu số
-    ThoiGianThanhToan: formatDateTime(new Date()),
+    TongTien: "0.00",
+    NgayLapHD: formatDateTime(),
+    TrangThaiTT: 0,
+    TrangThaiHT: 0,
+    GhiChu: "",
+    chi_tiet: [{ MaDV: 1, TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
   });
 
   const toast = useToast();
 
+  // Tính toán TongTien dựa trên chi_tiet
+  const calculateTotal = (chi_tiet) => {
+    const total = chi_tiet.reduce((sum, dv) => {
+      const thanhTien = parseFloat(dv.ThanhTien) || 0;
+      const soLuong = dv.SoLuong || 1;
+      return sum + thanhTien * soLuong;
+    }, 0);
+    return total.toFixed(2); // Định dạng số thập phân 2 chữ số
+  };
+
+  // Cập nhật TongTien mỗi khi chi_tiet thay đổi
   useEffect(() => {
-    if (invoice) {
-      setFormData({
-        ...invoice,
-        TrangThaiTT: Number(invoice.TrangThaiTT),
-        TrangThaiHT: Number(invoice.TrangThaiHT),
-      });
-    } else {
-      setFormData({
-        MaHD: "Mới",
-        MaKH: "",
-        HoTenKH: "",
-        GiaTien: "",
-        ChietKhau: "0",
-        TongTien: "",
-        NoiDung: "",
-        DichVu: [{ tenDichVu: "", soLuong: 1 }],
-        TrangThaiTT: 0,
-        TrangThaiHT: 0,
-        ThoiGianThanhToan: formatDateTime(new Date()),
-      });
-    }
-  }, [invoice]);
+    setFormData((prev) => ({
+      ...prev,
+      TongTien: calculateTotal(prev.chi_tiet),
+    }));
+  }, [formData.chi_tiet]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let formattedValue = value;
-
-    if (name === "GiaTien" || name === "ChietKhau") {
-      const numberValue = value.replace(/\D/g, ""); // Bỏ tất cả ký tự không phải số
-      formattedValue = numberValue.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Thêm dấu phẩy
-    }
-
-    setFormData((prev) => {
-      const giaTien = parseInt(
-        name === "GiaTien"
-          ? formattedValue.replace(/,/g, "")
-          : prev.GiaTien.replace(/,/g, "") || 0
-      );
-      const chietKhau = parseInt(
-        name === "ChietKhau"
-          ? formattedValue.replace(/,/g, "")
-          : prev.ChietKhau.replace(/,/g, "") || 0
-      );
-      const tongTien = (giaTien - chietKhau).toLocaleString();
-      return { ...prev, [name]: formattedValue, TongTien: tongTien };
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectChange = (e) => {
@@ -116,57 +83,86 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
   };
 
   const handleServiceChange = (index, field, value) => {
-    const updatedDichVu = [...formData.DichVu];
-    updatedDichVu[index][field] = value;
-    setFormData((prev) => ({ ...prev, DichVu: updatedDichVu }));
+    const updatedChiTiet = [...formData.chi_tiet];
+    updatedChiTiet[index][field] =
+      field === "SoLuong"
+        ? Number(value)
+        : field === "ThanhTien"
+        ? parseFloat(value).toFixed(2)
+        : value;
+    setFormData((prev) => ({ ...prev, chi_tiet: updatedChiTiet }));
   };
 
   const handleAddService = () => {
     setFormData((prev) => ({
       ...prev,
-      DichVu: [...prev.DichVu, { tenDichVu: "", soLuong: 1 }],
+      chi_tiet: [
+        ...prev.chi_tiet,
+        { MaDV: prev.chi_tiet.length + 1, TenDV: "", ThanhTien: "0.00", SoLuong: 1 },
+      ],
     }));
   };
 
   const handleRemoveService = (index) => {
-    const updatedDichVu = formData.DichVu.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, DichVu: updatedDichVu }));
+    const updatedChiTiet = formData.chi_tiet.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, chi_tiet: updatedChiTiet }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate dịch vụ
-    const hasInvalidService = formData.DichVu.some(
-      (dv) => !dv.tenDichVu.trim() || dv.soLuong < 1
+    const hasInvalidService = formData.chi_tiet.some(
+      (dv) =>
+        !dv.TenDV.trim() ||
+        isNaN(parseFloat(dv.ThanhTien)) ||
+        parseFloat(dv.ThanhTien) <= 0 ||
+        dv.SoLuong < 1
     );
 
-    if (hasInvalidService) {
+    if (!formData.MaKH || !formData.HoTenKH || hasInvalidService) {
       toast({
         title: "Lỗi",
-        description: "Vui lòng nhập đầy đủ tên dịch vụ và số lượng hợp lệ!",
+        description: "Vui lòng nhập đầy đủ thông tin hợp lệ!",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-      return; // Dừng lại nếu dịch vụ không hợp lệ
+      return;
     }
 
+    const payload = {
+      ...formData,
+      TongTien: parseFloat(formData.TongTien).toFixed(2),
+      LyDoKhachH: null,
+      LyDoQly: null,
+      chi_tiet: formData.chi_tiet.map((dv) => ({
+        MaDV: dv.MaDV,
+        TenDV: dv.TenDV,
+        ThanhTien: parseFloat(dv.ThanhTien).toFixed(2),
+        SoLuong: dv.SoLuong,
+      })),
+    };
+
     try {
-      await onSubmit(formData);
+      await onSubmit(payload);
       onClose();
       toast({
-        title: invoice ? "Cập nhật hóa đơn" : "Thêm hóa đơn thành công",
+        title: "Thêm hóa đơn thành công",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
     } catch (error) {
+      console.error("Lỗi khi gửi API:", error);
+      const errorMessage =
+        error.response?.data?.detail ||
+        error.response?.data ||
+        "Không thể lưu thông tin. Vui lòng kiểm tra API.";
       toast({
         title: "Lỗi",
-        description: "Không thể lưu thông tin",
+        description: JSON.stringify(errorMessage),
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -178,10 +174,8 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
       <DrawerContent>
         <Box bg="blue.50" px={6} py={4}>
           <DrawerHeader p={0} color="black" fontWeight="semibold">
-            {invoice ? "Chỉnh sửa hóa đơn" : "Tạo hóa đơn"}
-            <Text fontSize="sm" color="gray.600">
-              {formData.ThoiGianThanhToan}
-            </Text>
+            Tạo hóa đơn
+            <Text fontSize="sm" color="gray.600">{new Date().toLocaleString()}</Text>
           </DrawerHeader>
         </Box>
         <DrawerCloseButton />
@@ -202,11 +196,7 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
               <FormControl isRequired>
                 <HStack>
                   <FormLabel minW="14vw">Mã khách hàng</FormLabel>
-                  <Input
-                    name="MaKH"
-                    value={formData.MaKH}
-                    onChange={handleChange}
-                  />
+                  <Input name="MaKH" value={formData.MaKH} onChange={handleChange} />
                 </HStack>
               </FormControl>
 
@@ -216,13 +206,22 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
                     Dịch vụ
                   </FormLabel>
                   <VStack spacing={2} flex={1} align="stretch">
-                    {formData.DichVu.map((dv, index) => (
+                    {formData.chi_tiet.map((dv, index) => (
                       <HStack key={index} spacing={3}>
                         <Input
                           placeholder="Tên dịch vụ"
-                          value={dv.tenDichVu}
+                          value={dv.TenDV}
                           onChange={(e) =>
-                            handleServiceChange(index, "tenDichVu", e.target.value)
+                            handleServiceChange(index, "TenDV", e.target.value)
+                          }
+                        />
+                        <Input
+                          placeholder="Thành tiền"
+                          type="number"
+                          step="0.01"
+                          value={dv.ThanhTien}
+                          onChange={(e) =>
+                            handleServiceChange(index, "ThanhTien", e.target.value)
                           }
                         />
                         <Input
@@ -230,12 +229,12 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
                           type="number"
                           min={1}
                           maxW="100px"
-                          value={dv.soLuong}
+                          value={dv.SoLuong}
                           onChange={(e) =>
-                            handleServiceChange(index, "soLuong", e.target.value)
+                            handleServiceChange(index, "SoLuong", e.target.value)
                           }
                         />
-                        {formData.DichVu.length > 1 && (
+                        {formData.chi_tiet.length > 1 && (
                           <Button
                             size="sm"
                             colorScheme="red"
@@ -260,42 +259,26 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
 
               <FormControl isRequired>
                 <HStack>
-                  <FormLabel minW="14vw">Giá tiền</FormLabel>
-                  <Input
-                    name="GiaTien"
-                    value={formData.GiaTien}
-                    onChange={handleChange}
-                  />
-                </HStack>
-              </FormControl>
-              <FormControl>
-                <HStack>
-                  <FormLabel minW="14vw">Chiết khấu</FormLabel>
-                  <Input
-                    name="ChietKhau"
-                    value={formData.ChietKhau}
-                    onChange={handleChange}
-                  />
-                </HStack>
-              </FormControl>
-              <FormControl>
-                <HStack>
                   <FormLabel minW="14vw">Tổng tiền</FormLabel>
-                  <Input name="TongTien" value={formData.TongTien} isReadOnly />
+                  <Input
+                    name="TongTien"
+                    value={formData.TongTien}
+                    isReadOnly
+                    bg="gray.100"
+                  />
                 </HStack>
               </FormControl>
               <FormControl>
                 <HStack>
-                  <FormLabel minW="14vw">Nội dung</FormLabel>
+                  <FormLabel minW="14vw">Ghi chú</FormLabel>
                   <Input
-                    name="NoiDung"
-                    value={formData.NoiDung}
+                    name="GhiChu"
+                    value={formData.GhiChu}
                     onChange={handleChange}
                   />
                 </HStack>
               </FormControl>
 
-              {/* Chọn trạng thái thanh toán */}
               <FormControl isRequired>
                 <HStack>
                   <FormLabel minW="14vw">Trạng thái thanh toán</FormLabel>
@@ -314,7 +297,6 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
                 </HStack>
               </FormControl>
 
-              {/* Chọn trạng thái hoàn tiền */}
               <FormControl isRequired>
                 <HStack>
                   <FormLabel minW="14vw">Trạng thái hoàn tiền</FormLabel>
@@ -343,7 +325,7 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
             bottom="0"
           >
             <Button variant="outline" onClick={onClose}>
-              Huỷ
+              Hủy
             </Button>
             <Button type="submit" colorScheme="blue">
               Lưu
@@ -355,11 +337,10 @@ const InvoiceFormDrawer = ({ isOpen, onClose, invoice, onSubmit }) => {
   );
 };
 
-InvoiceFormDrawer.propTypes = {
+InvoiceCreateDrawer.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  invoice: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default InvoiceFormDrawer;
+export default InvoiceCreateDrawer;

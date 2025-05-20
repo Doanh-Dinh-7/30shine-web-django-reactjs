@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Button,
   Flex,
   Heading,
   Select,
-  useDisclosure,
   useToast,
   Input,
   InputGroup,
@@ -16,95 +16,141 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerCloseButton,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import InvoiceTable from "../lib/components/Invoices/InvoiceTable";
-import InvoiceFormDrawer from "../lib/components/Invoices/InvoiceFormDrawer";
-import InvoiceDetailDrawer from "../lib/components/Invoices/InvoiceDetailDrawer";
+import InvoiceCreateDrawer from "../lib/components/Invoices/InvoiceCreateDrawer";
+import InvoiceEditDrawer from "../lib/components/Invoices/InvoiceEditDrawer";
+import InvoiceViewDrawer from "../lib/components/Invoices/InvoiceViewDrawer";
 import InvoicePrintView from "../lib/components/Invoices/InvoicePrintView";
 
-const hoaDonList = [
-  {
-    MaHD: "HD001",
-    MaKH: "KH0001",
-    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
-    TongTien: "200.000",
-    ThoiGianThanhToan: "10:00 22/06/2024",
-    TrangThaiTT: 0, // chưa thanh toán
-    TrangThaiHT: 0, // chưa hoàn
-  },
-  {
-    MaHD: "HD002",
-    MaKH: "KH0002",
-    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
-    TongTien: "300.000",
-    ThoiGianThanhToan: "9:00 23/02/2025",
-    TrangThaiTT: 0,
-    TrangThaiHT: 0,
-  },
-  {
-    MaHD: "HD003",
-    MaKH: "KH0003",
-    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
-    TongTien: "200.000",
-    ThoiGianThanhToan: "12:20 05/02/2025",
-    TrangThaiTT: 0,
-    TrangThaiHT: 0,
-  },
-  {
-    MaHD: "HD006",
-    MaKH: "KH0006",
-    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
-    TongTien: "100.000",
-    ThoiGianThanhToan: "16:30 05/02/2025",
-    TrangThaiTT: 1, // đã thanh toán
-    TrangThaiHT: 0,
-  },
-  {
-    MaHD: "HD007",
-    MaKH: "KH0007",
-    DichVu: [{ TenDV: "Cắt tóc", soLuong: 1 }],
-    TongTien: "300.000",
-    ThoiGianThanhToan: "16:30 05/02/2025",
-    TrangThaiTT: 1,
-    TrangThaiHT: 2, // đã hoàn
-  },
-];
-
-
 const parseDate = (str) => {
-  const [time, date] = str.split(" ");
-  const [day, month, year] = date.split("/").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
-  return new Date(year, month - 1, day, hour, minute);
+  if (!str) return null;
+  const dateObj = new Date(str);
+  return isNaN(dateObj) ? null : dateObj;
 };
 
 const Invoices = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const detailDrawer = useDisclosure();
   const toast = useToast();
-  const printDrawer = useDisclosure();
-
-  const [invoices, setInvoices] = useState(hoaDonList);
+  const [invoices, setInvoices] = useState([]);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isPrintOpen, setIsPrintOpen] = useState(false);
+  const [invoiceToPrint, setInvoiceToPrint] = useState(null);
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [invoiceToPrint, setInvoiceToPrint] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/hoa-don/");
+        setInvoices(response.data);
+      } catch (error) {
+        console.error("Có lỗi khi lấy dữ liệu:", error);
+        setError("Không thể tải danh sách hóa đơn.");
+        toast({
+          title: "Lỗi khi tải dữ liệu",
+          description: "Không thể tải danh sách hóa đơn.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInvoices();
+  }, [toast]);
+
+  const handleViewInvoice = (invoice) => {
+    setSelectedInvoice(invoice);
+    setIsViewOpen(true);
+  };
+
+  const handleEditInvoice = (invoice) => {
+    setSelectedInvoice(invoice);
+    setIsEditOpen(true);
+  };
+
+  const handleDeleteInvoice = async (MaHD) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa hóa đơn này?")) {
+      try {
+        await axios.delete(`http://127.0.0.1:8000/api/hoa-don/${MaHD}/`);
+        setInvoices(invoices.filter((inv) => inv.MaHD !== MaHD));
+        toast({
+          title: "Đã xóa",
+          description: "Hóa đơn đã được xóa thành công.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Lỗi khi xóa hóa đơn:", error);
+        const errorMessage =
+          error.response?.data?.detail ||
+          error.response?.data ||
+          "Không thể xóa hóa đơn.";
+        toast({
+          title: "Lỗi",
+          description: JSON.stringify(errorMessage),
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  const handlePrintInvoice = (invoice) => {
+    setInvoiceToPrint(invoice);
+    setIsPrintOpen(true);
+  };
+
+  const handleSubmit = async (formData) => {
+    try {
+      if (!formData.MaHD || formData.MaHD === "Mới") {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/hoa-don/",
+          formData
+        );
+        setInvoices([...invoices, response.data]);
+      } else {
+        await axios.put(
+          `http://127.0.0.1:8000/api/hoa-don/${formData.MaHD}/`,
+          formData
+        );
+        setInvoices(
+          invoices.map((inv) => (inv.MaHD === formData.MaHD ? formData : inv))
+        );
+      }
+    } catch (error) {
+      console.error("Lỗi khi lưu hóa đơn:", error);
+      throw error;
+    }
   };
 
   const filteredInvoices = invoices
-    .filter(
-      (invoice) =>
-        invoice.MaHD.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        invoice.MaKH.toLowerCase().includes(searchQuery.toLowerCase())
-    )
     .filter((invoice) => {
-      const dateObj = parseDate(invoice.ThoiGianThanhToan);
+      const MaHDStr = invoice.MaHD ? invoice.MaHD.toString() : "";
+      const MaKHStr = invoice.MaKH ? invoice.MaKH.toString() : "";
+      return (
+        MaHDStr.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        MaKHStr.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    })
+    .filter((invoice) => {
+      const dateObj = parseDate(invoice.NgayLapHD);
+      if (!dateObj) return false;
       const day = dateObj.getDate();
       const month = dateObj.getMonth() + 1;
       const year = dateObj.getFullYear();
@@ -114,64 +160,7 @@ const Invoices = () => {
         (!selectedYear || year === Number(selectedYear))
       );
     })
-    .sort(
-      (a, b) => parseDate(b.ThoiGianThanhToan) - parseDate(a.ThoiGianThanhToan)
-    );
-
-  const handleAddInvoice = () => {
-    setSelectedInvoice(null);
-    onOpen();
-  };
-
-  const handleEditInvoice = (invoice) => {
-    setSelectedInvoice(invoice);
-    detailDrawer.onOpen();
-  };
-
-  const handleDeleteInvoice = (MaHD) => {
-    if (window.confirm("Xoá hoá đơn này?")) {
-      setInvoices(invoices.filter((inv) => inv.MaHD !== MaHD));
-      toast({
-        title: "Đã xóa",
-        description: "Hóa đơn đã được xóa",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const handlePrintInvoice = (invoice) => {
-    setInvoiceToPrint(invoice);
-    printDrawer.onOpen();
-  };
-
-  const handleSubmit = (formData) => {
-    if (!formData.MaHD || formData.MaHD === "Mới") {
-      const maxNum = invoices.reduce((max, inv) => {
-        const num = parseInt(inv.MaHD.replace("HD", ""));
-        return num > max ? num : max;
-      }, 0);
-      formData.MaHD = `HD${(maxNum + 1).toString().padStart(3, "0")}`;
-    }
-    if (selectedInvoice) {
-      const updatedInvoice = invoices.map((invoice) =>
-        invoice.MaHD === formData.MaHD ? formData : invoice
-      );
-      setInvoices(updatedInvoice);
-    } else {
-      setInvoices([...invoices, formData]);
-    }
-  };
-
-  const handleUpdateFromDetail = (updatedInvoice) => {
-    setInvoices((prev) =>
-      prev.map((inv) =>
-        inv.MaHD === updatedInvoice.MaHD ? { ...updatedInvoice } : inv
-      )
-    );
-    detailDrawer.onClose();
-  };
+    .sort((a, b) => parseDate(b.NgayLapHD) - parseDate(a.NgayLapHD));
 
   return (
     <Box p={6} bg="gray.50">
@@ -182,7 +171,7 @@ const Invoices = () => {
         <Button
           leftIcon={<FiPlus />}
           colorScheme="blue"
-          onClick={handleAddInvoice}
+          onClick={() => setIsCreateOpen(true)}
         >
           Thêm hóa đơn
         </Button>
@@ -194,9 +183,9 @@ const Invoices = () => {
             <FiSearch color="gray.400" />
           </InputLeftElement>
           <Input
-            placeholder="Tìm kiếm theo mã hoá đơn hoặc mã khách hàng"
+            placeholder="Tìm kiếm theo mã hóa đơn hoặc mã khách hàng"
             value={searchQuery}
-            onChange={handleSearchChange}
+            onChange={(e) => setSearchQuery(e.target.value)}
             bg="white"
           />
         </InputGroup>
@@ -237,32 +226,51 @@ const Invoices = () => {
         </Flex>
       </Flex>
 
-      <InvoiceTable
-        invoices={filteredInvoices}
-        onEditInvoice={handleEditInvoice}
-        onDeleteInvoice={handleDeleteInvoice}
-        onPrintInvoice={handlePrintInvoice}
-      />
-      <InvoiceFormDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        invoice={selectedInvoice}
+      {loading ? (
+        <Flex justify="center" my={10}>
+          <Spinner size="lg" />
+        </Flex>
+      ) : error ? (
+        <Text color="red.500" textAlign="center">
+          {error}
+        </Text>
+      ) : (
+        <InvoiceTable
+          invoices={filteredInvoices}
+          onEditInvoice={handleEditInvoice}
+          onDeleteInvoice={handleDeleteInvoice}
+          onPrintInvoice={handlePrintInvoice}
+          onViewInvoice={handleViewInvoice}
+        />
+      )}
+
+      <InvoiceCreateDrawer
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
         onSubmit={handleSubmit}
-        invoices={invoices}
       />
-        {selectedInvoice != null && detailDrawer.isOpen && (
-        <InvoiceDetailDrawer
-          isOpen={detailDrawer.isOpen}
-          onClose={detailDrawer.onClose}
+
+      {selectedInvoice && (
+        <InvoiceEditDrawer
+          isOpen={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
           invoice={selectedInvoice}
-          onUpdate={handleUpdateFromDetail}
-          />
-        )}
+          onSubmit={handleSubmit}
+        />
+      )}
+
+      {selectedInvoice && (
+        <InvoiceViewDrawer
+          isOpen={isViewOpen}
+          onClose={() => setIsViewOpen(false)}
+          invoice={selectedInvoice}
+        />
+      )}
 
       {invoiceToPrint && (
         <Drawer
-          isOpen={printDrawer.isOpen}
-          onClose={printDrawer.onClose}
+          isOpen={isPrintOpen}
+          onClose={() => setIsPrintOpen(false)}
           size="md"
         >
           <DrawerOverlay />

@@ -24,29 +24,19 @@ const PaymentDrawer = ({ isOpen, onClose, invoice, showQR, onConfirmPayment }) =
             <VStack spacing={4} align="start">
               <Text fontSize="sm">{new Date().toLocaleString()}</Text>
               <Text fontWeight="bold" mt={4}>
-                Hóa đơn
+                Hóa đơn: {invoice?.MaHD}
               </Text>
-              <Text>Tên khách hàng: Doanh</Text>
-
-              {/* Hiển thị danh sách dịch vụ và số lượng */}
+              <Text>Tên khách hàng: {invoice?.HoTenKH}</Text>
               <Box>
                 <Text fontWeight="semibold">Dịch vụ:</Text>
-                {invoice?.DichVu?.map((dv, idx) => (
+                {invoice?.chi_tiet?.map((dv, idx) => (
                   <Text key={idx}>
                     - {dv.TenDV} (Số lượng: {dv.SoLuong})
                   </Text>
                 ))}
               </Box>
-
-              <Text>
-                Giá tiền: {invoice?.TongTien?.toLocaleString() || 0} VND
-              </Text>
-              <Text>
-                Chiết khấu: {invoice?.ChietKhau?.toLocaleString() || 0} VND
-              </Text>
               <Text fontWeight="bold">
-                Tổng tiền:{" "}
-                {(invoice?.TongTien - invoice?.ChietKhau).toLocaleString()} VND
+                Tổng tiền: {invoice?.TongTien ? Number(invoice.TongTien).toLocaleString() : 0} VND
               </Text>
             </VStack>
           ) : (

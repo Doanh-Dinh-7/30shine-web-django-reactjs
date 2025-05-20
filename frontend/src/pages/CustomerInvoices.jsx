@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -16,73 +16,20 @@ import PaymentDrawer from "../lib/components/Invoices/PaymentDrawer";
 import RefundDrawer from "../lib/components/Invoices/RefundDrawer";
 import RatingModal from "../lib/components/Invoices/CustomerRatingModal";
 import { StarIcon } from "@chakra-ui/icons";
+import axios from "axios";
 
 // Quy ước trạng thái:
 // TrangThaiTT: 0 = Chưa thanh toán, 1 = Đã thanh toán chưa đánh giá, 2 = Đã đánh giá
 // TrangThaiHT: 0 = Chưa hoàn tiền, 1 = Đã yêu cầu, 2 = Đồng ý hoàn tiền, 3 = Từ chối hoàn tiền
-
-const dummyInvoices = [
-  {
-    MaHD: "HD001",
-    NgayLapHD: "14:30 22/05/2025",
-    DichVu: [
-      { TenDV: "Cắt tóc", SoLuong: 1 },
-      { TenDV: "Uốn tóc", SoLuong: 2 },
-    ],
-    TongTien: 100000,
-    ChietKhau: 0,
-    TrangThaiTT: 0,
-    TrangThaiHT: 0,
-  },
-  {
-    MaHD: "HD002",
-    NgayLapHD: "15:30 12/04/2025",
-    DichVu: [
-      { TenDV: "Cắt tóc", SoLuong: 1 },
-      { TenDV: "Uốn tóc", SoLuong: 1 },
-    ],
-    TongTien: 100000,
-    ChietKhau: 0,
-    TrangThaiTT: 0,
-    TrangThaiHT: 0,
-  },
-  {
-    MaHD: "HD003",
-    NgayLapHD: "11:30 03/03/2025",
-    DichVu: [
-      { TenDV: "Cắt tóc", SoLuong: 1 },
-      { TenDV: "Uốn tóc", SoLuong: 1 },
-    ],
-    TongTien: 100000,
-    ChietKhau: 0,
-    TrangThaiTT: 2,
-    TrangThaiHT: 0,
-    reviewed: true,
-    review: {
-      star: 5,
-      content:
-        "Dịch vụ tuyệt vời! Nhân viên thân thiện, cắt tóc đẹp, không gian sạch sẽ.",
-    },
-  },
-  {
-    MaHD: "HD004",
-    NgayLapHD: "10:00 01/03/2025",
-    DichVu: [{ TenDV: "Cắt tóc", SoLuong: 1 }],
-    TongTien: 80000,
-    ChietKhau: 0,
-    TrangThaiTT: 1,
-    TrangThaiHT: 0,
-    reviewed: false,
-    review: null,
-  },
-];
 
 const CustomerInvoices = () => {
   const [search, setSearch] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
-  const [invoices, setInvoices] = useState(dummyInvoices);
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showQR, setShowQR] = useState(false);
@@ -103,20 +50,64 @@ const CustomerInvoices = () => {
     onClose: onRefundClose,
   } = useDisclosure();
 
+  // Lấy dữ liệu hóa đơn từ API
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/hoa-don/khach-hang/5/");
+        setInvoices(response.data);
+      } catch (err) {
+        setError("Không thể tải danh sách hóa đơn.");
+        toast({
+          title: "Lỗi",
+          description: "Không thể tải danh sách hóa đơn.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInvoices();
+  }, [toast]);
+
   const handlePay = (inv) => {
     setSelectedInvoice(inv);
     setShowQR(false);
     onPaymentOpen();
   };
 
-  const handleConfirmPayment = () => {
+  const handleConfirmPayment = async () => {
     setShowQR(true);
-    const updated = invoices.map((inv) =>
-      inv.MaHD === selectedInvoice.MaHD
-        ? { ...inv, TrangThaiTT: 1 } // chuyển sang đã thanh toán chưa đánh giá
-        : inv
-    );
-    setInvoices(updated);
+    try {
+      // Gửi PATCH request để cập nhật TrangThaiTT
+      await axios.patch(`http://127.0.0.1:8000/api/hoa-don/${selectedInvoice.MaHD}/`, {
+        TrangThaiTT: 1,
+      });
+      // Cập nhật frontend
+      setInvoices((prev) =>
+        prev.map((inv) =>
+          inv.MaHD === selectedInvoice.MaHD ? { ...inv, TrangThaiTT: 1 } : inv
+        )
+      );
+      toast({
+        title: "Thanh toán thành công",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (err) {
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái thanh toán.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleRefund = (inv) => {
@@ -166,12 +157,14 @@ const CustomerInvoices = () => {
   };
 
   const filteredInvoices = invoices.filter((inv) => {
-    const matchesSearch = inv.DichVu?.some((dv) =>
+    const matchesSearch = inv.chi_tiet?.some((dv) =>
       dv.TenDV.toLowerCase().includes(search.toLowerCase())
     );
 
-    const [, dateStr] = inv.NgayLapHD.split(" ");
-    const [day, month, year] = dateStr.split("/");
+    const date = new Date(inv.NgayLapHD);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear());
 
     const matchDate =
       (!selectedDate || selectedDate === day) &&
@@ -232,98 +225,119 @@ const CustomerInvoices = () => {
         </Flex>
       </Flex>
 
-      <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
-        <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-          {filteredInvoices.map((inv) => (
-            <Box
-              key={inv.MaHD}
-              borderTop="5px solid #25c3d9"
-              bg="white"
-              borderRadius="md"
-              p={4}
-              boxShadow="sm"
-              position="relative"
-            >
-              <Text fontWeight="bold" mb={2}>
-                {inv.NgayLapHD}
-              </Text>
-              {inv.TrangThaiTT === 1 && (
-                <Text
-                  position="absolute"
-                  right={4}
-                  top={2}
-                  color="green"
-                  fontWeight="bold"
-                >
-                  Đã thanh toán
+      {loading ? (
+        <Text textAlign="center">Đang tải...</Text>
+      ) : error ? (
+        <Text textAlign="center" color="red.500">
+          {error}
+        </Text>
+      ) : (
+        <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
+          <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+            {filteredInvoices.map((inv) => (
+              <Box
+                key={inv.MaHD}
+                borderTop="5px solid #25c3d9"
+                bg="white"
+                borderRadius="md"
+                p={4}
+                boxShadow="sm"
+                position="relative"
+              >
+                <Text fontWeight="bold" mb={2}>
+                  {new Date(inv.NgayLapHD).toLocaleString("vi-VN", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </Text>
-              )}
-              <Box>
-                <Text fontWeight="semibold">Dịch vụ:</Text>
-                {inv.DichVu?.map((dv, idx) => (
-                  <Text key={idx}>
-                    - {dv.TenDV} (Số lượng: {dv.SoLuong})
-                  </Text>
-                ))}
-              </Box>
-              <Text>Chiết khấu: {inv.ChietKhau.toLocaleString()} VND</Text>
-              <Text fontWeight="bold">
-                Tổng tiền: {inv.TongTien.toLocaleString()} VND
-              </Text>
-              {/* Hiển thị đánh giá nếu có */}
-              {inv.TrangThaiTT === 2 && inv.reviewed && inv.review && (
-                <Box
-                  mt={3}
-                  p={3}
-                  bg="gray.50"
-                  borderRadius="md"
-                  borderWidth={"1px"}
-                  borderColor="yellow.200"
-                >
-                  <Flex align="center" mb={1}>
-                    {Array(5)
-                      .fill(0)
-                      .map((_, i) => (
-                        <Icon
-                          as={StarIcon}
-                          key={i}
-                          color={i < inv.review.star ? "yellow.400" : "gray.300"}
-                          boxSize={5}
-                        />
-                      ))}
-                    <Text ml={2} fontWeight="bold" color="blue.700">
-                      {inv.review.star}/5
-                    </Text>
-                  </Flex>
-                  <Text color="gray.700" fontStyle="italic">
-                    &quot;{inv.review.content}&quot;
-                  </Text>
-                </Box>
-              )}
-              <Flex gap={3} mt={3}>
-                {inv.TrangThaiTT === 0 && (
-                  <Button colorScheme="blue" onClick={() => handlePay(inv)}>
-                    Thanh toán
-                  </Button>
-                )}
                 {(inv.TrangThaiTT === 1 || inv.TrangThaiTT === 2) && (
-                  <Button colorScheme="red" onClick={() => handleRefund(inv)}>
-                    Hoàn tiền
-                  </Button>
-                )}
-                {inv.TrangThaiTT === 1 && !inv.reviewed && (
-                  <Button
-                    colorScheme="yellow"
-                    onClick={() => openReviewModal(inv)}
+                  <Text
+                    position="absolute"
+                    right={4}
+                    top={2}
+                    color="green"
+                    fontWeight="bold"
                   >
-                    Đánh giá
-                  </Button>
+                    Đã thanh toán
+                  </Text>
                 )}
-              </Flex>
-            </Box>
-          ))}
-        </SimpleGrid>
-      </Box>
+                <Box>
+                  <Text fontWeight="semibold">Dịch vụ:</Text>
+                  {inv.chi_tiet?.map((dv, idx) => (
+                    <Text key={idx}>
+                      - {dv.TenDV} (Thành tiền: {Number(dv.ThanhTien).toLocaleString()} VND)
+                    </Text>
+                  ))}
+                </Box>
+                <Text fontWeight="bold">
+                  Tổng tiền: {Number(inv.TongTien).toLocaleString()} VND
+                </Text>
+                {/* Hiển thị Lý do quản lý nếu có */}
+                {inv.LyDoQly && (
+                  <Box mt={2}>
+                    <Text fontWeight="semibold" color="red.500">
+                      Lý do quản lý: {inv.LyDoQly}
+                    </Text>
+                  </Box>
+                )}
+                {/* Hiển thị đánh giá nếu có */}
+                {inv.TrangThaiTT === 2 && inv.reviewed && inv.review && (
+                  <Box
+                    mt={3}
+                    p={3}
+                    bg="gray.50"
+                    borderRadius="md"
+                    borderWidth={"1px"}
+                    borderColor="yellow.200"
+                  >
+                    <Flex align="center" mb={1}>
+                      {Array(5)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Icon
+                            as={StarIcon}
+                            key={i}
+                            color={i < inv.review.star ? "yellow.400" : "gray.300"}
+                            boxSize={5}
+                          />
+                        ))}
+                      <Text ml={2} fontWeight="bold" color="blue.700">
+                        {inv.review.star}/5
+                      </Text>
+                    </Flex>
+                    <Text color="gray.700" fontStyle="italic">
+                      &quot;{inv.review.content}&quot;
+                    </Text>
+                  </Box>
+                )}
+                <Flex gap={3} mt={3}>
+                  {inv.TrangThaiTT === 0 && (
+                    <Button colorScheme="blue" onClick={() => handlePay(inv)}>
+                      Thanh toán
+                    </Button>
+                  )}
+                  {(inv.TrangThaiTT === 1 || inv.TrangThaiTT === 2) && (
+                    <Button colorScheme="red" onClick={() => handleRefund(inv)}>
+                      Hoàn tiền
+                    </Button>
+                  )}
+                  {inv.TrangThaiTT === 1 && !inv.reviewed && (
+                    <Button
+                      colorScheme="yellow"
+                      onClick={() => openReviewModal(inv)}
+                    >
+                      Đánh giá
+                    </Button>
+                  )}
+                </Flex>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </Box>
+      )}
 
       <RatingModal
         isOpen={isRatingOpen}
@@ -347,6 +361,7 @@ const CustomerInvoices = () => {
         isOpen={isRefundOpen}
         onClose={onRefundClose}
         invoice={selectedInvoice}
+        setInvoices={setInvoices}
       />
     </Box>
   );

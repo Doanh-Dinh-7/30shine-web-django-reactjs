@@ -17,18 +17,29 @@ import { FaDotCircle } from "react-icons/fa";
 import "../../../assets/styles/paginate.css";
 import { useState } from "react";
 
-// Ánh xạ trạng thái số sang chữ
 const trangThaiTTMap = {
-  0: "chưa thanh toán",
-  1: "đã thanh toán",
-  2: "đã đánh giá",
+  0: "Chưa thanh toán",
+  1: "Đã thanh toán",
+  2: "Đã đánh giá",
 };
 
 const trangThaiHTMap = {
-  0: "chưa hoàn",
-  1: "đã yêu cầu hoàn",
-  2: "đã hoàn",
-  3: "đã từ chối",
+  0: "Chưa hoàn",
+  1: "Đã yêu cầu hoàn",
+  2: "Đã hoàn",
+  3: "Đã từ chối",
+};
+
+const formatDateTime = (isoString) => {
+  if (!isoString) return "-";
+  const date = new Date(isoString);
+  if (isNaN(date)) return "-";
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
 
 const InvoiceTable = ({
@@ -36,13 +47,31 @@ const InvoiceTable = ({
   onEditInvoice,
   onDeleteInvoice,
   onPrintInvoice,
+  onViewInvoice,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 5;
   const pageCount = Math.ceil(invoices.length / pageSize);
   const startIndex = currentPage * pageSize;
   const endIndex = startIndex + pageSize;
-  const paginatedInvoices = invoices.slice(startIndex, endIndex);
+
+  // Hàm so sánh thời gian (gần nhất lên trên)
+  const compareDate = (a, b) => {
+    const dateA = new Date(a.NgayLapHD);
+    const dateB = new Date(b.NgayLapHD);
+    return dateB - dateA; // Sắp xếp giảm dần (gần nhất lên trên)
+  };
+
+  // Sắp xếp hóa đơn: Chưa thanh toán lên trên, sau đó sắp xếp theo thời gian
+  const sortedInvoices = [...invoices].sort((a, b) => {
+    // Đẩy chưa thanh toán (0) lên trên
+    if (a.TrangThaiTT === 0 && b.TrangThaiTT !== 0) return -1;
+    if (a.TrangThaiTT !== 0 && b.TrangThaiTT === 0) return 1;
+    // Nếu cùng trạng thái thanh toán, sắp xếp theo thời gian
+    return compareDate(a, b);
+  });
+
+  const paginatedInvoices = sortedInvoices.slice(startIndex, endIndex);
 
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
@@ -56,7 +85,7 @@ const InvoiceTable = ({
             <Th>Mã hóa đơn</Th>
             <Th>Mã khách hàng</Th>
             <Th>Tổng tiền</Th>
-            <Th>Thời gian</Th>
+            <Th>Thời gian lập</Th>
             <Th>Trạng thái</Th>
             <Th>Thao tác</Th>
             <Th>Yêu cầu hoàn tiền</Th>
@@ -64,25 +93,19 @@ const InvoiceTable = ({
         </Thead>
         <Tbody>
           {paginatedInvoices.map((invoice) => {
-            // Lấy trạng thái hiển thị
             const trangThaiTTText = trangThaiTTMap[invoice.TrangThaiTT] || "Không xác định";
             const trangThaiHTText = trangThaiHTMap[invoice.TrangThaiHT] || "Không xác định";
-
-            // Màu cho trạng thái thanh toán
-            let ttColor = "red.500"; // mặc định đỏ
+            let ttColor = "red.500";
             if (invoice.TrangThaiTT === 1) ttColor = "green.500";
             else if (invoice.TrangThaiTT === 2) ttColor = "blue.500";
-            else if (invoice.TrangThaiTT === 0) ttColor = "red.500";
 
             return (
               <Tr key={invoice.MaHD} _hover={{ bg: "gray.50" }}>
                 <Td>{invoice.MaHD}</Td>
                 <Td>{invoice.MaKH}</Td>
-                <Td fontWeight="bold">{invoice.TongTien}</Td>
-                <Td>{invoice.ThoiGianThanhToan}</Td>
-                <Td color={ttColor} fontWeight="medium">
-                  {trangThaiTTText}
-                </Td>
+                <Td fontWeight="bold">{Number(invoice.TongTien).toLocaleString()} VND</Td>
+                <Td>{formatDateTime(invoice.NgayLapHD)}</Td>
+                <Td color={ttColor} fontWeight="medium">{trangThaiTTText}</Td>
                 <Td>
                   <HStack spacing={2}>
                     <IconButton
@@ -90,20 +113,20 @@ const InvoiceTable = ({
                       variant="ghost"
                       colorScheme="teal"
                       aria-label="Xem chi tiết"
-                      onClick={() => onPrintInvoice(invoice)}
+                      onClick={() => onViewInvoice(invoice)}
                     />
                     <IconButton
                       icon={<FiEdit2 />}
                       variant="ghost"
                       colorScheme="blue"
-                      aria-label="Edit"
+                      aria-label="Sửa"
                       onClick={() => onEditInvoice(invoice)}
                     />
                     <IconButton
                       icon={<FiTrash2 />}
                       variant="ghost"
                       colorScheme="red"
-                      aria-label="Delete"
+                      aria-label="Xóa"
                       onClick={() => onDeleteInvoice(invoice.MaHD)}
                     />
                   </HStack>
