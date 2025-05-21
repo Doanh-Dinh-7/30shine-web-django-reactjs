@@ -18,15 +18,15 @@ const EditInforForm = ({ editData, onChange, onCancel, onSave, user }) => (
     </Flex>
     <FormControl mb={3}>
       <FormLabel>Họ và tên</FormLabel>
-      <Input name="name" value={editData.name} onChange={onChange} />
+      <Input name="name" value={editData.HoTenKH} onChange={onChange} />
     </FormControl>
     <FormControl mb={3}>
       <FormLabel>Số điện thoại</FormLabel>
-      <Input value={user.phone} isReadOnly />
+      <Input value={user.SDT} isReadOnly />
     </FormControl>
     <FormControl mb={3}>
       <FormLabel>Email</FormLabel>
-      <Input name="email" value={editData.email} onChange={onChange} />
+      <Input name="email" value={editData.Email} onChange={onChange} />
     </FormControl>
     <Flex gap={3} mt={4}>
       <Button variant="outline" onClick={onCancel}>

@@ -78,6 +78,11 @@ const Navbar = ({ onOpenRegister }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("role");
+    localStorage.removeItem("username");
+    localStorage.removeItem("MaKH");
+    localStorage.removeItem("user");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
     window.location.href = "/";
   };
 
@@ -260,10 +265,12 @@ const Navbar = ({ onOpenRegister }) => {
                   />
                   <Box display={{ base: "none", md: "block" }}>
                     <Text fontWeight="medium" fontSize="sm">
-                      Đinh Sỹ Quốc Doanh
+                      {localStorage.getItem("username")}
                     </Text>
                     <Text fontSize="xs" color="gray.500">
-                      {role === "quan ly" ? "Quản lý" : "Khách hàng"}
+                      {localStorage.getItem("role") === "quan ly"
+                        ? "Quản lý"
+                        : "Khách hàng"}
                     </Text>
                   </Box>
                   <FiChevronDown size="1em" style={{ marginLeft: "8px" }} />

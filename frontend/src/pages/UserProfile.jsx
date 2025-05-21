@@ -1,23 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Flex, Avatar, Text } from "@chakra-ui/react";
 import EditInforForm from "../lib/components/Profile/EditInforForm";
 import EditPasswordForm from "../lib/components/Profile/EditPasswordForm";
 
-const mockUser = {
-  name: "Đinh Sỹ Quốc Doanh",
-  role: "Khách hàng",
-  email: "dinhsquocdoanh@gmail.com",
-  phone: "0387631548",
-  avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-};
-
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [user, setUser] = useState(mockUser);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [role, setRole] = useState(localStorage.getItem("role"));
+
   const [editData, setEditData] = useState({
-    name: user.name,
-    email: user.email,
+    HoTenKH: user?.HoTenKH,
+    Email: user?.Email,
   });
 
   const handleEdit = () => setIsEditing(true);
@@ -28,8 +22,8 @@ const UserProfile = () => {
     setEditData({ ...editData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    setUser({ ...user, name: editData.name, email: editData.email });
+  const handleSave = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
     setIsEditing(false);
   };
 
@@ -53,25 +47,25 @@ const UserProfile = () => {
           flexDirection="column"
           alignItems="center"
         >
-          <Avatar size="2xl" src={user.avatar} mb={4} />
+          <Avatar size="2xl" src={user?.AnhDaiDien} mb={4} />
           <Text fontWeight="bold" fontSize="lg">
-            {user.name}
+            {user.HoTenKH}
           </Text>
           <Text color="gray.500" mb={4}>
-            {user.role}
+            {role}
           </Text>
           <Box w="100%" borderTop="1px solid #eee" my={2} />
           <Flex align="center" w="100%" mb={2} gap={2}>
             <span role="img" aria-label="email">
               📧
             </span>
-            <Text>{user.email}</Text>
+            <Text>{user.Email}</Text>
           </Flex>
           <Flex align="center" w="100%" gap={2}>
             <span role="img" aria-label="phone">
               📞
             </span>
-            <Text>{user.phone}</Text>
+            <Text>{user.SDT}</Text>
           </Flex>
           <Box w="100%" borderTop="1px solid #eee" my={2} />
           <Button

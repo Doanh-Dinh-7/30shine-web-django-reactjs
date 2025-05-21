@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.core.mail import send_mail
+from qlKhachHang.models import KhachHang
 
 # Create your views here.
 
@@ -19,11 +20,13 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = authenticate(
-            username=serializer.validated_data['username'],
-            password=serializer.validated_data['password']
-        )
-        if user is not None:
+        sdt = serializer.validated_data['sdt']
+        password = serializer.validated_data['password']
+        kh = KhachHang.objects.filter(SDT=sdt).first()
+        if not kh:
+            return Response({'error': 'Số điện thoại không tồn tại'}, status=status.HTTP_400_BAD_REQUEST)
+        user = kh.user
+        if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             user_data = UserSerializer(user).data
             return Response({
@@ -31,7 +34,7 @@ class LoginView(APIView):
                 'access': str(refresh.access_token),
                 'user': user_data
             })
-        return Response({'error': 'Sai tài khoản hoặc mật khẩu'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'Sai số điện thoại hoặc mật khẩu'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
@@ -99,7 +102,6 @@ class ForgotPasswordView(APIView):
             return Response({'success': 'Đã gửi email xác nhận'})
         elif sdt:
             # Kiểm tra user có SDT này không (tìm trong KhachHang)
-            from qlKhachHang.models import KhachHang
             kh = KhachHang.objects.filter(SDT=sdt).first()
             print(kh)
             if not kh:

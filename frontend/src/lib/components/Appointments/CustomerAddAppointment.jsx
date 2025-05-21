@@ -37,7 +37,8 @@ const MAX_APPOINTMENTS_PER_SLOT = 2; // Số lượng tối đa lịch hẹn cho
 const CustomerAddAppointment = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { appointments: rawAppointments, setAppointments } = useOutletContext() || {};
+  const { appointments: rawAppointments, setAppointments } =
+    useOutletContext() || {};
   const appointments = rawAppointments || [];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const role = localStorage.getItem("role");
@@ -56,13 +57,30 @@ const CustomerAddAppointment = () => {
     GhiChu: "",
   });
 
+  // Kiểm tra localStorage có MaKH không
+  useEffect(() => {
+    const MaKH = localStorage.getItem("MaKH");
+    if (MaKH) {
+      setFormData((prev) => ({
+        ...prev,
+        MaKH: MaKH,
+        HoTenKH: HoTenKH,
+        SDT: SDT,
+      }));
+    } else {
+      onOpen();
+    }
+  }, [onOpen]);
+
   useEffect(() => {
     const fetchStaff = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/nhan-vien/');
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/nhan-vien/"
+        );
         setStaffList(response.data);
       } catch (error) {
-        console.error('Error fetching staff:', error);
+        console.error("Error fetching staff:", error);
         toast({
           title: "Lỗi",
           description: "Không thể tải danh sách nhân viên",
@@ -78,10 +96,10 @@ const CustomerAddAppointment = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/dich-vu/dichvu_kem_danhgia/');
+        const response = await axios.get("http://127.0.0.1:8000/api/dich-vu/");
         setServices(response.data);
       } catch (error) {
-        console.error('Error fetching services:', error);
+        console.error("Error fetching services:", error);
         toast({
           title: "Lỗi",
           description: "Không thể tải danh sách dịch vụ",
@@ -115,17 +133,19 @@ const CustomerAddAppointment = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "TenDV") {
-      const selectedService = services.find(service => service.TenDV === value);
-      setFormData(prev => ({
+      const selectedService = services.find(
+        (service) => service.TenDV === value
+      );
+      setFormData((prev) => ({
         ...prev,
         TenDV: value,
         MaDV: selectedService ? selectedService.MaDV : "",
-        GiaTien: selectedService ? selectedService.GiaTien : ""
+        GiaTien: selectedService ? selectedService.GiaTien : "",
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
@@ -144,14 +164,17 @@ const CustomerAddAppointment = () => {
       const appointmentData = {
         MaKH: formData.MaKH,
         MaDV: formData.MaDV,
-        NgayDatLich: formData.NgayDatLich,
+        NgayDatLich: new Date().toISOString().split("T")[0],
         GioDatLich: formData.GioDatLich,
         GhiChu: formData.GhiChu || "",
-        TrangThai: 0 // 0: Chờ xác nhận
+        TrangThai: 0, // 0: Chờ xác nhận
       };
 
-      const response = await axios.post('http://localhost:8000/api/lich-hen/', appointmentData);
-      
+      const response = await axios.post(
+        "http://localhost:8000/api/lich-hen/",
+        appointmentData
+      );
+
       if (response.status === 201) {
         toast({
           title: "Thành công",
@@ -163,7 +186,7 @@ const CustomerAddAppointment = () => {
         navigate("/appointments");
       }
     } catch (error) {
-      console.error('Error creating appointment:', error);
+      console.error("Error creating appointment:", error);
       toast({
         title: "Lỗi",
         description: error.response?.data?.detail || "Không thể đặt lịch hẹn",
@@ -191,11 +214,11 @@ const CustomerAddAppointment = () => {
       </Flex>
 
       {!role && (
-        <Text 
-          color="red.500" 
-          textAlign="center" 
-          fontSize="lg" 
-          fontWeight="bold" 
+        <Text
+          color="red.500"
+          textAlign="center"
+          fontSize="lg"
+          fontWeight="bold"
           mb={4}
         >
           Bạn cần đăng nhập để đặt lịch
@@ -225,16 +248,16 @@ const CustomerAddAppointment = () => {
             />
           </FormControl>
 
-          <FormControl isRequired>
+          {/* <FormControl isRequired>
             <FormLabel>Ngày đặt lịch</FormLabel>
             <Input
               name="NgayDatLich"
               value={formData.NgayDatLich}
               onChange={handleChange}
               type="date"
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date().toISOString().split("T")[0]}
             />
-          </FormControl>
+          </FormControl> */}
 
           <FormControl isRequired>
             <FormLabel>Loại dịch vụ</FormLabel>
@@ -246,7 +269,11 @@ const CustomerAddAppointment = () => {
             >
               {services.map((service) => (
                 <option key={service.MaDV} value={service.TenDV}>
-                  {service.TenDV} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.GiaTien)}
+                  {service.TenDV} -{" "}
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(service.GiaTien)}
                 </option>
               ))}
             </Select>
@@ -333,7 +360,7 @@ const CustomerAddAppointment = () => {
               placeholder="Nhập ghi chú (nếu có)"
             />
           </FormControl>
-          
+
           <Button
             type="submit"
             colorScheme="blue"
