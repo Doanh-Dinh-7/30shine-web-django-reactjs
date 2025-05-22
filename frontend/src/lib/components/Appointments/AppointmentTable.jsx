@@ -11,8 +11,9 @@ import {
   Flex,
   HStack,
   useDisclosure,
+  Tooltip,
 } from "@chakra-ui/react";
-import { FiTrash2, FiFileText } from "react-icons/fi";
+import { FiTrash2, FiFileText, FiCheckCircle } from "react-icons/fi";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import PropTypes from "prop-types";
@@ -22,6 +23,8 @@ import NoteModal from "./NoteModal";
 const AppointmentTable = ({
   appointments,
   onDeleteAppointment,
+  onCompleteAppointment,
+  isManager = false,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedNote, setSelectedNote] = useState("");
@@ -89,7 +92,7 @@ const AppointmentTable = ({
         </Thead>
         <Tbody>
           {paginatedAppointments.map((appointment) => (
-            <Tr key={appointment.MaLH} _hover={{ bg: "gray.100" }}>
+            <Tr key={appointment.MaLH}>
               <Td width="100px">{appointment.MaLH}</Td>
               <Td width="150px">{appointment.HoTenKH}</Td>
               <Td width="120px">{appointment.SDT}</Td>
@@ -112,6 +115,18 @@ const AppointmentTable = ({
                     aria-label="View Note"
                     size="sm"
                   />
+                  {isManager && appointment.TrangThai === 0 && (
+                    <Tooltip label="Hoàn thành">
+                      <IconButton
+                        icon={<FiCheckCircle />}
+                        variant="ghost"
+                        colorScheme="green"
+                        onClick={() => onCompleteAppointment(appointment.MaLH)}
+                        aria-label="Complete"
+                        size="sm"
+                      />
+                    </Tooltip>
+                  )}
                   <IconButton
                     icon={<FiTrash2 />}
                     variant="ghost"
@@ -173,6 +188,8 @@ AppointmentTable.propTypes = {
     })
   ).isRequired,
   onDeleteAppointment: PropTypes.func.isRequired,
+  onCompleteAppointment: PropTypes.func,
+  isManager: PropTypes.bool,
 };
 
 export default AppointmentTable;

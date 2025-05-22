@@ -19,21 +19,7 @@ import {
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import LoginModal from "../Auth/LoginModal";
-
-const SERVICES = [
-  { id: 1, name: "Cắt tóc nam", price: 100000 },
-  { id: 2, name: "Cắt tóc nữ", price: 500000 },
-  { id: 3, name: "Nhuộm tóc toàn bộ", price: 150000 },
-  { id: 4, name: "Uốn tóc tự nhiên", price: 700000 },
-];
-
-const STAFF_LIST = [
-  { id: "NV001", name: "Nhân viên 1" },
-  { id: "NV002", name: "Nhân viên 2" },
-  { id: "NV003", name: "Nhân viên 3" },
-  { id: "NV004", name: "Nhân viên 4" },
-  { id: "NV005", name: "Nhân viên 5" },
-];
+import axios from "axios";
 
 const TIME_SLOTS = [
   ["08h00", "08h20", "08h40", "09h00", "09h20", "09h40"],
@@ -55,17 +41,58 @@ const CustomerAddAppointment = () => {
   const appointments = rawAppointments || [];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const role = localStorage.getItem("role");
+  const [services, setServices] = useState([]);
+  const [staffList, setStaffList] = useState([]);
 
   const [formData, setFormData] = useState({
-    TenKH: "",
+    MaKH: "",
+    HoTenKH: "",
     SDT: "",
-    TGHen: "",
-    GioKhachDen: "",
-    LoaiDV: "",
-    NhanVien: "",
-    TrangThai: "Chờ hoàn thành",
+    NgayDatLich: "",
+    GioDatLich: "",
+    MaDV: "",
+    TenDV: "",
+    GiaTien: "",
     GhiChu: "",
   });
+
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/nhan-vien/');
+        setStaffList(response.data);
+      } catch (error) {
+        console.error('Error fetching staff:', error);
+        toast({
+          title: "Lỗi",
+          description: "Không thể tải danh sách nhân viên",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+    fetchStaff();
+  }, [toast]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/dich-vu/dichvu_kem_danhgia/');
+        setServices(response.data);
+      } catch (error) {
+        console.error('Error fetching services:', error);
+        toast({
+          title: "Lỗi",
+          description: "Không thể tải danh sách dịch vụ",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+    fetchServices();
+  }, [toast]);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -85,12 +112,22 @@ const CustomerAddAppointment = () => {
     return appointmentsForSlot.length >= MAX_APPOINTMENTS_PER_SLOT;
   };
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "TenDV") {
+      const selectedService = services.find(service => service.TenDV === value);
+      setFormData(prev => ({
+        ...prev,
+        TenDV: value,
+        MaDV: selectedService ? selectedService.MaDV : "",
+        GiaTien: selectedService ? selectedService.GiaTien : ""
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleDateChange = (e) => {
@@ -101,60 +138,40 @@ const CustomerAddAppointment = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!role) {
-      onOpen(); // Mở modal đăng nhập nếu chưa đăng nhập
-      return;
-    }
+    try {
+      const appointmentData = {
+        MaKH: formData.MaKH,
+        MaDV: formData.MaDV,
+        NgayDatLich: formData.NgayDatLich,
+        GioDatLich: formData.GioDatLich,
+        GhiChu: formData.GhiChu || "",
+        TrangThai: 0 // 0: Chờ xác nhận
+      };
 
-    // Validate form data
-    if (
-      !formData.TenKH ||
-      !formData.SDT ||
-      !formData.TGHen ||
-      !formData.GioKhachDen ||
-      !formData.LoaiDV ||
-      !formData.NhanVien
-    ) {
+      const response = await axios.post('http://localhost:8000/api/lich-hen/', appointmentData);
+      
+      if (response.status === 201) {
+        toast({
+          title: "Thành công",
+          description: "Đặt lịch hẹn thành công",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        navigate("/appointments");
+      }
+    } catch (error) {
+      console.error('Error creating appointment:', error);
       toast({
         title: "Lỗi",
-        description: "Vui lòng điền đầy đủ thông tin",
+        description: error.response?.data?.detail || "Không thể đặt lịch hẹn",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-      return;
     }
-
-    // Generate new appointment ID
-    const maxNumber = appointments.reduce((max, app) => {
-      const num = parseInt(app.MaLH.replace("LH", ""));
-      return num > max ? num : max;
-    }, 0);
-    const newNumber = (maxNumber + 1).toString().padStart(3, "0");
-    const newMaLH = `LH${newNumber}`;
-
-    // Create new appointment object
-    const newAppointment = {
-      MaLH: newMaLH,
-      ...formData,
-    };
-
-    // Add new appointment to the list
-    if (setAppointments) {
-      setAppointments([...appointments, newAppointment]);
-    }
-
-    toast({
-      title: "Thành công",
-      description: "Đặt lịch thành công",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-    window.scrollTo(0, 0);
-    navigate("/appointments");
   };
 
   return (
@@ -190,9 +207,9 @@ const CustomerAddAppointment = () => {
           <FormControl isRequired>
             <FormLabel>Họ và tên</FormLabel>
             <Input
-              name="TenKH"
-              value={formData.TenKH}
-              onChange={handleInputChange}
+              name="HoTenKH"
+              value={formData.HoTenKH}
+              onChange={handleChange}
               placeholder="Nhập họ và tên"
             />
           </FormControl>
@@ -202,27 +219,34 @@ const CustomerAddAppointment = () => {
             <Input
               name="SDT"
               value={formData.SDT}
-              onChange={handleInputChange}
+              onChange={handleChange}
               placeholder="Nhập số điện thoại"
               type="tel"
             />
           </FormControl>
 
           <FormControl isRequired>
+            <FormLabel>Ngày đặt lịch</FormLabel>
+            <Input
+              name="NgayDatLich"
+              value={formData.NgayDatLich}
+              onChange={handleChange}
+              type="date"
+              min={new Date().toISOString().split('T')[0]}
+            />
+          </FormControl>
+
+          <FormControl isRequired>
             <FormLabel>Loại dịch vụ</FormLabel>
             <Select
-              name="LoaiDV"
-              value={formData.LoaiDV}
-              onChange={handleInputChange}
+              name="TenDV"
+              value={formData.TenDV}
+              onChange={handleChange}
               placeholder="Chọn dịch vụ"
             >
-              {SERVICES.map((service) => (
-                <option key={service.id} value={service.name}>
-                  {service.name} -{" "}
-                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(service.price)}
+              {services.map((service) => (
+                <option key={service.MaDV} value={service.TenDV}>
+                  {service.TenDV} - {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.GiaTien)}
                 </option>
               ))}
             </Select>
@@ -262,7 +286,7 @@ const CustomerAddAppointment = () => {
                           }
                           onClick={() =>
                             !isFull &&
-                            handleInputChange({
+                            handleChange({
                               target: { name: "GioKhachDen", value: time },
                             })
                           }
@@ -287,14 +311,14 @@ const CustomerAddAppointment = () => {
           <FormControl isRequired>
             <FormLabel>Nhân viên phụ trách</FormLabel>
             <Select
-              name="NhanVien"
-              value={formData.NhanVien}
-              onChange={handleInputChange}
+              name="HoTenNV"
+              value={formData.HoTenNV}
+              onChange={handleChange}
               placeholder="Chọn nhân viên"
             >
-              {STAFF_LIST.map((staff) => (
-                <option key={staff.id} value={staff.name}>
-                  {staff.name}
+              {staffList.map((staff) => (
+                <option key={staff.MaNV} value={staff.MaNV}>
+                  {staff.HoTenNV}
                 </option>
               ))}
             </Select>
@@ -304,13 +328,19 @@ const CustomerAddAppointment = () => {
             <FormLabel>Ghi chú</FormLabel>
             <Input
               name="GhiChu"
-              value={formData.GhiChu || ""}
-              onChange={handleInputChange}
+              value={formData.GhiChu}
+              onChange={handleChange}
               placeholder="Nhập ghi chú (nếu có)"
             />
           </FormControl>
           
-          <Button colorScheme="blue" size="lg" onClick={handleSubmit} mt={4}>
+          <Button
+            type="submit"
+            colorScheme="blue"
+            size="lg"
+            width="full"
+            onClick={handleSubmit}
+          >
             Đặt lịch
           </Button>
         </VStack>
