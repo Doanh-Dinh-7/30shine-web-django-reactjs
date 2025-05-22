@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer, ChangePasswordSerializer
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
 from rest_framework import serializers
@@ -137,7 +137,7 @@ class ForgotPasswordView(APIView):
         return Response({'error': 'Phải nhập email hoặc số điện thoại'}, status=400)
 
 class DashboardRevenueView(APIView): # Doanh thu hoá đơn
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     def get(self, request):
         today = timezone.now().date()
         month = today.month
@@ -152,7 +152,7 @@ class DashboardRevenueView(APIView): # Doanh thu hoá đơn
         })
 
 class DashboardTopServicesView(APIView): # Dịch vụ hot
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     def get(self, request):
         top_services = (ChiTietHoaDon.objects
             .values('MaDV__TenDV')
@@ -161,7 +161,7 @@ class DashboardTopServicesView(APIView): # Dịch vụ hot
         return Response({'top_services': list(top_services)})
 
 class DashboardAppointmentView(APIView): # Nhân viên hiệu suất
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     def get(self, request):
         today = timezone.now().date()
         total_appointments = LichHen.objects.filter(NgayDatLich=today).count()
@@ -177,7 +177,7 @@ class DashboardAppointmentView(APIView): # Nhân viên hiệu suất
         })
 
 class DashboardRevenueByMonthView(APIView): # Doanh thu theo tháng
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     def get(self, request):
         year = timezone.now().year
         data = []
