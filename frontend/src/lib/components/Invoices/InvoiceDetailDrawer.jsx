@@ -65,8 +65,8 @@ const InvoiceDetailDrawer = ({ isOpen, onClose, invoice, onUpdate }) => {
         <DrawerBody p={6}>
           <InvoiceEditForm invoice={invoice} onUpdate={handleUpdate} />
         </DrawerBody>
-      </DrawerBody>
-    </DrawerContent>
+      </DrawerContent>
+    </Drawer>
   );
 };
 

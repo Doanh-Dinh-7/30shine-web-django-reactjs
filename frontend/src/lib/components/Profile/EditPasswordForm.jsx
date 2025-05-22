@@ -9,6 +9,7 @@ import {
   FormErrorMessage,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import axios from "axios";
 
 const EditPasswordForm = ({ onCancel, onSave }) => {
   const [form, setForm] = useState({
@@ -17,13 +18,14 @@ const EditPasswordForm = ({ onCancel, onSave }) => {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
       setError("Vui lòng điền đầy đủ thông tin.");
       return;
@@ -32,7 +34,31 @@ const EditPasswordForm = ({ onCancel, onSave }) => {
       setError("Mật khẩu mới không khớp.");
       return;
     }
-    onSave(form);
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("access");
+      await axios.post(
+        "http://127.0.0.1:8000/api/tai-khoan/doi-mat-khau/",
+        {
+          old_password: form.oldPassword,
+          new_password: form.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setLoading(false);
+      onSave();
+    } catch (err) {
+      setLoading(false);
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else {
+        setError("Đổi mật khẩu thất bại. Vui lòng thử lại.");
+      }
+    }
   };
 
   return (
@@ -82,7 +108,7 @@ const EditPasswordForm = ({ onCancel, onSave }) => {
         <Button variant="outline" onClick={onCancel}>
           Hủy
         </Button>
-        <Button colorScheme="blue" onClick={handleSubmit}>
+        <Button colorScheme="blue" onClick={handleSubmit} isLoading={loading}>
           Lưu
         </Button>
       </Flex>

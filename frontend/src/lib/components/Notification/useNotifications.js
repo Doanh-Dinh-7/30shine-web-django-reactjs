@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from "react";
 
 const MOCK_NOTIFICATIONS = [
   {
@@ -48,7 +48,7 @@ const MOCK_NOTIFICATIONS = [
     message: "đã đánh giá 5 sao và để lại lời khen cho nhân viên",
     time: "2 giờ trước",
     isRead: false,
-  }
+  },
 ];
 
 export const useNotifications = () => {
@@ -57,14 +57,14 @@ export const useNotifications = () => {
 
   // Kiểm tra thông báo chưa đọc
   useEffect(() => {
-    const unreadCount = notifications.filter(n => !n.isRead).length;
+    const unreadCount = notifications.filter((n) => !n.isRead).length;
     setHasUnread(unreadCount > 0);
   }, [notifications]);
 
   // Đánh dấu thông báo đã đọc
   const markAsRead = useCallback((notificationId) => {
-    setNotifications(prev =>
-      prev.map(notification =>
+    setNotifications((prev) =>
+      prev.map((notification) =>
         notification.id === notificationId
           ? { ...notification, isRead: true }
           : notification
@@ -74,25 +74,28 @@ export const useNotifications = () => {
 
   // Đánh dấu tất cả là đã đọc
   const markAllAsRead = useCallback(() => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, isRead: true }))
+    setNotifications((prev) =>
+      prev.map((notification) => ({ ...notification, isRead: true }))
     );
   }, []);
 
   // Thêm thông báo mới
   const addNotification = useCallback((notification) => {
-    setNotifications(prev => [{
-      id: Date.now().toString(),
-      isRead: false,
-      time: "Vừa xong",
-      ...notification
-    }, ...prev]);
+    setNotifications((prev) => [
+      {
+        id: Date.now().toString(),
+        isRead: false,
+        time: "Vừa xong",
+        ...notification,
+      },
+      ...prev,
+    ]);
   }, []);
 
   // Xóa thông báo
   const removeNotification = useCallback((notificationId) => {
-    setNotifications(prev =>
-      prev.filter(notification => notification.id !== notificationId)
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== notificationId)
     );
   }, []);
 
@@ -102,6 +105,36 @@ export const useNotifications = () => {
     markAsRead,
     markAllAsRead,
     addNotification,
-    removeNotification
+    removeNotification,
   };
-}; 
+};
+
+export function useNotificationWebSocket(onMessage) {
+  useEffect(() => {
+    // Địa chỉ WebSocket backend (có thể cần sửa lại cho đúng)
+    const ws = new WebSocket("ws://localhost:8000/ws/notification/");
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      // Gọi callback khi có message mới
+      if (onMessage) onMessage(data);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected");
+    };
+
+    // Cleanup khi component unmount
+    return () => {
+      ws.close();
+    };
+  }, [onMessage]);
+}

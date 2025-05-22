@@ -16,7 +16,8 @@ import {
 import { FiBell, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useNotifications } from "./useNotifications";
+import { useNotifications, useNotificationWebSocket } from "./useNotifications";
+import { useState } from "react";
 
 const NotificationItem = ({ notification, onClick }) => {
   return (
@@ -41,8 +42,8 @@ const NotificationItem = ({ notification, onClick }) => {
         </Text>
       </Box>
       {!notification.isRead && (
-        <Badge 
-          colorScheme="red" 
+        <Badge
+          colorScheme="red"
           borderRadius="full"
           position="absolute"
           top="3"
@@ -69,6 +70,12 @@ const NotificationPopover = () => {
   const navigate = useNavigate();
   const { notifications, hasUnread, markAsRead } = useNotifications();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [notificationsState, setNotificationsState] = useState([]);
+
+  useNotificationWebSocket((data) => {
+    // Thêm thông báo mới vào danh sách
+    setNotificationsState((prev) => [data, ...prev]);
+  });
 
   const handleNotificationClick = (notification) => {
     markAsRead(notification.id);
@@ -113,7 +120,7 @@ const NotificationPopover = () => {
               alignItems="center"
               justifyContent="center"
             >
-              {notifications.filter(n => !n.isRead).length}
+              {notifications.filter((n) => !n.isRead).length}
             </Badge>
           )}
         </Box>
@@ -138,7 +145,7 @@ const NotificationPopover = () => {
             overflowY="auto"
             divider={<Box borderBottom="1px" borderColor="gray.100" />}
           >
-            {notifications.map((notification) => (
+            {notificationsState.map((notification) => (
               <NotificationItem
                 key={notification.id}
                 notification={notification}
@@ -152,4 +159,4 @@ const NotificationPopover = () => {
   );
 };
 
-export default NotificationPopover; 
+export default NotificationPopover;

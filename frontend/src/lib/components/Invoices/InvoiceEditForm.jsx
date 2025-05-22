@@ -155,6 +155,18 @@ const InvoiceEditForm = ({ invoice, onUpdate }) => {
 
     try {
       onUpdate(payload);
+      setFormData({
+        ...formData,
+        MaKH: "",
+        HoTenKH: "",
+        TongTien: "0.00",
+        GhiChu: "",
+        LyDoKhachH: "",
+        LyDoQly: "",
+        TrangThaiTT: 0,
+        TrangThaiHT: 0,
+        chi_tiet: [{ MaDV: 1, TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
+      });
       toast({
         title: "Cập nhật hóa đơn thành công",
         status: "success",
@@ -186,7 +198,11 @@ const InvoiceEditForm = ({ invoice, onUpdate }) => {
       </FormControl>
       <FormControl isRequired>
         <FormLabel>Mã khách hàng</FormLabel>
-        <Input name="MaKH" value={formData.MaKH || ""} onChange={handleChange} />
+        <Input
+          name="MaKH"
+          value={formData.MaKH || ""}
+          onChange={handleChange}
+        />
       </FormControl>
       <FormControl isRequired>
         <FormLabel>Dịch vụ khách hàng sử dụng</FormLabel>

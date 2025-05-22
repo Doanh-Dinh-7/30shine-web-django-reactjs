@@ -7,6 +7,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 import csv
 from django.utils.dateparse import parse_date
 from datetime import time, datetime, timedelta
+from django.contrib.auth.models import User
+from rest_framework.permissions import IsAdminUser
+from rest_framework.views import APIView
 
 # Create your views here.
 
@@ -22,6 +25,27 @@ class NhanVienViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Xoá nhân viên thành công!'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': f'Xoá nhân viên thất bại: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['patch'], url_path='cap-nhat-quyen')
+    def cap_nhat_quyen(self, request, pk=None):
+        try:
+            nhanvien = self.get_object()
+            user = nhanvien.user
+            is_superuser = request.data.get('is_superuser')
+            password = request.data.get('password', None)
+            if is_superuser is not None:
+                user.is_superuser = bool(is_superuser)
+                user.is_staff = bool(is_superuser)
+            if password:
+                user.set_password(password)
+            user.save()
+            return Response({
+                'success': True,
+                'user_id': user.id,
+                'is_superuser': user.is_superuser
+            })
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
 
 
 class LichLamViecViewSet(viewsets.ModelViewSet):
@@ -85,3 +109,10 @@ class LichLamViecViewSet(viewsets.ModelViewSet):
             'imported': imported,
             'errors': errors
         }, status=status.HTTP_200_OK)
+
+class NhanVienByUserView(APIView):
+    def get(self, request, user_id):
+        nv = NhanVien.objects.filter(user_id=user_id).first()
+        if not nv:
+            return Response({'error': 'Không tìm thấy nhân viên'}, status=404)
+        return Response(NhanVienSerializer(nv).data)

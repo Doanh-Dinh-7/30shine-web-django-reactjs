@@ -52,21 +52,35 @@ const CustomerInvoices = () => {
 
   // Lấy dữ liệu hóa đơn từ API
   useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    let user = null;
+    try {
+      user = JSON.parse(userStr);
+    } catch {
+      user = null;
+    }
     const fetchInvoices = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/hoa-don/khach-hang/5/");
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/hoa-don/khach-hang/${user.MaKH}/`
+        );
         setInvoices(response.data);
       } catch (err) {
-        setError("Không thể tải danh sách hóa đơn.");
-        toast({
-          title: "Lỗi",
-          description: "Không thể tải danh sách hóa đơn.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        if (err.response && err.response.status === 404) {
+          setInvoices([]);
+          setError("Không có hóa đơn nào.");
+        } else {
+          setError("Không thể tải danh sách hóa đơn.");
+          toast({
+            title: "Lỗi",
+            description: "Không thể tải danh sách hóa đơn.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
       } finally {
         setLoading(false);
       }
@@ -84,9 +98,12 @@ const CustomerInvoices = () => {
     setShowQR(true);
     try {
       // Gửi PATCH request để cập nhật TrangThaiTT
-      await axios.patch(`http://127.0.0.1:8000/api/hoa-don/${selectedInvoice.MaHD}/`, {
-        TrangThaiTT: 1,
-      });
+      await axios.patch(
+        `http://127.0.0.1:8000/api/hoa-don/${selectedInvoice.MaHD}/`,
+        {
+          TrangThaiTT: 1,
+        }
+      );
       // Cập nhật frontend
       setInvoices((prev) =>
         prev.map((inv) =>
@@ -99,7 +116,7 @@ const CustomerInvoices = () => {
         duration: 3000,
         isClosable: true,
       });
-    } catch (err) {
+    } catch {
       toast({
         title: "Lỗi",
         description: "Không thể cập nhật trạng thái thanh toán.",
@@ -122,7 +139,7 @@ const CustomerInvoices = () => {
     setRatingOpen(true);
   };
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (!ratingValue || ratingValue < 1 || ratingValue > 5) {
       toast({ title: "Vui lòng chọn số sao từ 1 đến 5", status: "warning" });
       return;
@@ -131,29 +148,60 @@ const CustomerInvoices = () => {
       toast({ title: "Vui lòng nhập nội dung đánh giá", status: "warning" });
       return;
     }
-    setInvoices((prev) =>
-      prev.map((inv) =>
-        inv.MaHD === selectedInvoice.MaHD
-          ? {
-              ...inv,
-              reviewed: true,
-              review: { star: ratingValue, content: ratingContent },
-              TrangThaiTT: 2, // Đã đánh giá
-            }
-          : inv
-      )
-    );
-    toast({
-      title: "Cảm ơn bạn đã đánh giá!",
-      description: `Bạn đã đánh giá ${ratingValue} sao${
-        ratingContent ? ": " + ratingContent : ""
-      }`,
-      status: "success",
-      duration: 4000,
-      isClosable: true,
-    });
-    setRatingOpen(false);
-    setSelectedInvoice(null);
+    // Gọi API tạo đánh giá
+    try {
+      await axios.post("http://127.0.0.1:8000/api/danh-gia/", {
+        MaKH: selectedInvoice.MaKH, // hoặc selectedInvoice.MaKH nếu là object thì .MaKH.MaKH
+        NoiDung: ratingContent,
+        DiemDanhGia: ratingValue,
+        MaDV: selectedInvoice.chi_tiet && selectedInvoice.chi_tiet[0]?.MaDV, // lấy dịch vụ đầu tiên trong hóa đơn
+        MaHD: selectedInvoice.MaHD,
+      });
+      setInvoices((prev) =>
+        prev.map((inv) =>
+          inv.MaHD === selectedInvoice.MaHD
+            ? {
+                ...inv,
+                reviewed: true,
+                review: { star: ratingValue, content: ratingContent },
+                TrangThaiTT: 2, // Đã đánh giá
+              }
+            : inv
+        )
+      );
+      // Gửi PATCH request để cập nhật TrangThaiTT
+      await axios.patch(
+        `http://127.0.0.1:8000/api/hoa-don/${selectedInvoice.MaHD}/`,
+        {
+          TrangThaiTT: 2,
+        }
+      );
+      // Cập nhật frontend
+      setInvoices((prev) =>
+        prev.map((inv) =>
+          inv.MaHD === selectedInvoice.MaHD ? { ...inv, TrangThaiTT: 2 } : inv
+        )
+      );
+      toast({
+        title: "Cảm ơn bạn đã đánh giá!",
+        description: `Bạn đã đánh giá ${ratingValue} sao${
+          ratingContent ? ": " + ratingContent : ""
+        }`,
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+      setRatingOpen(false);
+      setSelectedInvoice(null);
+    } catch (error) {
+      toast({
+        title: "Lỗi khi gửi đánh giá",
+        description: error.response?.data?.detail || "Không thể gửi đánh giá",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
   };
 
   const filteredInvoices = invoices.filter((inv) => {
@@ -268,17 +316,26 @@ const CustomerInvoices = () => {
                   <Text fontWeight="semibold">Dịch vụ:</Text>
                   {inv.chi_tiet?.map((dv, idx) => (
                     <Text key={idx}>
-                      - {dv.TenDV} (Thành tiền: {Number(dv.ThanhTien).toLocaleString()} VND)
+                      - {dv.TenDV} (Thành tiền:{" "}
+                      {Number(dv.ThanhTien).toLocaleString()} VND)
                     </Text>
                   ))}
                 </Box>
                 <Text fontWeight="bold">
                   Tổng tiền: {Number(inv.TongTien).toLocaleString()} VND
                 </Text>
+                {/* Hiển thị Lý do khách hàng nếu có */}
+                {inv.LyDoKhachH && (
+                  <Box mt={2}>
+                    <Text fontWeight="semibold" color="red.500">
+                      Lý do khách hàng: {inv.LyDoKhachH}
+                    </Text>
+                  </Box>
+                )}
                 {/* Hiển thị Lý do quản lý nếu có */}
                 {inv.LyDoQly && (
                   <Box mt={2}>
-                    <Text fontWeight="semibold" color="red.500">
+                    <Text fontWeight="semibold" color="yellow.500">
                       Lý do quản lý: {inv.LyDoQly}
                     </Text>
                   </Box>
@@ -300,7 +357,9 @@ const CustomerInvoices = () => {
                           <Icon
                             as={StarIcon}
                             key={i}
-                            color={i < inv.review.star ? "yellow.400" : "gray.300"}
+                            color={
+                              i < inv.review.star ? "yellow.400" : "gray.300"
+                            }
                             boxSize={5}
                           />
                         ))}
@@ -319,11 +378,15 @@ const CustomerInvoices = () => {
                       Thanh toán
                     </Button>
                   )}
-                  {(inv.TrangThaiTT === 1 || inv.TrangThaiTT === 2) && (
-                    <Button colorScheme="red" onClick={() => handleRefund(inv)}>
-                      Hoàn tiền
-                    </Button>
-                  )}
+                  {(inv.TrangThaiTT === 1 || inv.TrangThaiTT === 2) &&
+                    inv.TrangThaiHT === 0 && (
+                      <Button
+                        colorScheme="red"
+                        onClick={() => handleRefund(inv)}
+                      >
+                        Hoàn tiền
+                      </Button>
+                    )}
                   {inv.TrangThaiTT === 1 && !inv.reviewed && (
                     <Button
                       colorScheme="yellow"

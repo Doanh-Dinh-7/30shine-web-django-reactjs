@@ -152,6 +152,9 @@ python manage.py createsuperuser
 ```bash
 # Development
 python manage.py runserver
+
+# Bắt Websocket 
+daphne salon.asgi:application
 ```
 Backend server sẽ chạy tại: http://localhost:8000 (hoặc cổng bạn chỉ định)
 

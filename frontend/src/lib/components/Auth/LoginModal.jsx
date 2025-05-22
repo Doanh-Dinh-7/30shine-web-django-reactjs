@@ -2,14 +2,12 @@
 import {
   Button,
   FormControl,
-  FormLabel,
   Icon,
   Input,
   InputGroup,
   InputLeftElement,
   InputRightElement,
   Modal,
-  ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
@@ -18,21 +16,59 @@ import {
 } from "@chakra-ui/react";
 import { FiEye, FiEyeOff, FiLock, FiPhone } from "react-icons/fi";
 import { useState } from "react";
+import axios from "axios";
 
 const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    if (username === "admin") {
-      localStorage.setItem("MaNguoiDung", "admin");
-      localStorage.setItem("role", "quan ly");
-    } else {
-      localStorage.setItem("username", "admin");
-      localStorage.setItem("role", "khach hang");
+  const handleLogin = async () => {
+    setError("");
+    // console.log(username, password);
+    // if (username === "admin" && password === "") {
+    //   localStorage.setItem("username", "admin");
+    //   localStorage.setItem("role", "quan ly");
+    //   onClose();
+    //   window.location.reload();
+    //   return;
+    // }
+    try {
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/tai-khoan/dang-nhap/",
+        {
+          sdt: username,
+          password,
+        }
+      );
+      const { access, refresh, user } = res.data;
+      localStorage.setItem("access", access);
+      localStorage.setItem("refresh", refresh);
+      console.log("user", user);
+
+      if (username === "admin") {
+        localStorage.setItem("role", "quan ly");
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/nhan-vien/user/${user.id}/`
+        );
+        const nhanvien = res.data;
+        localStorage.setItem("username", nhanvien.HoTenNV);
+        localStorage.setItem("user", JSON.stringify(nhanvien));
+      } else {
+        localStorage.setItem("role", "khach hang");
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/khach-hang/user/${user.id}/`
+        );
+        const khachHang = res.data;
+        localStorage.setItem("username", khachHang.HoTenKH);
+        localStorage.setItem("user", JSON.stringify(khachHang));
+      }
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      setError("Sai tài khoản hoặc mật khẩu!");
     }
-    onClose();
-    window.location.reload();
   };
 
   return (
@@ -75,6 +111,8 @@ const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="Mật khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <InputRightElement>
                 <Button
@@ -101,6 +139,12 @@ const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
               Quên mật khẩu?
             </Text>
           </FormControl>
+
+          {error && (
+            <Text color="red.500" fontSize="sm" textAlign="center">
+              {error}
+            </Text>
+          )}
 
           <Button
             colorScheme="blue"

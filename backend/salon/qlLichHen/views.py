@@ -9,6 +9,8 @@ from .serializers import LichHenSerializer
 from qlThongBao.models import ThongBao
 from qlThongBao.utils import send_notification
 from rest_framework.decorators import action
+from qlNhanVien.models import NhanVien, LichLamViec
+from qlNhanVien.serializers import NhanVienSerializer, LichLamViecSerializer
 
 # Create your views here.
 
@@ -57,3 +59,33 @@ class HoanThanhLichHenAPIView(APIView):
             return Response({'message': 'Đã cập nhật lịch hẹn thành hoàn thành'}, status=status.HTTP_200_OK)
         except LichHen.DoesNotExist:
             return Response({'error': 'Lịch hẹn không tồn tại'}, status=status.HTTP_404_NOT_FOUND)
+
+class NhanVienTheoLichAPIView(APIView):
+    def get(self, request):
+        ngay_lam = request.query_params.get('NgayLam')
+        gio = request.query_params.get('Gio')  # dạng 'HH:MM'
+        print(ngay_lam, gio)
+        if not (ngay_lam and gio):
+            return Response({'error': 'Thiếu tham số'}, status=400)
+        from datetime import time
+        try:
+            gio = time.fromisoformat(gio)
+            lich_lam_viec = LichLamViec.objects.filter(
+                NgayLam=ngay_lam,
+                GioBatDau__lte=gio,
+                GioKetThuc__gte=gio
+            ).select_related('MaNV')
+            data = []
+            for llv in lich_lam_viec:
+                nhanvien_data = NhanVienSerializer(llv.MaNV).data
+                data.append({
+                    'MaNV': llv.MaNV.MaNV,
+                    'HoTenNV': llv.MaNV.HoTenNV,
+                    'MaLLV': llv.MaLLV,
+                    'GioBatDau': llv.GioBatDau,
+                    'GioKetThuc': llv.GioKetThuc,
+                    'nhanvien': nhanvien_data
+                })
+            return Response({'data': data})
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
