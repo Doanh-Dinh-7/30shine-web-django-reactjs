@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
-import ReactPaginate from "react-paginate";
+import ReactPaginate from "react-paginate"; 
 import "../../../assets/styles/paginate.css";
 import PropTypes from "prop-types";
 
@@ -30,7 +30,13 @@ const ServiceAndPriceTable = ({ services, onEditService, onDeleteService }) => {
 
   return (
     <Box>
-      <Table variant="simple" colorScheme="blue" size="md" bg="white" style={{ tableLayout: 'fixed' }}>
+      <Table
+        variant="simple"
+        colorScheme="blue"
+        size="md"
+        bg="white"
+        style={{ tableLayout: "fixed" }}
+      >
         <Thead>
           <Tr>
             <Th width="120px">Mã dịch vụ</Th>
@@ -45,12 +51,19 @@ const ServiceAndPriceTable = ({ services, onEditService, onDeleteService }) => {
           {paginatedServices.map((service) => (
             <Tr key={service.MaDV} _hover={{ bg: "gray.100" }}>
               <Td width="120px">{service.MaDV}</Td>
-              <Td width="200px" fontWeight="medium">{service.TenDV}</Td>
+              <Td width="200px" fontWeight="medium">
+                {service.TenDV}
+              </Td>
               <Td width="150px" color="blue.600" fontWeight="bold">
-                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(service.GiaDV)}
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(service.GiaTien)}
               </Td>
               <Td>{service.ChitietDV}</Td>
-              <Td width="150px" textAlign="center">{service.ThoiGianLam || "30"}</Td>
+              <Td width="150px" textAlign="center">
+                {service.ThoiGianLam || "30"}
+              </Td>
               <Td width="120px">
                 <HStack spacing={2}>
                   <IconButton
@@ -105,7 +118,7 @@ ServiceAndPriceTable.propTypes = {
     PropTypes.shape({
       MaDV: PropTypes.string.isRequired,
       TenDV: PropTypes.string.isRequired,
-      GiaDV: PropTypes.string.isRequired,
+      GiaTien: PropTypes.string.isRequired,
       ChitietDV: PropTypes.string.isRequired,
       ThoiGianLam: PropTypes.string,
     })
@@ -114,4 +127,4 @@ ServiceAndPriceTable.propTypes = {
   onDeleteService: PropTypes.func.isRequired,
 };
 
-export default ServiceAndPriceTable; 
+export default ServiceAndPriceTable;

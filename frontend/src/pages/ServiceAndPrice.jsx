@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Input,
@@ -20,96 +21,64 @@ const ServiceAndPrice = () => {
   const [selectedService, setSelectedService] = useState(null);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const [services, setServices] = useState([]);
 
-  // eslint-disable-next-line no-unused-vars
-  const [services, setServices] = useState([
-    {
-      MaDV: "DV001",
-      TenDV: "Cắt tóc nam",
-      GiaDV: "100000",
-      ChitietDV: "Cắt tóc, gội đầu, massage vai gáy, tư vấn kiểu tóc phù hợp với khuôn mặt",
-      ThoiGianLam: "45"
-    },
-    {
-      MaDV: "DV002",
-      TenDV: "Nhuộm tóc cao cấp",
-      GiaDV: "300000",
-      ChitietDV: "Nhuộm tóc với sản phẩm cao cấp, tư vấn màu phù hợp, chăm sóc da đầu",
-      ThoiGianLam: "120"
-    },
-    {
-      MaDV: "DV003",
-      TenDV: "Uốn tóc Hàn Quốc",
-      GiaDV: "250000",
-      ChitietDV: "Uốn tóc theo công nghệ Hàn Quốc, tư vấn kiểu phù hợp, chăm sóc tóc đặc biệt",
-      ThoiGianLam: "150"
-    },
-    {
-      MaDV: "DV004",
-      TenDV: "Gội đầu dưỡng sinh",
-      GiaDV: "100000",
-      ChitietDV: "Gội đầu bằng sản phẩm thảo dược, massage vai gáy 15 phút, massage mặt thư giãn",
-      ThoiGianLam: "30"
-    },
-    {
-      MaDV: "DV005",
-      TenDV: "Cạo râu và massage mặt",
-      GiaDV: "50000",
-      ChitietDV: "Cạo râu sạch sẽ, massage mặt thư giãn, đắp mặt nạ dưỡng da",
-      ThoiGianLam: "40"
-    },
-    {
-      MaDV: "DV006",
-      TenDV: "Combo cắt gội VIP",
-      GiaDV: "150000",
-      ChitietDV: "Cắt tóc, gội đầu, massage vai gáy, tạo kiểu, chăm sóc da mặt cơ bản",
-      ThoiGianLam: "90"
-    },
-    {
-      MaDV: "DV007",
-      TenDV: "Nhuộm tóc thời trang",
-      GiaDV: "400000",
-      ChitietDV: "Nhuộm tóc highlight, ombre hoặc balayage, tư vấn phong cách phù hợp",
-      ThoiGianLam: "180"
-    },
-    {
-      MaDV: "DV008",
-      TenDV: "Phục hồi tóc",
-      GiaDV: "200000",
-      ChitietDV: "Phục hồi tóc hư tổn bằng sản phẩm cao cấp, chăm sóc da đầu chuyên sâu",
-      ThoiGianLam: "60"
-    },
-    {
-      MaDV: "DV009",
-      TenDV: "Tẩy tóc",
-      GiaDV: "350000",
-      ChitietDV: "Tẩy tóc an toàn, bảo vệ da đầu, tư vấn quy trình chăm sóc sau tẩy",
-      ThoiGianLam: "150"
-    },
-    {
-      MaDV: "DV010",
-      TenDV: "Combo chăm sóc toàn diện",
-      GiaDV: "500000",
-      ChitietDV: "Cắt tóc, gội đầu, massage toàn thân 30 phút, chăm sóc da mặt cao cấp",
-      ThoiGianLam: "120"
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://127.0.0.1:8000/api/dich-vu/");
+      const formattedServices = response.data.map((service) => ({
+        MaDV: service.MaDV,
+        TenDV: service.TenDV,
+        GiaTien: service.GiaTien,
+        ChitietDV: service.MoTa,
+        ThoiGianLamDV: service.ThoiGianLamDV,
+      }));
+      setServices(formattedServices);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách dịch vụ:", error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể lấy danh sách dịch vụ",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  const handleDeleteService = (MaDV) => {
+  const handleDeleteService = async (MaDV) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa dịch vụ này?")) {
-      // Xử lý xóa dịch vụ
-      setServices(services.filter(service => service.MaDV !== MaDV));
-      toast({
-        title: "Xóa thành công",
-        description: "Dịch vụ đã được xóa",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      try {
+        await axios.delete(`http://127.0.0.1:8000/api/dich-vu/${MaDV}/`);
+        setServices(services.filter((service) => service.MaDV !== MaDV));
+        toast({
+          title: "Xóa thành công",
+          description: "Dịch vụ đã được xóa",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Lỗi khi xóa dịch vụ:", error);
+        toast({
+          title: "Lỗi",
+          description: "Không thể xóa dịch vụ",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 
@@ -123,21 +92,96 @@ const ServiceAndPrice = () => {
     onOpen();
   };
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (formData, selectedFile) => {
     try {
       if (selectedService) {
-        // Xử lý cập nhật dịch vụ
-        const updatedServices = services.map((service) =>
-          service.MaDV === formData.MaDV ? formData : service
+        const response = await axios.put(
+          `http://127.0.0.1:8000/api/dich-vu/${formData.MaDV}/`,
+          {
+            TenDV: formData.TenDV,
+            MoTa: formData.ChitietDV,
+            GiaTien: formData.GiaTien,
+            ThoiGianLamDV: formData.ThoiGianLamDV,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
-        setServices(updatedServices);
+
+        const updatedService = {
+          MaDV: response.data.MaDV,
+          TenDV: response.data.TenDV,
+          GiaTien: response.data.GiaTien,
+          ChitietDV: response.data.MoTa,
+          ThoiGianLamDV: response.data.ThoiGianLamDV,
+        };
+
+        setServices(
+          services.map((service) =>
+            service.MaDV === updatedService.MaDV ? updatedService : service
+          )
+        );
+
+        // Update ảnh dịch vụ ở đây
+        const file = new FormData();
+        file.append("AnhDaiDien", selectedFile);
+        const res = await axios.patch(
+          `http://127.0.0.1:8000/api/dich-vu/${formData.MaDV}/`,
+          file,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
       } else {
-        // Xử lý thêm dịch vụ mới
-        setServices([...services, formData]);
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/dich-vu/",
+          {
+            TenDV: formData.TenDV,
+            MoTa: formData.ChitietDV,
+            GiaTien: formData.GiaTien,
+            ThoiGianLamDV: formData.ThoiGianLamDV,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const newService = {
+          MaDV: response.data.MaDV.toString(),
+          TenDV: response.data.TenDV,
+          GiaTien: response.data.GiaTien,
+          ChitietDV: response.data.MoTa,
+          ThoiGianLam: response.data.ThoiGianLamDV.toString(),
+        };
+
+        setServices([...services, newService]);
       }
+
+      toast({
+        title: "Thành công",
+        description: selectedService
+          ? "Cập nhật dịch vụ thành công"
+          : "Thêm dịch vụ thành công",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      onClose();
     } catch (error) {
       console.error("Lỗi khi xử lý dịch vụ:", error);
-      throw error;
+      toast({
+        title: "Lỗi",
+        description: "Không thể xử lý yêu cầu",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -180,6 +224,7 @@ const ServiceAndPrice = () => {
           services={filteredServices}
           onEditService={handleEditService}
           onDeleteService={handleDeleteService}
+          loading={loading}
         />
       </Box>
 
@@ -193,4 +238,4 @@ const ServiceAndPrice = () => {
   );
 };
 
-export default ServiceAndPrice; 
+export default ServiceAndPrice;

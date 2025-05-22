@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Flex,
@@ -15,43 +16,35 @@ import CustomerFormDrawer from "../lib/components/Customers/CustomerFormDrawer";
 import CustomerTable from "../lib/components/Customers/CustomerTable";
 
 const Customers = () => {
-  const mockupData = [
-    {
-      MaKH: "KH001",
-      HoTenKH: "Nguyễn Văn A",
-      SDT: "0123456789",
-      Email: "nguyenvana@gmail.com",
-    },
-    {
-      MaKH: "KH002",
-      HoTenKH: "Trần Thị B",
-      SDT: "0987654321",
-      Email: "tranthib@gmail.com",
-    },
-    {
-      MaKH: "KH003",
-      HoTenKH: "Đinh Văn C",
-      SDT: "0987656789",
-      Email: "tranvana@gmail.com",
-    },
-    {
-      MaKH: "KH004",
-      HoTenKH: "Đinh Văn D",
-      SDT: "0987656789",
-      Email: "tranvana@gmail.com",
-    },
-    {
-      MaKH: "KH005",
-      HoTenKH: "Đinh Văn E",
-      SDT: "0987656789",
-      Email: "tranvana@gmail.com",
-    },
-  ];
   const [searchQuery, setSearchQuery] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [customers, setCustomers] = useState(mockupData);
+  const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const fetchCustomers = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://127.0.0.1:8000/api/khach-hang/");
+      setCustomers(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách khách hàng:", error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể lấy danh sách khách hàng",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Xử lý thanh tìm kiếm
   const handleSearchChange = (e) => {
@@ -60,49 +53,106 @@ const Customers = () => {
 
   const filteredCustomers = customers.filter(
     (customer) =>
-      customer.HoTenKH.toLowerCase().includes(searchQuery) ||
-      customer.SDT.toLowerCase().includes(searchQuery) ||
-      customer.MaKH.toLowerCase().includes(searchQuery)
+      customer.HoTenKH.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.SDT.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.MaKH.toString().toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDeleteCustomer = (MaKH) => {
+  const handleDeleteCustomer = async (MaKH) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa khách hàng này?")) {
-      setCustomers(customers.filter((customer) => customer.MaKH !== MaKH));
-      toast({
-        title: "Xóa thành công",
-        description: "Khách hàng đã được xóa",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      try {
+        await axios.delete(`http://127.0.0.1:8000/api/khach-hang/${MaKH}/`);
+        setCustomers(customers.filter((customer) => customer.MaKH !== MaKH));
+        toast({
+          title: "Xóa thành công",
+          description: "Khách hàng đã được xóa",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Lỗi khi xóa khách hàng:", error);
+        toast({
+          title: "Lỗi",
+          description: "Không thể xóa khách hàng",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
     }
   };
 
-  const handleAddCustomer = () => {
-    setSelectedCustomer(null);
-    onOpen();
-  };
+  // const handleAddCustomer = () => {
+  //   setSelectedCustomer(null);
+  //   onOpen();
+  // };
 
   const handleEditCustomer = (customer) => {
     setSelectedCustomer(customer);
     onOpen();
   };
 
-  const handleSubmit = (formData) => {
+  const handleSubmit = async (formData) => {
     try {
       if (selectedCustomer) {
-        // Xử lý cập nhật
-        const updatedCustomers = customers.map((customer) =>
-          customer.MaKH === formData.MaKH ? formData : customer
+        // Cập nhật khách hàng
+        const response = await axios.put(
+          `http://127.0.0.1:8000/api/khach-hang/${formData.MaKH}/`,
+          {
+            HoTenKH: formData.HoTenKH,
+            SDT: formData.SDT,
+            Email: formData.Email,
+            DiaChi: formData.DiaChi,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
-        setCustomers(updatedCustomers);
+        setCustomers(
+          customers.map((customer) =>
+            customer.MaKH === response.data.MaKH ? response.data : customer
+          )
+        );
       } else {
-        // Xử lý thêm mới
-        setCustomers([...customers, formData]);
+        // Thêm mới khách hàng
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/khach-hang/",
+          {
+            HoTenKH: formData.HoTenKH,
+            SDT: formData.SDT,
+            Email: formData.Email,
+            DiaChi: formData.DiaChi,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setCustomers([...customers, response.data]);
       }
+      toast({
+        title: "Thành công",
+        description: selectedCustomer
+          ? "Cập nhật khách hàng thành công"
+          : "Thêm khách hàng thành công",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      onClose();
     } catch (error) {
       console.error("Lỗi khi xử lý khách hàng:", error);
-      throw error;
+      toast({
+        title: "Lỗi",
+        description: "Không thể xử lý yêu cầu",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -114,14 +164,14 @@ const Customers = () => {
           <Heading size="lg" color="blue.600">
             Quản lý khách hàng
           </Heading>
-          <Button
+          {/* <Button
             leftIcon={<FiPlus />}
             colorScheme="blue"
             color="white"
             onClick={handleAddCustomer}
           >
             Thêm khách hàng
-          </Button>
+          </Button> */}
         </Flex>
 
         {/* Search Bar */}
@@ -143,6 +193,7 @@ const Customers = () => {
             customers={filteredCustomers}
             onEditCustomer={handleEditCustomer}
             onDeleteCustomer={handleDeleteCustomer}
+            loading={loading}
           />
         </Box>
       </Flex>

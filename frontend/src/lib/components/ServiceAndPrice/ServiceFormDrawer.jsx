@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Drawer,
   DrawerOverlay,
@@ -26,9 +26,11 @@ const ServiceFormDrawer = ({ isOpen, onClose, service, onSubmit }) => {
   const [formData, setFormData] = useState({
     MaDV: "",
     TenDV: "",
-    GiaDV: "",
+    GiaTien: "",
     ChitietDV: "",
+    ThoiGianLamDV: "",
   });
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const toast = useToast();
 
@@ -37,16 +39,20 @@ const ServiceFormDrawer = ({ isOpen, onClose, service, onSubmit }) => {
       setFormData({
         MaDV: service.MaDV || "",
         TenDV: service.TenDV || "",
-        GiaDV: service.GiaDV || "",
+        GiaTien: service.GiaTien || "",
         ChitietDV: service.ChitietDV || "",
+        ThoiGianLamDV: service.ThoiGianLamDV || "",
       });
+      setSelectedFile(null);
     } else {
       setFormData({
         MaDV: "Mới",
         TenDV: "",
-        GiaDV: "",
+        GiaTien: "",
         ChitietDV: "",
+        ThoiGianLamDV: "",
       });
+      setSelectedFile(null);
     }
   }, [service]);
 
@@ -58,20 +64,15 @@ const ServiceFormDrawer = ({ isOpen, onClose, service, onSubmit }) => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await onSubmit(formData);
+      await onSubmit(formData, selectedFile);
       onClose();
-      toast({
-        title: "Thành công",
-        description: service
-          ? "Cập nhật dịch vụ thành công"
-          : "Thêm dịch vụ thành công",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
     } catch (error) {
       console.error("Lỗi khi gửi form:", error);
       toast({
@@ -120,14 +121,40 @@ const ServiceFormDrawer = ({ isOpen, onClose, service, onSubmit }) => {
                         <FiDollarSign color="gray.300" />
                       </InputLeftElement>
                       <Input
-                        name="TenDV"
-                        value={formData.TenDV}
+                        name="GiaTien"
+                        value={formData.GiaTien}
                         onChange={handleChange}
-                        placeholder="Nhập tên dịch vụ"
+                        placeholder="Nhập giá dịch vụ"
                       />
                     </InputGroup>
                   </FormControl>
                 </GridItem>
+                <GridItem>
+                  <FormControl isRequired>
+                    <FormLabel fontWeight="bold">
+                      Thời gian làm dịch vụ (phút):
+                    </FormLabel>
+                    <Input
+                      name="ThoiGianLamDV"
+                      value={formData.ThoiGianLamDV}
+                      onChange={handleChange}
+                      placeholder="Nhập thời gian dịch vụ"
+                    />
+                  </FormControl>
+                </GridItem>
+                {formData?.MaDV !== "Mới" && (
+                  <GridItem>
+                    <FormControl>
+                      <FormLabel fontWeight="bold">Ảnh đại diện:</FormLabel>
+                      <Input
+                        type="file"
+                        name="AnhDaiDien"
+                        onChange={handleFileChange}
+                        accept="image/*"
+                      />
+                    </FormControl>
+                  </GridItem>
+                )}
                 <GridItem colSpan={2}>
                   <FormControl isRequired>
                     <FormLabel fontWeight="bold">Chi tiết dịch vụ:</FormLabel>
@@ -163,8 +190,9 @@ ServiceFormDrawer.propTypes = {
   service: PropTypes.shape({
     MaDV: PropTypes.string,
     TenDV: PropTypes.string,
-    GiaDV: PropTypes.string,
+    GiaTien: PropTypes.string,
     ChitietDV: PropTypes.string,
+    ThoiGianLamDV: PropTypes.string,
   }),
   onSubmit: PropTypes.func.isRequired,
 };

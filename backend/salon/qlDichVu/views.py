@@ -8,14 +8,14 @@ from qlDanhGia.models import DanhGia
 from qlDanhGia.serializers import DanhGiaSerializer
 from rest_framework import status
 from salon.cloudinary import upload_image
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 # Create your views here.
 
 class DichVuViewSet(viewsets.ModelViewSet):
     queryset = DichVu.objects.all()
     serializer_class = DichVuSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()

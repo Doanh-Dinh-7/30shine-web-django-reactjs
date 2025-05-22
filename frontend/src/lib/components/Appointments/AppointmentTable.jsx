@@ -79,39 +79,46 @@ const AppointmentTable = ({
       >
         <Thead>
           <Tr>
-            <Th width="100px">Mã lịch hẹn</Th>
-            <Th width="150px">Tên khách hàng</Th>
-            <Th width="120px">Số điện thoại</Th>
-            <Th width="120px">Thời gian hẹn</Th>
-            <Th width="120px">Giờ khách đến</Th>
-            <Th width="150px">Loại dịch vụ</Th>
-            <Th width="150px">Nhân viên phụ trách</Th>
-            <Th width="130px">Trạng thái</Th>
-            <Th width="100px">Tác vụ</Th>
+            <Th width="7vw">Mã lịch hẹn</Th>
+            <Th width="10.5vw">Tên khách hàng</Th>
+            <Th width="8.7vw">Số điện thoại</Th>
+            <Th width="8.3vw">Thời gian hẹn</Th>
+            <Th width="8.3vw">Giờ khách đến</Th>
+            <Th width="10.5vw">Loại dịch vụ</Th>
+            <Th width="10.5vw">Nhân viên phụ trách</Th>
+            <Th width="9vw">Trạng thái</Th>
+            <Th width="8.7vw">Tác vụ</Th>
           </Tr>
         </Thead>
         <Tbody>
           {paginatedAppointments.map((appointment) => (
             <Tr key={appointment.MaLH}>
-              <Td width="100px">{appointment.MaLH}</Td>
-              <Td width="150px">{appointment.HoTenKH}</Td>
-              <Td width="120px">{appointment.SDT}</Td>
-              <Td width="120px">{new Date(appointment.NgayDatLich).toLocaleDateString('vi-VN')}</Td>
-              <Td width="120px">{appointment.GioKhachDen || 'Chưa đến'}</Td>
-              <Td width="150px">{appointment.TenDV}</Td>
-              <Td width="150px">{appointment.TenNV}</Td>
-              <Td width="130px">
+              <Td width="7vw">{appointment.MaLH}</Td>
+              <Td width="10.5vw">{appointment.HoTenKH}</Td>
+              <Td width="8.7vw">{appointment.SDT}</Td>
+              <Td width="8.3vw">
+                {new Date(appointment.NgayDatLich).toLocaleDateString("vi-VN")}
+              </Td>
+              <Td width="8.3vw">{appointment.GioKhachDen || "Chưa đến"}</Td>
+              <Td width="10.5vw">{appointment.TenDV}</Td>
+              <Td width="10.5vw">{appointment.TenNV}</Td>
+              <Td width="9vw">
                 <Badge colorScheme={getStatusColor(appointment.TrangThai)}>
                   {getStatusText(appointment.TrangThai)}
                 </Badge>
               </Td>
-              <Td width="100px">
+              <Td width="8.7vw">
                 <HStack spacing={2}>
                   <IconButton
                     icon={<FiFileText />}
                     variant="ghost"
                     colorScheme="blue"
-                    onClick={() => handleViewNote(appointment.GhiChu || "Không có ghi chú", appointment.MaLH)}
+                    onClick={() =>
+                      handleViewNote(
+                        appointment.GhiChu || "Không có ghi chú",
+                        appointment.MaLH
+                      )
+                    }
                     aria-label="View Note"
                     size="sm"
                   />

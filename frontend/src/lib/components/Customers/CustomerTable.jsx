@@ -21,7 +21,7 @@ import "../../../assets/styles/paginate.css";
 const CustomerTable = ({ customers, onEditCustomer, onDeleteCustomer }) => {
   const toast = useToast();
   const [currentPage, setCurrentPage] = useState(0); // State cho trang hiện tại
-  const pageSize = 3; // Số nhân viên mỗi trang (có thể thay đổi)
+  const pageSize = 5; // Số nhân viên mỗi trang (có thể thay đổi)
 
   // Logic phân trang
   const pageCount = Math.ceil(customers.length / pageSize);

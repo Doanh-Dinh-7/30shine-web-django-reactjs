@@ -61,15 +61,6 @@ const CustomerFormDrawer = ({ isOpen, onClose, customer, onSubmit }) => {
     try {
       await onSubmit(formData);
       onClose();
-      toast({
-        title: "Thành công",
-        description: customer
-          ? "Cập nhật khách hàng thành công"
-          : "Thêm khách hàng thành công",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
     } catch (error) {
       console.error("Lỗi khi gửi form:", error);
       toast({

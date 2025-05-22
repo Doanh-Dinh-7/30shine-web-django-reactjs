@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from .models import KhachHang
 from .serializers import KhachHangSerializer
 from salon.cloudinary import upload_image
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.views import APIView
 
 # Create your views here.
@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 class KhachHangViewSet(viewsets.ModelViewSet):
     queryset = KhachHang.objects.all()
     serializer_class = KhachHangSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()

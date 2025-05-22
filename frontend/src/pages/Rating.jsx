@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -10,73 +10,58 @@ import {
   Input,
   Flex,
   IconButton,
-  Text,
-  Button,
+  useToast,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import ReactPaginate from "react-paginate";
 import "../assets/styles/paginate.css";
+import axios from "axios";
 
 const Rating = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(0); // Thêm state cho trang hiện tại
   const pageSize = 5; // Số lượng đánh giá mỗi trang
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const [ratings, setRatings] = useState([]);
 
-  const [ratings, setRatings] = useState([
-    {
-      MaDG: "DG001",
-      TenKH: "Nguyễn Anh Tú",
-      DanhGia: 5,
-      NoiDung: "Dịch vụ tuyệt vời",
-      NgayDanhGia: "17/10/2025",
-    },
-    {
-      MaDG: "DG002",
-      TenKH: "Đinh Sỹ Quốc Doanh",
-      DanhGia: 4,
-      NoiDung: "Rất đáng tiền",
-      NgayDanhGia: "17/10/2024",
-    },
-    {
-      MaDG: "DG003",
-      TenKH: "Nguyễn Hoàng",
-      DanhGia: 5,
-      NoiDung: "Nhân viên nhiệt tình, có sự chu đáo trong việc tiếp đón",
-      NgayDanhGia: "22/10/2024",
-    },
-    {
-      MaDG: "DG004",
-      TenKH: "Lê Nguyễn Ngọc Tú Hương",
-      DanhGia: 3,
-      NoiDung: "Trải nghiệm rất tuyệt vời",
-      NgayDanhGia: "17/10/2024",
-    },
-    {
-      MaDG: "DG005",
-      TenKH: "Lê Đức Kiên",
-      DanhGia: 4,
-      NoiDung: "Dịch vụ ổn",
-      NgayDanhGia: "20/10/2024",
-    },
-    {
-      MaDG: "DG006",
-      TenKH: "Nguyễn Thanh Tùng",
-      DanhGia: 5,
-      NoiDung: "Rất đáng tiền",
-      NgayDanhGia: "25/10/2024",
-    },
-  ]);
+  useEffect(() => {
+    fetchRatings();
+  }, []);
+
+  const fetchRatings = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("http://127.0.0.1:8000/api/danh-gia/");
+      setRatings(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách đánh giá của khách hàng:", error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể lấy danh sách đánh giá của khách hàng",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset về trang 1 khi tìm kiếm
+    setCurrentPage(0);
   };
 
-  const filteredRatings = ratings.filter(
-    (rating) =>
-      rating.TenKH.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      rating.NoiDung.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRatings = ratings.filter((rating) => {
+    const customerName = rating.ten_khach_hang || "";
+    const reviewContent = rating.NoiDung || "";
+
+    return (
+      customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      reviewContent.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   // Phân trang logic
   const pageCount = Math.ceil(filteredRatings.length / pageSize);
@@ -98,7 +83,11 @@ const Rating = () => {
           onChange={handleSearchChange}
           width="300px"
           borderColor="gray.300"
-          rightElement={<IconButton icon={<FaSearch />} />}
+        />
+        <IconButton
+          aria-label="Search database"
+          icon={<FaSearch />}
+          isDisabled={true}
         />
       </Flex>
 
@@ -117,38 +106,39 @@ const Rating = () => {
             {paginatedRatings.map((rating) => (
               <Tr key={rating.MaDG} _hover={{ bg: "gray.100" }}>
                 <Td>{rating.MaDG}</Td>
-                <Td>{rating.TenKH}</Td>
-                <Td>{Array(rating.DanhGia).fill("⭐")}</Td>
-                <Td>{rating.NoiDung}</Td>
+                <Td>{rating.ten_khach_hang || "N/A"}</Td>
+                <Td>{Array(rating.DiemDanhGia).fill("⭐")}</Td>
+                <Td>{rating.NoiDung || "Không có nội dung"}</Td>
                 <Td>{rating.NgayDanhGia}</Td>
               </Tr>
             ))}
           </Tbody>
         </Table>
 
-        {/* ReactPaginate component */}
-        <Flex mt={5} justify="center">
-          <ReactPaginate
-            previousLabel={"<"}
-            nextLabel={">"}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}
-            nextClassName={"page-item"}
-            previousLinkClassName={"previous-link"}
-            nextLinkClassName={"next-link"}
-            breakClassName={"page-item"}
-            breakLinkClassName={"break-link"}
-            forcePage={currentPage}
-          />
-        </Flex>
+        {pageCount > 1 && (
+          <Flex mt={5} justify="center">
+            <ReactPaginate
+              previousLabel={"<"}
+              nextLabel={">"}
+              breakLabel={"..."}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageClick}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+              pageClassName={"page-item"}
+              pageLinkClassName={"page-link"}
+              previousClassName={"page-item"}
+              nextClassName={"page-item"}
+              previousLinkClassName={"previous-link"}
+              nextLinkClassName={"next-link"}
+              breakClassName={"page-item"}
+              breakLinkClassName={"break-link"}
+              forcePage={currentPage}
+            />
+          </Flex>
+        )}
       </Box>
     </Box>
   );
