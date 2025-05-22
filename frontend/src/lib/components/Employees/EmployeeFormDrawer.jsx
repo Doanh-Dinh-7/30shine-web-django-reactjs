@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Drawer,
   DrawerOverlay,
@@ -15,7 +15,9 @@ import {
   VStack,
   Box,
   useToast,
+  Checkbox,
 } from "@chakra-ui/react";
+import PropTypes from "prop-types";
 
 const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -26,6 +28,9 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
     SDT: "",
     Email: "",
     ChucVu: "",
+    username: "",
+    password: "",
+    is_superuser: false,
   });
 
   const toast = useToast();
@@ -39,7 +44,9 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
         DiaChi: employee.DiaChi || "",
         SDT: employee.SDT || "",
         Email: employee.Email || "",
-        ChucVu: employee.ChucVu || "",
+        username: employee.user?.username || "",
+        password: "",
+        is_superuser: employee.user?.is_superuser || false,
       });
     } else {
       setFormData({
@@ -49,7 +56,9 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
         DiaChi: "",
         SDT: "",
         Email: "",
-        ChucVu: "",
+        username: "",
+        password: "",
+        is_superuser: false,
       });
     }
   }, [employee]);
@@ -62,22 +71,41 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
     }));
   };
 
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const submitData = {
-        ...formData,
-        GioiTinh: formData.GioiTinh === "Nam" ? 0 : 1,
+        MaNV: formData.MaNV,
+        HoTenNV: formData.HoTenNV,
+        GioiTinh:
+          formData.GioiTinh === "Nam"
+            ? 0
+            : formData.GioiTinh === "Nữ"
+            ? 1
+            : null,
+        DiaChi: formData.DiaChi,
+        SDT: formData.SDT,
+        Email: formData.Email,
+        user: {
+          username: formData.username,
+          is_superuser: formData.is_superuser,
+          ...(formData.password && { password: formData.password }),
+          ...(employee?.user?.id && { id: employee.user.id }),
+        },
       };
+
       await onSubmit(submitData);
       onClose();
-      toast({
-        title: employee ? "Cập nhật thành công" : "Thêm nhân viên thành công",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
     } catch (error) {
+      console.error("Error in EmployeeFormDrawer handleSubmit:", error);
       toast({
         title: "Lỗi",
         description: "Không thể lưu thông tin",
@@ -101,70 +129,103 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
 
         <form onSubmit={handleSubmit}>
           <DrawerBody>
-            <VStack spacing={5} mt={4}>
-              <FormControl isRequired>
-                <FormLabel fontWeight="bold">Họ và tên :</FormLabel>
-                <Input
-                  name="HoTenNV"
-                  value={formData.HoTenNV}
-                  onChange={handleChange}
-                  placeholder="Nhập họ tên nhân viên"
-                />
-              </FormControl>
+            <Box overflowY="auto" pr={4} maxH="calc(100vh - 200px)" minH="0">
+              <VStack spacing={5} mt={4}>
+                {employee && (
+                  <FormControl>
+                    <FormLabel fontWeight="bold">Mã nhân viên:</FormLabel>
+                    <Input value={formData.MaNV} isReadOnly />
+                  </FormControl>
+                )}
 
-              <FormControl isRequired>
-                <FormLabel fontWeight="bold">Giới tính:</FormLabel>
-                <Select
-                  name="GioiTinh"
-                  value={formData.GioiTinh}
-                  onChange={handleChange}
-                >
-                  <option value="">-- Chọn giới tính --</option>
-                  <option value="Nam">Nam</option>
-                  <option value="Nữ">Nữ</option>
-                </Select>
-              </FormControl>
+                <FormControl isRequired>
+                  <FormLabel fontWeight="bold">Username:</FormLabel>
+                  <Input
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="Nhập username"
+                  />
+                </FormControl>
 
-              <FormControl>
-                <FormLabel fontWeight="bold">Địa chỉ:</FormLabel>
-                <Input
-                  name="DiaChi"
-                  value={formData.DiaChi}
-                  onChange={handleChange}
-                  placeholder="Nhập địa chỉ"
-                />
-              </FormControl>
+                {!employee && (
+                  <FormControl isRequired>
+                    <FormLabel fontWeight="bold">Password:</FormLabel>
+                    <Input
+                      name="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Nhập password"
+                    />
+                  </FormControl>
+                )}
 
-              <FormControl isRequired>
-                <FormLabel fontWeight="bold">Số điện thoại :</FormLabel>
-                <Input
-                  name="SDT"
-                  value={formData.SDT}
-                  onChange={handleChange}
-                  placeholder="Nhập số điện thoại"
-                />
-              </FormControl>
+                <FormControl>
+                  <FormLabel fontWeight="bold">Là Superuser:</FormLabel>
+                  <Checkbox
+                    name="is_superuser"
+                    isChecked={formData.is_superuser}
+                    onChange={handleCheckboxChange}
+                  >
+                    Có quyền quản trị cao nhất
+                  </Checkbox>
+                </FormControl>
 
-              <FormControl>
-                <FormLabel fontWeight="bold">Email:</FormLabel>
-                <Input
-                  name="Email"
-                  value={formData.Email}
-                  onChange={handleChange}
-                  placeholder="Nhập email"
-                />
-              </FormControl>
+                <FormControl isRequired>
+                  <FormLabel fontWeight="bold">Họ và tên :</FormLabel>
+                  <Input
+                    name="HoTenNV"
+                    value={formData.HoTenNV}
+                    onChange={handleChange}
+                    placeholder="Nhập họ tên nhân viên"
+                  />
+                </FormControl>
 
-              <FormControl>
-                <FormLabel fontWeight="bold">Chức vụ:</FormLabel>
-                <Input
-                  name="ChucVu"
-                  value={formData.ChucVu}
-                  onChange={handleChange}
-                  placeholder="Nhập chức vụ"
-                />
-              </FormControl>
-            </VStack>
+                <FormControl isRequired>
+                  <FormLabel fontWeight="bold">Giới tính:</FormLabel>
+                  <Select
+                    name="GioiTinh"
+                    value={formData.GioiTinh}
+                    onChange={handleChange}
+                    placeholder="-- Chọn giới tính --"
+                  >
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel fontWeight="bold">Địa chỉ:</FormLabel>
+                  <Input
+                    name="DiaChi"
+                    value={formData.DiaChi}
+                    onChange={handleChange}
+                    placeholder="Nhập địa chỉ"
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel fontWeight="bold">Số điện thoại :</FormLabel>
+                  <Input
+                    name="SDT"
+                    value={formData.SDT}
+                    onChange={handleChange}
+                    placeholder="Nhập số điện thoại"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel fontWeight="bold">Email:</FormLabel>
+                  <Input
+                    name="Email"
+                    value={formData.Email}
+                    onChange={handleChange}
+                    placeholder="Nhập email"
+                  />
+                </FormControl>
+              </VStack>
+            </Box>
           </DrawerBody>
 
           <DrawerFooter bg="blue.50" justifyContent="flex-end">
@@ -179,6 +240,26 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
       </DrawerContent>
     </Drawer>
   );
+};
+
+EmployeeFormDrawer.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  employee: PropTypes.shape({
+    MaNV: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    HoTenNV: PropTypes.string,
+    GioiTinh: PropTypes.number,
+    DiaChi: PropTypes.string,
+    SDT: PropTypes.string,
+    Email: PropTypes.string,
+    ChucVu: PropTypes.string,
+    user: PropTypes.shape({
+      id: PropTypes.number,
+      username: PropTypes.string,
+      is_superuser: PropTypes.bool,
+    }),
+  }),
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default EmployeeFormDrawer;

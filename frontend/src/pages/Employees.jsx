@@ -1,5 +1,6 @@
 // src/pages/Employees.jsx
 import { useState, useEffect } from "react";
+import axios from "axios"; // Import axios
 import {
   Box,
   Heading,
@@ -15,12 +16,7 @@ import { FiSearch, FiPlus, FiCalendar } from "react-icons/fi";
 import EmployeeTable from "../lib/components/Employees/EmployeeTable";
 import EmployeeDetail from "../lib/components/Employees/EmployeeDetail";
 import EmployeeFormDrawer from "../lib/components/Employees/EmployeeFormDrawer";
-import { Outlet, useNavigate } from "react-router-dom";
-import {
-  getAllEmployees,
-  createEmployee,
-  updateEmployee,
-} from "../lib/service/employees";
+import { useNavigate } from "react-router-dom"; // Remove Outlet
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -38,28 +34,29 @@ const Employees = () => {
   }, [employees]);
 
   // Gọi API lấy danh sách nhân viên
+  const fetchEmployees = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/nhan-vien/");
+      // Assuming the API returns an array of employee objects directly
+      setEmployees(response.data);
+    } catch (error) {
+      console.error("Error fetching employees:", error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể tải danh sách nhân viên",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchEmployees = async () => {
-      setLoading(true);
-      try {
-        const response = await getAllEmployees();
-        setEmployees(response);
-        setFilteredEmployees(response);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        toast({
-          title: "Lỗi",
-          description: "Không thể tải danh sách nhân viên",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchEmployees();
-  }, [toast]);
+  }, [toast]); // Depend on toast if used inside fetchEmployees, otherwise remove it
 
   const handleViewEmployee = (employeeId) => {
     setSelectedEmployeeId(employeeId);
@@ -90,30 +87,54 @@ const Employees = () => {
     try {
       if (selectedEmployee) {
         // Cập nhật nhân viên
-        await updateEmployee(selectedEmployee.MaNV, formData);
+        // Assuming API PUT endpoint is /api/nhan-vien/{id}/
+        await axios.put(
+          `http://127.0.0.1:8000/api/nhan-vien/${selectedEmployee.MaNV}/`,
+          formData // Assuming formData structure matches API expected input
+        );
         toast({ title: "Cập nhật thành công", status: "success" });
       } else {
         // Thêm nhân viên mới
-        await createEmployee(formData);
+        // Assuming API POST endpoint is /api/nhan-vien/
+        await axios.post("http://127.0.0.1:8000/api/nhan-vien/", formData); // Assuming formData structure matches API expected input
         toast({ title: "Thêm nhân viên thành công", status: "success" });
       }
       handleCloseFormModal();
-      // Reload lại danh sách nhân viên
-      setLoading(true);
-      const response = await getAllEmployees();
-      setEmployees(response);
-      setFilteredEmployees(response);
-      setLoading(false);
+      // Reload lại danh sách nhân viên sau khi thêm/sửa thành công
+      fetchEmployees();
     } catch (error) {
       console.error("Error submitting employee:", error);
       toast({
         title: "Lỗi",
-        description: "Không thể lưu nhân viên",
+        description: error.response?.data?.message || "Không thể lưu nhân viên", // Use error response message if available
         status: "error",
         duration: 3000,
         isClosable: true,
       });
-      throw error;
+      // Rethrow or handle error as needed
+      // throw error; // Optional: if you want calling component to handle it
+    }
+  };
+
+  // Add handleDeleteEmployee function
+  const handleDeleteEmployee = async (employeeId) => {
+    setLoading(true);
+    try {
+      // Assuming API DELETE endpoint is /api/nhan-vien/{id}/
+      await axios.delete(`http://127.0.0.1:8000/api/nhan-vien/${employeeId}/`);
+      toast({ title: "Xóa thành công", status: "success" });
+      // Reload the employee list after successful deletion
+      fetchEmployees();
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      toast({
+        title: "Lỗi",
+        description: error.response?.data?.message || "Không thể xóa nhân viên",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      setLoading(false); // Stop loading on error
     }
   };
 
@@ -122,35 +143,15 @@ const Employees = () => {
     const filtered = employees.filter(
       (employee) =>
         employee.HoTenNV.toLowerCase().includes(searchTerm) ||
-        employee.SDT.toLowerCase().includes(searchTerm) ||
-        employee.MaNV.toLowerCase().includes(searchTerm)
+        (employee.SDT && employee.SDT.toLowerCase().includes(searchTerm)) || // Check if SDT exists
+        employee.MaNV.toString().toLowerCase().includes(searchTerm) // Ensure MaNV is string
     );
     setFilteredEmployees(filtered);
   };
 
-  const handleDepartmentFilter = (event) => {
-    const department = event.target.value;
-    if (department === "all") {
-      setFilteredEmployees(employees);
-    } else {
-      const filtered = employees.filter(
-        (employee) => employee.departmentName === department
-      );
-      setFilteredEmployees(filtered);
-    }
-  };
-
-  const handleStatusFilter = (event) => {
-    const status = event.target.value;
-    if (status === "all") {
-      setFilteredEmployees(employees);
-    } else {
-      const filtered = employees.filter(
-        (employee) => employee.status === status
-      );
-      setFilteredEmployees(filtered);
-    }
-  };
+  // Remove unused filter functions
+  // const handleDepartmentFilter = (event) => { ... }
+  // const handleStatusFilter = (event) => { ... }
 
   if (loading) {
     return (
@@ -172,7 +173,6 @@ const Employees = () => {
           Quản lý nhân viên
         </Heading>
       </Box>
-
       <Flex justify="space-between" align="center" mb={4}>
         <InputGroup maxW="300px" bg="white" borderRadius="md" boxShadow="sm">
           <InputLeftElement pointerEvents="none">
@@ -204,27 +204,27 @@ const Employees = () => {
           </Button>
         </Flex>
       </Flex>
-
       <Box bg="blue.50" p={4} borderRadius="xl" boxShadow="md">
         <EmployeeTable
           employees={filteredEmployees}
           onViewEmployee={handleViewEmployee}
           onEditEmployee={handleEditEmployee}
+          onDeleteEmployee={handleDeleteEmployee}
+          loading={loading}
         />
       </Box>
-
       <EmployeeDetail
         isOpen={isDetailModalOpen}
         onClose={handleCloseDetailModal}
         employeeId={selectedEmployeeId}
       />
-
       <EmployeeFormDrawer
         isOpen={isFormModalOpen}
         onClose={handleCloseFormModal}
         employee={selectedEmployee}
         onSubmit={handleSubmitEmployee}
       />
+      {/* Outlet is removed */} {/* <Outlet /> */}
     </Box>
   );
 };

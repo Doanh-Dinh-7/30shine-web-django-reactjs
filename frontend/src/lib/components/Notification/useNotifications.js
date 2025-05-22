@@ -1,102 +1,99 @@
 import { useState, useCallback, useEffect } from "react";
-
-const MOCK_NOTIFICATIONS = [
-  {
-    id: "1",
-    type: "appointment",
-    customerName: "Nguyễn Hoàng",
-    message: "đã đặt lịch hẹn lúc 8:00 ngày 27/04/2025",
-    time: "5 phút trước",
-    isRead: false,
-  },
-  {
-    id: "2",
-    type: "rating",
-    customerName: "Lê Đức Kiên",
-    message: "đã đánh giá 5 sao cho dịch vụ",
-    time: "10 phút trước",
-    isRead: false,
-  },
-  {
-    id: "3",
-    type: "appointment",
-    customerName: "Trần Văn Nam",
-    message: "đã hủy lịch hẹn lúc 15:30 ngày 26/04/2025",
-    time: "15 phút trước",
-    isRead: true,
-  },
-  {
-    id: "4",
-    type: "rating",
-    customerName: "Phạm Thị Hương",
-    message: "đã đánh giá 4 sao và bình luận về dịch vụ",
-    time: "30 phút trước",
-    isRead: false,
-  },
-  {
-    id: "5",
-    type: "appointment",
-    customerName: "Nguyễn Văn An",
-    message: "đã thay đổi lịch hẹn sang 10:00 ngày 28/04/2025",
-    time: "1 giờ trước",
-    isRead: true,
-  },
-  {
-    id: "6",
-    type: "rating",
-    customerName: "Lê Thị Bình",
-    message: "đã đánh giá 5 sao và để lại lời khen cho nhân viên",
-    time: "2 giờ trước",
-    isRead: false,
-  },
-];
+import axios from "axios";
 
 export const useNotifications = () => {
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([]);
   const [hasUnread, setHasUnread] = useState(false);
 
-  // Kiểm tra thông báo chưa đọc
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/thong-bao/");
+      const formattedNotifications = response.data.map((notification) => ({
+        id: notification.MaTB,
+        time: notification.ThoiGian,
+        message: notification.NoiDung,
+        type:
+          notification.LoaiThongBao ||
+          (notification.MaDG
+            ? "rating"
+            : notification.MaLH
+            ? "appointment"
+            : "other"),
+        ratingId: notification.MaDG,
+        appointmentId: notification.MaLH,
+        isRead: notification.LoaiThongBao === "1",
+      }));
+      setNotifications(formattedNotifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
+
   useEffect(() => {
     const unreadCount = notifications.filter((n) => !n.isRead).length;
     setHasUnread(unreadCount > 0);
   }, [notifications]);
 
-  // Đánh dấu thông báo đã đọc
-  const markAsRead = useCallback((notificationId) => {
-    setNotifications((prev) =>
-      prev.map((notification) =>
-        notification.id === notificationId
-          ? { ...notification, isRead: true }
-          : notification
-      )
-    );
+  const markAsRead = useCallback(async (notificationId) => {
+    try {
+      await axios.patch(
+        `http://127.0.0.1:8000/api/thong-bao/${notificationId}/`,
+        {
+          LoaiThongBao: "1",
+        }
+      );
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, isRead: true }
+            : notification
+        )
+      );
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
   }, []);
 
-  // Đánh dấu tất cả là đã đọc
   const markAllAsRead = useCallback(() => {
     setNotifications((prev) =>
       prev.map((notification) => ({ ...notification, isRead: true }))
     );
   }, []);
 
-  // Thêm thông báo mới
   const addNotification = useCallback((notification) => {
-    setNotifications((prev) => [
-      {
-        id: Date.now().toString(),
-        isRead: false,
-        time: "Vừa xong",
-        ...notification,
-      },
-      ...prev,
-    ]);
+    const newNotification = {
+      id: notification.MaTB,
+      time: notification.ThoiGian,
+      message: notification.NoiDung,
+      type:
+        notification.LoaiThongBao ||
+        (notification.MaDG
+          ? "rating"
+          : notification.MaLH
+          ? "appointment"
+          : "other"),
+      ratingId: notification.MaDG,
+      appointmentId: notification.MaLH,
+      isRead: notification.LoaiThongBao === "1",
+    };
+    setNotifications((prev) => [newNotification, ...prev]);
   }, []);
 
-  // Xóa thông báo
-  const removeNotification = useCallback((notificationId) => {
-    setNotifications((prev) =>
-      prev.filter((notification) => notification.id !== notificationId)
-    );
+  const removeNotification = useCallback(async (notificationId) => {
+    try {
+      await axios.delete(
+        `http://127.0.0.1:8000/api/thong-bao/${notificationId}/`
+      );
+      setNotifications((prev) =>
+        prev.filter((notification) => notification.id !== notificationId)
+      );
+    } catch (error) {
+      console.error("Error removing notification:", error);
+    }
   }, []);
 
   return {
@@ -111,17 +108,20 @@ export const useNotifications = () => {
 
 export function useNotificationWebSocket(onMessage) {
   useEffect(() => {
-    // Địa chỉ WebSocket backend (có thể cần sửa lại cho đúng)
-    const ws = new WebSocket("ws://localhost:8000/ws/notification/");
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/thongbao/");
 
     ws.onopen = () => {
-      console.log("WebSocket connected");
+      console.log("WebSocket connected to /ws/thongbao/");
     };
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      // Gọi callback khi có message mới
-      if (onMessage) onMessage(data);
+      try {
+        const data = JSON.parse(event.data);
+        console.log("WebSocket message received:", data);
+        if (onMessage) onMessage(data);
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
     };
 
     ws.onerror = (error) => {
@@ -129,10 +129,9 @@ export function useNotificationWebSocket(onMessage) {
     };
 
     ws.onclose = () => {
-      console.log("WebSocket disconnected");
+      console.log("WebSocket disconnected from /ws/thongbao/");
     };
 
-    // Cleanup khi component unmount
     return () => {
       ws.close();
     };

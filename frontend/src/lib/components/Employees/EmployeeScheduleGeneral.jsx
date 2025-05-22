@@ -12,7 +12,7 @@ const colorMap = [
 ];
 
 const days = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
-const hours = Array.from({ length: 15 }, (_, i) => 8 + i); // 8h-22h
+const hours = Array.from({ length: 12 }, (_, i) => 8 + i); // 8h-19h
 const hourHeight = 32;
 
 function getBlocks(hoursArr) {
@@ -85,6 +85,7 @@ const EmployeeScheduleGeneral = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [stateWeek, setStateWeek] = useState(0);
 
   // Fetch lịch làm việc theo tuần
   useEffect(() => {
@@ -93,7 +94,7 @@ const EmployeeScheduleGeneral = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          "http://127.0.0.1:8000/api/nhan-vien/lich-lam-viec/by-week/?week=0"
+          `http://127.0.0.1:8000/api/nhan-vien/lich-lam-viec/by-week/?week=${stateWeek}`
         );
         if (!res.ok) throw new Error("Không thể tải lịch làm việc");
         const data = await res.json();
@@ -132,7 +133,7 @@ const EmployeeScheduleGeneral = () => {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [stateWeek]);
 
   // Reload lại tuần hiện tại
   const reloadSchedule = () => {
@@ -390,6 +391,7 @@ const EmployeeScheduleGeneral = () => {
           textDecoration={weekType === "current" ? "underline" : "none"}
           onClick={() => setWeekType("current")}
           _hover={{ bg: weekType === "current" ? "#174ea6" : "#eaf0fb" }}
+          onClickCapture={() => setStateWeek(0)}
         >
           Tuần hiện tại
         </Box>
@@ -406,6 +408,7 @@ const EmployeeScheduleGeneral = () => {
           textDecoration={weekType === "next" ? "underline" : "none"}
           onClick={() => setWeekType("next")}
           _hover={{ bg: weekType === "next" ? "#174ea6" : "#eaf0fb" }}
+          onClickCapture={() => setStateWeek(1)}
         >
           Tuần kế tiếp
         </Box>

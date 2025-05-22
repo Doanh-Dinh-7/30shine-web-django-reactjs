@@ -47,7 +47,7 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
     TrangThaiTT: 0,
     TrangThaiHT: 0,
     GhiChu: "",
-    chi_tiet: [{ TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
+    chi_tiet: [{ MaDV: "", TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
   });
   const [services, setServices] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -59,7 +59,7 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/dich-vu/");
         setServices(response.data);
-      } catch (error) {
+      } catch {
         toast({
           title: "Lỗi",
           description: "Không thể tải danh sách dịch vụ.",
@@ -76,9 +76,11 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/api/khach-hang/");
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/khach-hang/"
+        );
         setCustomers(response.data);
-      } catch (error) {
+      } catch {
         toast({
           title: "Lỗi",
           description: "Không thể tải danh sách khách hàng.",
@@ -135,9 +137,12 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
     const updatedChiTiet = [...formData.chi_tiet];
     updatedChiTiet[index] = {
       ...updatedChiTiet[index],
+      MaDV: selectedService ? selectedService.MaDV : "",
       TenDV: value,
       ThanhTien: selectedService
-        ? (parseFloat(selectedService.GiaTien) * updatedChiTiet[index].SoLuong).toFixed(2)
+        ? (
+            parseFloat(selectedService.GiaTien) * updatedChiTiet[index].SoLuong
+          ).toFixed(2)
         : "0.00",
     };
     setFormData((prev) => ({ ...prev, chi_tiet: updatedChiTiet }));
@@ -147,7 +152,9 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
     const updatedChiTiet = [...formData.chi_tiet];
     updatedChiTiet[index][field] = field === "SoLuong" ? Number(value) : value;
     if (field === "SoLuong") {
-      const selectedService = services.find((s) => s.TenDV === updatedChiTiet[index].TenDV);
+      const selectedService = services.find(
+        (s) => s.TenDV === updatedChiTiet[index].TenDV
+      );
       updatedChiTiet[index].ThanhTien = selectedService
         ? (parseFloat(selectedService.GiaTien) * Number(value)).toFixed(2)
         : "0.00";
@@ -158,7 +165,10 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
   const handleAddService = () => {
     setFormData((prev) => ({
       ...prev,
-      chi_tiet: [...prev.chi_tiet, { TenDV: "", ThanhTien: "0.00", SoLuong: 1 }],
+      chi_tiet: [
+        ...prev.chi_tiet,
+        { MaDV: "", TenDV: "", ThanhTien: "0.00", SoLuong: 1 },
+      ],
     }));
   };
 
@@ -172,7 +182,7 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
 
     const hasInvalidService = formData.chi_tiet.some(
       (dv) =>
-        !dv.TenDV.trim() ||
+        !dv.MaDV ||
         isNaN(parseFloat(dv.ThanhTien)) ||
         parseFloat(dv.ThanhTien) <= 0 ||
         dv.SoLuong < 1
@@ -188,6 +198,8 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
         description:
           formData.HoTenKH === "Khách hàng không tồn tại"
             ? "Khách hàng không tồn tại. Vui lòng kiểm tra Mã khách hàng!"
+            : hasInvalidService
+            ? "Thông tin dịch vụ không hợp lệ. Vui lòng chọn dịch vụ và kiểm tra số lượng/thành tiền."
             : "Vui lòng nhập đầy đủ thông tin hợp lệ!",
         status: "error",
         duration: 3000,
@@ -202,7 +214,7 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
       LyDoKhachH: null,
       LyDoQly: null,
       chi_tiet: formData.chi_tiet.map((dv) => ({
-        TenDV: dv.TenDV,
+        MaDV: dv.MaDV,
         ThanhTien: parseFloat(dv.ThanhTien).toFixed(2),
         SoLuong: dv.SoLuong,
       })),
@@ -225,7 +237,10 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
         "Không thể lưu thông tin. Vui lòng kiểm tra API.";
       toast({
         title: "Lỗi",
-        description: JSON.stringify(errorMessage),
+        description:
+          typeof errorMessage === "string"
+            ? errorMessage
+            : JSON.stringify(errorMessage),
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -240,7 +255,9 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
         <Box bg="blue.50" px={6} py={4}>
           <DrawerHeader p={0} color="black" fontWeight="semibold">
             Tạo hóa đơn
-            <Text fontSize="sm" color="gray.600">{new Date().toLocaleString()}</Text>
+            <Text fontSize="sm" color="gray.600">
+              {new Date().toLocaleString()}
+            </Text>
           </DrawerHeader>
         </Box>
         <DrawerCloseButton />
@@ -266,8 +283,16 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
                     name="HoTenKH"
                     value={formData.HoTenKH}
                     isReadOnly
-                    bg={formData.HoTenKH === "Khách hàng không tồn tại" ? "red.100" : "gray.100"}
-                    color={formData.HoTenKH === "Khách hàng không tồn tại" ? "red.600" : "black"}
+                    bg={
+                      formData.HoTenKH === "Khách hàng không tồn tại"
+                        ? "red.100"
+                        : "gray.100"
+                    }
+                    color={
+                      formData.HoTenKH === "Khách hàng không tồn tại"
+                        ? "red.600"
+                        : "black"
+                    }
                   />
                 </HStack>
               </FormControl>
@@ -283,7 +308,9 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
                         <Select
                           placeholder="Chọn dịch vụ"
                           value={dv.TenDV}
-                          onChange={(e) => handleSelectChange(index, e.target.value)}
+                          onChange={(e) =>
+                            handleSelectChange(index, e.target.value)
+                          }
                         >
                           <option value="" disabled>
                             Chọn dịch vụ
@@ -309,7 +336,11 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
                           maxW="100px"
                           value={dv.SoLuong}
                           onChange={(e) =>
-                            handleServiceChange(index, "SoLuong", e.target.value)
+                            handleServiceChange(
+                              index,
+                              "SoLuong",
+                              e.target.value
+                            )
                           }
                         />
                         {formData.chi_tiet.length > 1 && (

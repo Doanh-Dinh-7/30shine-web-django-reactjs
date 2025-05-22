@@ -4,7 +4,6 @@ import {
   PopoverContent,
   PopoverBody,
   IconButton,
-  VStack,
   Text,
   Box,
   Badge,
@@ -12,36 +11,68 @@ import {
   InputGroup,
   InputLeftElement,
   useDisclosure,
+  VStack,
 } from "@chakra-ui/react";
 import { FiBell, FiSearch } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useNotifications, useNotificationWebSocket } from "./useNotifications";
+import { useNotifications } from "./useNotifications";
 import { useState } from "react";
 
 const NotificationItem = ({ notification, onClick }) => {
+  const { id, time, message, isRead, type } = notification;
+
+  // Function to format the time string
+  const formatTime = (timeString) => {
+    if (!timeString) return "Vừa xong";
+    try {
+      const date = new Date(timeString);
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        return "Thời gian không hợp lệ";
+      }
+
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return "Lỗi định dạng thời gian";
+    }
+  };
+
+  const formattedTime = formatTime(time);
+
   return (
     <Box
       w="full"
       p="3"
-      bg={!notification.isRead ? "blue.50" : "white"}
+      bg={!isRead ? "blue.50" : "white"}
       _hover={{ bg: "gray.50" }}
       cursor="pointer"
-      onClick={() => onClick(notification)}
+      onClick={() => onClick(id)}
       position="relative"
     >
       <Box>
         <Text fontSize="sm" noOfLines={2}>
           <Text as="span" fontWeight="medium">
-            Khách hàng {notification.customerName}
+            {type === "appointment"
+              ? "Lịch hẹn mới"
+              : type === "rating"
+              ? "Đánh giá mới"
+              : "Thông báo"}
           </Text>{" "}
-          {notification.message}
+          {message || "Không có nội dung"}
         </Text>
         <Text fontSize="xs" color="gray.500" mt="1">
-          {notification.time}
+          {formattedTime}
         </Text>
       </Box>
-      {!notification.isRead && (
+      {!isRead && (
         <Badge
           colorScheme="red"
           borderRadius="full"
@@ -56,12 +87,13 @@ const NotificationItem = ({ notification, onClick }) => {
 
 NotificationItem.propTypes = {
   notification: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(["appointment", "rating"]).isRequired,
-    customerName: PropTypes.string.isRequired,
-    message: PropTypes.string.isRequired,
-    time: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     isRead: PropTypes.bool.isRequired,
+    time: PropTypes.string,
+    message: PropTypes.string,
+    type: PropTypes.string,
+    ratingId: PropTypes.number,
+    appointmentId: PropTypes.number,
   }).isRequired,
   onClick: PropTypes.func.isRequired,
 };
@@ -70,22 +102,40 @@ const NotificationPopover = () => {
   const navigate = useNavigate();
   const { notifications, hasUnread, markAsRead } = useNotifications();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [notificationsState, setNotificationsState] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useNotificationWebSocket((data) => {
-    // Thêm thông báo mới vào danh sách
-    setNotificationsState((prev) => [data, ...prev]);
-  });
-
-  const handleNotificationClick = (notification) => {
-    markAsRead(notification.id);
+  const handleNotificationClick = (notificationId) => {
+    markAsRead(notificationId);
     onClose();
-    if (notification.type === "appointment") {
-      navigate("/appointments");
-    } else if (notification.type === "rating") {
-      navigate("/feedback");
+    const clickedNotification = notifications.find(
+      (n) => n.id === notificationId
+    );
+    console.log(clickedNotification.type);
+
+    if (clickedNotification) {
+      if (
+        clickedNotification.type === "appointment" ||
+        clickedNotification.appointmentId
+      ) {
+        navigate("/appointments");
+      } else if (
+        clickedNotification.type === "rating" ||
+        clickedNotification.ratingId
+      ) {
+        navigate("/feedback");
+      } else {
+        console.log(
+          "Clicked on a notification with no specific navigation path.",
+          clickedNotification
+        );
+      }
     }
   };
+
+  const filteredNotifications = notifications.filter((notification) => {
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return notification.message?.toLowerCase().includes(lowerSearchTerm);
+  });
 
   return (
     <Popover
@@ -135,7 +185,11 @@ const NotificationPopover = () => {
               <InputLeftElement pointerEvents="none">
                 <FiSearch color="gray.300" />
               </InputLeftElement>
-              <Input placeholder="Tìm kiếm..." />
+              <Input
+                placeholder="Tìm kiếm..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </InputGroup>
           </Box>
           <VStack
@@ -145,7 +199,7 @@ const NotificationPopover = () => {
             overflowY="auto"
             divider={<Box borderBottom="1px" borderColor="gray.100" />}
           >
-            {notificationsState.map((notification) => (
+            {[...filteredNotifications].reverse().map((notification) => (
               <NotificationItem
                 key={notification.id}
                 notification={notification}

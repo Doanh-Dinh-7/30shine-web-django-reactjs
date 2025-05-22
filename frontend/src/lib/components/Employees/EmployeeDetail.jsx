@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Modal,
   ModalOverlay,
@@ -9,44 +10,57 @@ import {
   Grid,
   GridItem,
   Text,
-  Badge,
   Box,
   VStack,
-  HStack,
   Divider,
+  Spinner,
 } from "@chakra-ui/react";
-import { getEmployeeDetail } from "../../service/employees";
+import PropTypes from "prop-types";
 
 const EmployeeDetail = ({ isOpen, onClose, employeeId }) => {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const fetchEmployeeDetail = async () => {
-  //     try {
-  //       const response = await getEmployeeDetail(employeeId);
-  //       setEmployee(response);
-  //     } catch (error) {
-  //       console.error("Error fetching employee details:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchEmployeeDetail = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/nhan-vien/${employeeId}/`
+        );
+        setEmployee(response.data);
+      } catch (error) {
+        console.error("Error fetching employee details:", error);
+        // Handle error display if needed
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   if (employeeId) {
-  //     fetchEmployeeDetail();
-  //   }
-  // }, [employeeId]);
+    if (employeeId !== null) {
+      // Fetch only if employeeId is provided
+      fetchEmployeeDetail();
+    } else {
+      setEmployee(null); // Clear employee details if no employeeId
+      setLoading(false); // Stop loading if no employeeId
+    }
+  }, [employeeId]); // Depend on employeeId
 
   if (loading) {
     return (
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Employee Details</ModalHeader>
+          <ModalHeader>Chi tiết nhân viên</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <Text>Loading...</Text>
+          <ModalBody
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minH="200px"
+          >
+            <Spinner size="lg" />
+            <Text ml={2}>Đang tải...</Text>
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -54,14 +68,16 @@ const EmployeeDetail = ({ isOpen, onClose, employeeId }) => {
   }
 
   if (!employee) {
+    if (!isOpen && employeeId === null) return null;
+
     return (
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Employee Details</ModalHeader>
+          <ModalHeader>Chi tiết nhân viên</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Employee not found</Text>
+            <Text>Không tìm thấy thông tin nhân viên.</Text>
           </ModalBody>
         </ModalContent>
       </Modal>
@@ -72,41 +88,46 @@ const EmployeeDetail = ({ isOpen, onClose, employeeId }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Employee Details</ModalHeader>
+        <ModalHeader>Chi tiết nhân viên</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <VStack spacing={4} align="stretch">
             {/* Thông tin cơ bản */}
             <Box>
               <Text fontSize="lg" fontWeight="bold" mb={2}>
-                Basic Information
+                Thông tin cơ bản
               </Text>
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 <GridItem>
-                  <Text fontWeight="medium">Employee ID:</Text>
-                  <Text>{employee.employeeID}</Text>
+                  <Text fontWeight="medium">Mã nhân viên:</Text>
+                  <Text>{employee.MaNV}</Text>
                 </GridItem>
                 <GridItem>
-                  <Text fontWeight="medium">Full Name:</Text>
-                  <Text>{employee.fullName}</Text>
+                  <Text fontWeight="medium">Họ và tên:</Text>
+                  <Text>{employee.HoTenNV}</Text>
                 </GridItem>
                 <GridItem>
-                  <Text fontWeight="medium">Position:</Text>
-                  <Text>{employee.position}</Text>
+                  <Text fontWeight="medium">Giới tính:</Text>
+                  <Text>{employee.GioiTinh === 0 ? "Nam" : "Nữ"}</Text>
+                </GridItem>
+              </Grid>
+            </Box>
+
+            <Divider />
+
+            {/* Thông tin tài khoản */}
+            <Box>
+              <Text fontSize="lg" fontWeight="bold" mb={2}>
+                Thông tin tài khoản
+              </Text>
+              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                <GridItem>
+                  <Text fontWeight="medium">Username:</Text>
+                  <Text>{employee.user?.username || "N/A"}</Text>
                 </GridItem>
                 <GridItem>
-                  <Text fontWeight="medium">Department:</Text>
-                  <Text>{employee.departmentName}</Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="medium">Gender:</Text>
-                  <Text>{employee.gender}</Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="medium">Date of Birth:</Text>
-                  <Text>
-                    {new Date(employee.dateOfBirth).toLocaleDateString("vi-VN")}
-                  </Text>
+                  <Text fontWeight="medium">Is Superuser:</Text>
+                  <Text>{employee.user?.is_superuser ? "Yes" : "No"}</Text>
                 </GridItem>
               </Grid>
             </Box>
@@ -116,81 +137,34 @@ const EmployeeDetail = ({ isOpen, onClose, employeeId }) => {
             {/* Thông tin cá nhân */}
             <Box>
               <Text fontSize="lg" fontWeight="bold" mb={2}>
-                Personal Information
+                Thông tin cá nhân
               </Text>
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
                 <GridItem>
-                  <Text fontWeight="medium">Nationality:</Text>
-                  <Text>{employee.nationality}</Text>
+                  <Text fontWeight="medium">Số điện thoại:</Text>
+                  <Text>{employee.SDT}</Text>
                 </GridItem>
                 <GridItem>
-                  <Text fontWeight="medium">National ID Number:</Text>
-                  <Text>{employee.nationalIDNumber}</Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="medium">Phone Number:</Text>
-                  <Text>{employee.phoneNumber}</Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="medium">Health Insurance Number:</Text>
-                  <Text>{employee.healthInsurance || "No data"}</Text>
+                  <Text fontWeight="medium">Email:</Text>
+                  <Text>{employee.Email || "N/A"}</Text>
                 </GridItem>
                 <GridItem colSpan={2}>
-                  <Text fontWeight="medium">Address:</Text>
-                  <Text>{employee.address}</Text>
+                  <Text fontWeight="medium">Địa chỉ:</Text>
+                  <Text>{employee.DiaChi || "N/A"}</Text>
                 </GridItem>
               </Grid>
-            </Box>
-
-            <Divider />
-
-            {/* Thông tin ngân hàng */}
-            <Box>
-              <Text fontSize="lg" fontWeight="bold" mb={2}>
-                Bank Information
-              </Text>
-              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                <GridItem>
-                  <Text fontWeight="medium">Bank Account Number:</Text>
-                  <Text>{employee.bankAccountNumber}</Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="medium">Bank Name:</Text>
-                  <Text>{employee.bankName}</Text>
-                </GridItem>
-              </Grid>
-            </Box>
-
-            <Divider />
-
-            {/* Trạng thái */}
-            <Box>
-              <Text fontSize="lg" fontWeight="bold" mb={2}>
-                Status
-              </Text>
-              <HStack>
-                <Badge
-                  colorScheme={
-                    employee.status === "Active"
-                      ? "green"
-                      : employee.status === "On leave"
-                      ? "yellow"
-                      : "red"
-                  }
-                >
-                  {employee.status === "Active"
-                    ? "Working"
-                    : employee.status === "On leave"
-                    ? "On leave"
-                    : "Inactive"}
-                </Badge>
-              </HStack>
             </Box>
           </VStack>
         </ModalBody>
       </ModalContent>
     </Modal>
   );
+};
+
+EmployeeDetail.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  employeeId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default EmployeeDetail;
