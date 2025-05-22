@@ -49,7 +49,7 @@ const UserProfile = () => {
         >
           <Avatar size="2xl" src={user?.AnhDaiDien} mb={4} />
           <Text fontWeight="bold" fontSize="lg">
-            {user.HoTenKH}
+            {user.HoTenKH || user.HoTenNV}
           </Text>
           <Text color="gray.500" mb={4}>
             {role}

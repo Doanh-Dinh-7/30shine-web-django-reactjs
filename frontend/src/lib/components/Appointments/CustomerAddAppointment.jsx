@@ -37,13 +37,12 @@ const MAX_APPOINTMENTS_PER_SLOT = 2; // Số lượng tối đa lịch hẹn cho
 const CustomerAddAppointment = () => {
   const navigate = useNavigate();
   const toast = useToast();
-  const { appointments: rawAppointments, setAppointments } =
-    useOutletContext() || {};
+  const { appointments: rawAppointments } = useOutletContext() || {};
   const appointments = rawAppointments || [];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const role = localStorage.getItem("role");
   const [services, setServices] = useState([]);
-  const [staffList, setStaffList] = useState([]);
+  const [staffOptions, setStaffOptions] = useState([]); // Danh sách nhân viên theo lịch
 
   const [formData, setFormData] = useState({
     MaKH: "",
@@ -55,17 +54,26 @@ const CustomerAddAppointment = () => {
     TenDV: "",
     GiaTien: "",
     GhiChu: "",
+    MaNV: "",
+    MaLLV: "",
   });
 
   // Kiểm tra localStorage có MaKH không
   useEffect(() => {
-    const MaKH = localStorage.getItem("MaKH");
-    if (MaKH) {
+    const userStr = localStorage.getItem("user");
+    let user = null;
+    try {
+      user = JSON.parse(userStr);
+    } catch {
+      user = null;
+    }
+
+    if (user && user.MaKH) {
       setFormData((prev) => ({
         ...prev,
-        MaKH: MaKH,
-        HoTenKH: HoTenKH,
-        SDT: SDT,
+        MaKH: user.MaKH,
+        HoTenKH: user.HoTenKH,
+        SDT: user.SDT,
       }));
     } else {
       onOpen();
@@ -78,7 +86,7 @@ const CustomerAddAppointment = () => {
         const response = await axios.get(
           "http://127.0.0.1:8000/api/nhan-vien/"
         );
-        setStaffList(response.data);
+        setStaffOptions(response.data);
       } catch (error) {
         console.error("Error fetching staff:", error);
         toast({
@@ -112,6 +120,36 @@ const CustomerAddAppointment = () => {
     fetchServices();
   }, [toast]);
 
+  // Hàm chuyển đổi giờ từ '13h20' sang '13:20:00'
+  const convertTimeInput = (input) => {
+    if (!input) return "";
+    if (input.includes(":")) {
+      // Đã đúng định dạng
+      return input.length === 5 ? input + ":00" : input;
+    }
+    return input.replace("h", ":") + ":00";
+  };
+
+  // Lấy danh sách nhân viên phù hợp khi chọn ngày và giờ hẹn
+  useEffect(() => {
+    if (formData.TGHen && formData.GioKhachDen) {
+      const fetchStaffBySchedule = async () => {
+        try {
+          const gioQuery = convertTimeInput(formData.GioKhachDen).slice(0, 5); // '13:20'
+          const response = await axios.get(
+            `http://127.0.0.1:8000/api/lich-hen/nhan-vien-theo-lich/?NgayLam=${formData.TGHen}&Gio=${gioQuery}`
+          );
+          setStaffOptions(response.data.data || []);
+        } catch {
+          setStaffOptions([]);
+        }
+      };
+      fetchStaffBySchedule();
+    } else {
+      setStaffOptions([]);
+    }
+  }, [formData.TGHen, formData.GioKhachDen]);
+
   // Scroll to top when component mounts
   useEffect(() => {
     const mainContent = document.querySelector('[role="main"]') || window;
@@ -142,6 +180,18 @@ const CustomerAddAppointment = () => {
         MaDV: selectedService ? selectedService.MaDV : "",
         GiaTien: selectedService ? selectedService.GiaTien : "",
       }));
+    } else if (name === "MaNV_MaLLV") {
+      // value dạng "MaNV-MaLLV"
+      const [MaNV, MaLLV] = value.split("-");
+      const staff = staffOptions.find(
+        (s) => String(s.MaNV) === MaNV && String(s.MaLLV) === MaLLV
+      );
+      setFormData((prev) => ({
+        ...prev,
+        MaNV,
+        MaLLV,
+        HoTenNV: staff ? staff.HoTenNV : "",
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -164,10 +214,11 @@ const CustomerAddAppointment = () => {
       const appointmentData = {
         MaKH: formData.MaKH,
         MaDV: formData.MaDV,
-        NgayDatLich: new Date().toISOString().split("T")[0],
-        GioDatLich: formData.GioDatLich,
-        GhiChu: formData.GhiChu || "",
+        MaLLV: formData.MaLLV,
+        NgayDatLich: formData.TGHen,
+        GioKhachDen: convertTimeInput(formData.GioKhachDen),
         TrangThai: 0, // 0: Chờ xác nhận
+        GhiChu: formData.GhiChu || "",
       };
 
       const response = await axios.post(
@@ -338,14 +389,22 @@ const CustomerAddAppointment = () => {
           <FormControl isRequired>
             <FormLabel>Nhân viên phụ trách</FormLabel>
             <Select
-              name="HoTenNV"
-              value={formData.HoTenNV}
+              name="MaNV_MaLLV"
+              value={
+                formData.MaNV && formData.MaLLV
+                  ? `${formData.MaNV}-${formData.MaLLV}`
+                  : ""
+              }
               onChange={handleChange}
               placeholder="Chọn nhân viên"
+              isDisabled={!formData.TGHen || !formData.GioKhachDen}
             >
-              {staffList.map((staff) => (
-                <option key={staff.MaNV} value={staff.MaNV}>
-                  {staff.HoTenNV}
+              {staffOptions.map((staff) => (
+                <option
+                  key={staff.MaNV + "-" + staff.MaLLV}
+                  value={staff.MaNV + "-" + staff.MaLLV}
+                >
+                  {staff.HoTenNV} (Ca: {staff.GioBatDau} - {staff.GioKetThuc})
                 </option>
               ))}
             </Select>

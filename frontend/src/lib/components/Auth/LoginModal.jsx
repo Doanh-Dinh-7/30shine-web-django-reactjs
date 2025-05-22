@@ -26,14 +26,14 @@ const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
 
   const handleLogin = async () => {
     setError("");
-    console.log(username, password);
-    if (username === "admin" && password === "") {
-      localStorage.setItem("username", "admin");
-      localStorage.setItem("role", "quan ly");
-      onClose();
-      window.location.reload();
-      return;
-    }
+    // console.log(username, password);
+    // if (username === "admin" && password === "") {
+    //   localStorage.setItem("username", "admin");
+    //   localStorage.setItem("role", "quan ly");
+    //   onClose();
+    //   window.location.reload();
+    //   return;
+    // }
     try {
       const res = await axios.post(
         "http://127.0.0.1:8000/api/tai-khoan/dang-nhap/",
@@ -45,14 +45,20 @@ const LoginModal = ({ isOpen, onClose, onSwitchRegister, onSwitchForgot }) => {
       const { access, refresh, user } = res.data;
       localStorage.setItem("access", access);
       localStorage.setItem("refresh", refresh);
+      console.log("user", user);
+
       if (username === "admin") {
-        localStorage.setItem("username", "admin");
         localStorage.setItem("role", "quan ly");
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/nhan-vien/user/${user.id}/`
+        );
+        const nhanvien = res.data;
+        localStorage.setItem("username", nhanvien.HoTenNV);
+        localStorage.setItem("user", JSON.stringify(nhanvien));
       } else {
         localStorage.setItem("role", "khach hang");
-        localStorage.setItem("MaKH", user.id);
         const res = await axios.get(
-          `http://127.0.0.1:8000/api/khach-hang/${user.id}/`
+          `http://127.0.0.1:8000/api/khach-hang/user/${user.id}/`
         );
         const khachHang = res.data;
         localStorage.setItem("username", khachHang.HoTenKH);

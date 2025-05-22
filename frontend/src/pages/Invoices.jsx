@@ -133,6 +133,7 @@ const Invoices = () => {
           invoices.map((inv) => (inv.MaHD === formData.MaHD ? formData : inv))
         );
       }
+      setIsEditOpen(false);
     } catch (error) {
       console.error("Lỗi khi lưu hóa đơn:", error);
       throw error;
