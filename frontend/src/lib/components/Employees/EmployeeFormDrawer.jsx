@@ -41,6 +41,7 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
         Email: employee.Email || "",
         ChucVu: employee.ChucVu || "",
       });
+      
     } else {
       setFormData({
         MaNV: "",
