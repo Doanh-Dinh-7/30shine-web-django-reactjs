@@ -58,7 +58,7 @@ def create_nhan_vien():
     return created_nhan_vien
 
 def create_lich_lam_viec(nhan_vien):
-    # Tạo lịch làm việc cho nhân viên 1 (Trương Thái Bảo)
+
     lich_lam_viec_nv1 = [
         {'NgayLam': datetime(2025, 5, 27).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
         {'NgayLam': datetime(2025, 5, 28).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
@@ -66,9 +66,23 @@ def create_lich_lam_viec(nhan_vien):
         {'NgayLam': datetime(2025, 5, 30).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
         {'NgayLam': datetime(2025, 5, 31).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
         {'NgayLam': datetime(2025, 6, 1).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 2).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 3).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 4).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 5).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 6, 6).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 7).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 8).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 9).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 10).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 11).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 12).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 6, 13).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 14).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 15).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
     ]
 
-    # Tạo lịch làm việc cho nhân viên 2 (Hồ Văn Trường)
+
     lich_lam_viec_nv2 = [
         {'NgayLam': datetime(2025, 5, 27).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
         {'NgayLam': datetime(2025, 5, 28).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
@@ -76,26 +90,39 @@ def create_lich_lam_viec(nhan_vien):
         {'NgayLam': datetime(2025, 5, 30).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
         {'NgayLam': datetime(2025, 5, 31).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
         {'NgayLam': datetime(2025, 6, 1).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 2).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 6, 3).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 4).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 6, 5).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 6).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 7).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 8).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 6, 9).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 6, 10).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 11).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 6, 12).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 13).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 14).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 6, 15).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
     ]
 
-    # Tạo lịch làm việc cho cả hai nhân viên
+
     created_llv = []
-    for llv in lich_lam_viec_nv1:
-        llv_obj = LichLamViec.objects.create(MaNV=nhan_vien[0], **llv)
+    for llv_data in lich_lam_viec_nv1:
+        llv_obj = LichLamViec.objects.create(MaNV=nhan_vien[0], **llv_data)
         created_llv.append(llv_obj)
     
-    for llv in lich_lam_viec_nv2:
-        llv_obj = LichLamViec.objects.create(MaNV=nhan_vien[1], **llv)
+    for llv_data in lich_lam_viec_nv2:
+        llv_obj = LichLamViec.objects.create(MaNV=nhan_vien[1], **llv_data)
         created_llv.append(llv_obj)
     
     return created_llv
 
 def create_sample_data():
-    # Tạo nhân viên và lịch làm việc
+
     nhan_vien = create_nhan_vien()
     lich_lam_viec = create_lich_lam_viec(nhan_vien)
 
-    # Create Users (Giữ lại user cho khách hàng)
     user_giang = User.objects.create_user(
         username='nguyentruonggiang',
         password='hoang12345',
@@ -107,7 +134,6 @@ def create_sample_data():
         email='nhan@gmail.com'
     )
 
-    # Create KhachHang (Tạo thủ công 2 khách hàng)
     kh_giang = KhachHang.objects.create(
         user=user_giang,
         HoTenKH='Nguyễn Trường Giang',
@@ -125,7 +151,6 @@ def create_sample_data():
         AnhDaiDien='https://res.cloudinary.com/de3vts9dv/image/upload/v1748193646/k1ymuierlisa4dzk3pg8.jpg'
     )
 
-    # Create DichVu (Tạo thủ công 2 dịch vụ)
     dv_nhuom = DichVu.objects.create(
         TenDV='Nhuộm tóc (Tẩy)',
         MoTa='Tẩy tóc và nhuộm những màu tóc tẩy hot trend 2025',
@@ -141,16 +166,17 @@ def create_sample_data():
         AnhDaiDien='https://res.cloudinary.com/de3vts9dv/image/upload/v1748194666/ydefmyvjcz2cxadle2ah.jpg'
     )
 
-    # Create LichHen (Tạo thủ công 5 lịch hẹn)
-    try:
-        # Lấy các lịch làm việc đã tạo
-        llv_1 = lich_lam_viec[0]  # 2025-05-27 NV 1, 08:00-12:00
-        llv_3 = lich_lam_viec[2]  # 2025-05-29 NV 1, 08:00-12:00
-        llv_5 = lich_lam_viec[4]  # 2025-05-31 NV 1, 08:00-17:00
-        llv_7 = lich_lam_viec[6]  # 2025-05-27 NV 2, 17:00-22:00
-        llv_9 = lich_lam_viec[8]  # 2025-05-29 NV 2, 17:00-22:00
 
-        # Lịch hẹn 1: Giang đặt Nhuộm tóc với Bảo (MaNV 1) ngày 2025-05-27, khung 8:00-12:00 (MaLLV 1)
+    try:
+
+
+        llv_1 = lich_lam_viec[0]
+        llv_3 = lich_lam_viec[2]
+        llv_5 = lich_lam_viec[4]
+        llv_7 = lich_lam_viec[20]
+        llv_9 = lich_lam_viec[22]
+
+
         LichHen.objects.create(
             MaKH=kh_giang,
             MaDV=dv_nhuom,
@@ -162,7 +188,7 @@ def create_sample_data():
             GhiChu="Khách muốn nhuộm màu xám khói"
         )
 
-        # Lịch hẹn 2: Nhân đặt Gội đầu với Trường (MaNV 2) ngày 2025-05-27, khung 17:00-22:00 (MaLLV 7)
+
         LichHen.objects.create(
             MaKH=kh_nhan,
             MaDV=dv_goi,
@@ -173,8 +199,7 @@ def create_sample_data():
             TrangThai=1, # Đã xác nhận
             GhiChu="Gội đầu thư giãn"
         )
-        
-        # Lịch hẹn 3: Giang đặt Gội đầu với Bảo (MaNV 1) ngày 2025-05-29, khung 8:00-12:00 (MaLLV 3)
+
         LichHen.objects.create(
             MaKH=kh_giang,
             MaDV=dv_goi,
@@ -186,7 +211,7 @@ def create_sample_data():
             GhiChu="Gội đầu + hút mụn"
         )
 
-        # Lịch hẹn 4: Nhân đặt Nhuộm tóc với Trường (MaNV 2) ngày 2025-05-29, khung 17:00-22:00 (MaLLV 9)
+
         LichHen.objects.create(
             MaKH=kh_nhan,
             MaDV=dv_nhuom,
@@ -198,7 +223,7 @@ def create_sample_data():
             GhiChu="Nhuộm màu nâu khói"
         )
 
-        # Lịch hẹn 5: Giang đặt Nhuộm tóc với Bảo (MaNV 1) ngày 2025-05-31, khung 8:00-17:00 (MaLLV 5)
+
         LichHen.objects.create(
             MaKH=kh_giang,
             MaDV=dv_nhuom,
@@ -213,12 +238,9 @@ def create_sample_data():
     except Exception as e:
         print(f"Lỗi khi tạo lịch hẹn: {e}")
 
-    # Create HoaDon (Tạo thủ công hóa đơn)
-    # Sử dụng timezone-aware datetime cho ngày lập và thời gian thanh toán
-    
-    # 3 Hóa đơn bình thường (không đánh giá)
+
     try:
-        # Hóa đơn B1: Giang, Dịch vụ Gội đầu (Đã thanh toán)
+
         hdb1_ngay_lap = timezone.make_aware(datetime(2024, 6, 5))
         hdb1_thoi_gian_tt = timezone.make_aware(datetime(2024, 6, 5, 10, 15, 0))
         hdb1 = HoaDon.objects.create(
@@ -258,7 +280,7 @@ def create_sample_data():
             SoLuong=1
         )
         
-        # Hóa đơn B3: Giang, Dịch vụ Nhuộm tóc + Gội đầu (Chưa thanh toán)
+        # Hóa đơn B3: Giang, Dịch vụ Nhuộm tóc + Gội đầu (Đã thanh toán)
         hdb3_ngay_lap = timezone.make_aware(datetime(2024, 6, 8))
         hdb3 = HoaDon.objects.create(
             MaKH=kh_giang,
@@ -322,7 +344,6 @@ def create_sample_data():
             MaHD=hde1
         )
 
-        # Hóa đơn Đ2: Giang, Gội đầu (Đã thanh toán, có đánh giá)
         hde2_ngay_lap = timezone.make_aware(datetime(2024, 5, 12))
         hde2_thoi_gian_tt = timezone.make_aware(datetime(2024, 5, 12, 14, 0, 0))
         hde2 = HoaDon.objects.create(
@@ -350,7 +371,7 @@ def create_sample_data():
             MaHD=hde2
         )
 
-        # Hóa đơn Đ3: Nhân, Nhuộm tóc (Đã thanh toán, có đánh giá)
+
         hde3_ngay_lap = timezone.make_aware(datetime(2024, 5, 18))
         hde3_thoi_gian_tt = timezone.make_aware(datetime(2024, 5, 18, 10, 0, 0))
         hde3 = HoaDon.objects.create(
@@ -378,7 +399,7 @@ def create_sample_data():
             MaHD=hde3
         )
 
-        # Hóa đơn Đ4: Giang, Nhuộm tóc + Gội đầu (Đã thanh toán, có đánh giá)
+
         hde4_ngay_lap = timezone.make_aware(datetime(2024, 5, 21))
         hde4_thoi_gian_tt = timezone.make_aware(datetime(2024, 5, 21, 17, 30, 0))
         hde4 = HoaDon.objects.create(
@@ -412,7 +433,7 @@ def create_sample_data():
             MaHD=hde4
         )
 
-        # Hóa đơn Đ5: Nhân, Gội đầu (Đã thanh toán, có đánh giá)
+
         hde5_ngay_lap = timezone.make_aware(datetime(2024, 5, 24))
         hde5_thoi_gian_tt = timezone.make_aware(datetime(2024, 5, 24, 9, 0, 0))
         hde5 = HoaDon.objects.create(
@@ -444,4 +465,5 @@ def create_sample_data():
         print(f"Lỗi khi tạo hóa đơn kèm đánh giá: {e}")
 
 if __name__ == '__main__':
-    create_sample_data() 
+    create_sample_data()
+
