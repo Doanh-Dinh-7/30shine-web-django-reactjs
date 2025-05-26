@@ -17,12 +17,17 @@ from qlLichHen.models import LichHen
 from qlDanhGia.models import DanhGia
 
 def create_sample_data():
+    # Xóa dữ liệu cũ để tránh lỗi trùng khóa chính hoặc unique
+    DanhGia.objects.all().delete()
+    ChiTietHoaDon.objects.all().delete()
+    HoaDon.objects.all().delete()
+
     # Create Users
     users = [
-        {'username': 'nguyentruonggiang', 'password': 'hoang12345', 'email': 'giang@gmail.com'},
-        {'username': 'leducnhan', 'password': 'hoang12345', 'email': 'nhan@gmail.com'},
-        {'username': 'truongthaibao', 'password': 'hoang12345', 'email': 'bao@gmail.com'},
-        {'username': 'hovantruong', 'password': 'hoang12345', 'email': 'truong@gmail.com'},
+        {'username': 'nguyenanhduc', 'password': 'duc12345', 'email': 'duc@gmail.com'},
+        {'username': 'tranbuiquocan', 'password': 'an12345', 'email': 'an@gmail.com'},
+        {'username': 'nguyenthanhtung', 'password': 'tung12345', 'email': 'tung@gmail.com'},
+        {'username': 'ngovanhai', 'password': 'hai12345', 'email': 'hai@gmail.com'},
     ]
 
     created_users = []
