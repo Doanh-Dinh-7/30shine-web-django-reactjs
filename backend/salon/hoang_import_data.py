@@ -16,8 +16,86 @@ from qlDanhGia.models import DanhGia
 from decimal import Decimal
 from random import randint, sample
 
+def create_nhan_vien():
+    # Create Users
+    users = [
+        {'username': 'truongthaibao', 'password': 'hoang12345', 'email': 'bao@gmail.com'},
+        {'username': 'hovantruong', 'password': 'hoang12345', 'email': 'truong@gmail.com'},
+    ]
+
+    created_users = []
+    for user_data in users:
+        user = User.objects.create_user(
+            username=user_data['username'],
+            password=user_data['password'],
+            email=user_data['email']
+        )
+        created_users.append(user)
+
+    # Create NhanVien
+    nhan_vien = [
+        {
+            'user': created_users[0],
+            'HoTenNV': 'Trương Thái Bảo',
+            'SDT': '0914306897',
+            'DiaChi': '03 Nguyễn Văn Linh - Hòa Cường Nam - Hải Châu - Đà Nẵng',
+            'GioiTinh': 'Nam'
+        },
+        {
+            'user': created_users[1],
+            'HoTenNV': 'Hồ Văn Trường',
+            'SDT': '0914306557',
+            'DiaChi': '33 Mỹ An 1 - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
+            'GioiTinh': 'Nam'
+        }
+    ]
+
+    created_nhan_vien = []
+    for nv in nhan_vien:
+        nhan_vien_obj = NhanVien.objects.create(**nv)
+        created_nhan_vien.append(nhan_vien_obj)
+    
+    return created_nhan_vien
+
+def create_lich_lam_viec(nhan_vien):
+    # Tạo lịch làm việc cho nhân viên 1 (Trương Thái Bảo)
+    lich_lam_viec_nv1 = [
+        {'NgayLam': datetime(2025, 5, 27).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 5, 28).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 5, 29).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 5, 30).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 5, 31).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 1).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+    ]
+
+    # Tạo lịch làm việc cho nhân viên 2 (Hồ Văn Trường)
+    lich_lam_viec_nv2 = [
+        {'NgayLam': datetime(2025, 5, 27).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 5, 28).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 5, 29).date(), 'GioBatDau': time(17, 0), 'GioKetThuc': time(22, 0)},
+        {'NgayLam': datetime(2025, 5, 30).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+        {'NgayLam': datetime(2025, 5, 31).date(), 'GioBatDau': time(12, 0), 'GioKetThuc': time(17, 0)},
+        {'NgayLam': datetime(2025, 6, 1).date(), 'GioBatDau': time(8, 0), 'GioKetThuc': time(12, 0)},
+    ]
+
+    # Tạo lịch làm việc cho cả hai nhân viên
+    created_llv = []
+    for llv in lich_lam_viec_nv1:
+        llv_obj = LichLamViec.objects.create(MaNV=nhan_vien[0], **llv)
+        created_llv.append(llv_obj)
+    
+    for llv in lich_lam_viec_nv2:
+        llv_obj = LichLamViec.objects.create(MaNV=nhan_vien[1], **llv)
+        created_llv.append(llv_obj)
+    
+    return created_llv
+
 def create_sample_data():
-    # Create Users (Giữ lại user cho khách hàng, bỏ user cho nhân viên)
+    # Tạo nhân viên và lịch làm việc
+    nhan_vien = create_nhan_vien()
+    lich_lam_viec = create_lich_lam_viec(nhan_vien)
+
+    # Create Users (Giữ lại user cho khách hàng)
     user_giang = User.objects.create_user(
         username='nguyentruonggiang',
         password='hoang12345',
@@ -46,9 +124,6 @@ def create_sample_data():
         DiaChi='14 Mỹ An 3 - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
         AnhDaiDien='https://res.cloudinary.com/de3vts9dv/image/upload/v1748193646/k1ymuierlisa4dzk3pg8.jpg'
     )
-    
-    # Assume NhanVien with MaNV 1 ('Trương Thái Bảo') and MaNV 2 ('Hồ Văn Trường') already exist
-    # Assume LichLamViec with MaLLV 1-12 and corresponding data from the image already exist
 
     # Create DichVu (Tạo thủ công 2 dịch vụ)
     dv_nhuom = DichVu.objects.create(
@@ -66,18 +141,14 @@ def create_sample_data():
         AnhDaiDien='https://res.cloudinary.com/de3vts9dv/image/upload/v1748194666/ydefmyvjcz2cxadle2ah.jpg'
     )
 
-    # Create LichHen (Tạo thủ công 5 lịch hẹn, liên kết với MaNV 1, 2 và các MaLLV từ 1-12)
-    # Lấy các đối tượng NhanVien và LichLamViec giả định
+    # Create LichHen (Tạo thủ công 5 lịch hẹn)
     try:
-        nv_bao = NhanVien.objects.get(MaNV=1)
-        nv_truong = NhanVien.objects.get(MaNV=2)
-        
-        # Lấy một số MaLLV cụ thể từ ảnh để tạo lịch hẹn
-        llv_1 = LichLamViec.objects.get(MaLLV=1)  # 2025-05-27 NV 1, 08:00-12:00
-        llv_3 = LichLamViec.objects.get(MaLLV=3)  # 2025-05-29 NV 1, 08:00-12:00
-        llv_5 = LichLamViec.objects.get(MaLLV=5)  # 2025-05-31 NV 1, 08:00-17:00
-        llv_7 = LichLamViec.objects.get(MaLLV=7)  # 2025-05-27 NV 2, 17:00-22:00
-        llv_9 = LichLamViec.objects.get(MaLLV=9)  # 2025-05-29 NV 2, 17:00-22:00
+        # Lấy các lịch làm việc đã tạo
+        llv_1 = lich_lam_viec[0]  # 2025-05-27 NV 1, 08:00-12:00
+        llv_3 = lich_lam_viec[2]  # 2025-05-29 NV 1, 08:00-12:00
+        llv_5 = lich_lam_viec[4]  # 2025-05-31 NV 1, 08:00-17:00
+        llv_7 = lich_lam_viec[6]  # 2025-05-27 NV 2, 17:00-22:00
+        llv_9 = lich_lam_viec[8]  # 2025-05-29 NV 2, 17:00-22:00
 
         # Lịch hẹn 1: Giang đặt Nhuộm tóc với Bảo (MaNV 1) ngày 2025-05-27, khung 8:00-12:00 (MaLLV 1)
         LichHen.objects.create(
@@ -85,7 +156,7 @@ def create_sample_data():
             MaDV=dv_nhuom,
             MaLLV=llv_1, 
             NgayDatLich=llv_1.NgayLam,
-            GioDatLich=datetime.combine(llv_1.NgayLam, time(9, 0)).time(), # Giờ cụ thể trong khung
+            GioDatLich=datetime.combine(llv_1.NgayLam, time(9, 0)).time(),
             GioKhachDen=datetime.combine(llv_1.NgayLam, time(10, 0)).time(),
             TrangThai=1, # Đã xác nhận
             GhiChu="Khách muốn nhuộm màu xám khói"
@@ -127,7 +198,7 @@ def create_sample_data():
             GhiChu="Nhuộm màu nâu khói"
         )
 
-         # Lịch hẹn 5: Giang đặt Nhuộm tóc với Bảo (MaNV 1) ngày 2025-05-31, khung 8:00-17:00 (MaLLV 5)
+        # Lịch hẹn 5: Giang đặt Nhuộm tóc với Bảo (MaNV 1) ngày 2025-05-31, khung 8:00-17:00 (MaLLV 5)
         LichHen.objects.create(
             MaKH=kh_giang,
             MaDV=dv_nhuom,
@@ -139,13 +210,8 @@ def create_sample_data():
             GhiChu="Tẩy và nhuộm bạch kim"
         )
 
-    except NhanVien.DoesNotExist:
-        print("Lỗi: Không tìm thấy nhân viên với MaNV 1 hoặc 2. Vui lòng đảm bảo dữ liệu nhân viên đã có trong DB.")
-    except LichLamViec.DoesNotExist:
-        print("Lỗi: Không tìm thấy lịch làm việc với MaLLV cần thiết. Vui lòng đảm bảo dữ liệu lịch làm việc đã có trong DB.")
     except Exception as e:
         print(f"Lỗi khi tạo lịch hẹn: {e}")
-
 
     # Create HoaDon (Tạo thủ công hóa đơn)
     # Sử dụng timezone-aware datetime cho ngày lập và thời gian thanh toán
@@ -198,11 +264,11 @@ def create_sample_data():
             MaKH=kh_giang,
             TongTien=Decimal('650000'),
             NgayLapHD=hdb3_ngay_lap,
-            SoTienThanhToan=Decimal('0'),
+            SoTienThanhToan=Decimal('650000'),
             HinhThucThanhToan=2, # Khác
-            ThoiGianThanhToan=None,
-            TrangThaiTT=0, # Chưa thanh toán
-            TrangThaiHT=0 # Chưa hoàn thành
+            ThoiGianThanhToan=timezone.make_aware(datetime(2024, 6, 8, 14, 0, 0)), # Thời gian thanh toán trong quá khứ
+            TrangThaiTT=1, # Đã thanh toán
+            TrangThaiHT=1 # Đã hoàn thành
         )
         ChiTietHoaDon.objects.create(
             MaHD=hdb3,
@@ -219,7 +285,6 @@ def create_sample_data():
 
     except Exception as e:
         print(f"Lỗi khi tạo hóa đơn bình thường: {e}")
-
 
     # 5 Hóa đơn kèm đánh giá
     try:
@@ -378,7 +443,5 @@ def create_sample_data():
     except Exception as e:
         print(f"Lỗi khi tạo hóa đơn kèm đánh giá: {e}")
 
-
 if __name__ == '__main__':
-    create_sample_data()
-    print("Đã cố gắng tạo dữ liệu mẫu thủ công (trừ Nhân viên và Lịch làm việc). Vui lòng kiểm tra log nếu có lỗi liên quan đến việc thiếu Nhân viên hoặc Lịch làm việc.") 
+    create_sample_data() 
