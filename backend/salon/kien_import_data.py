@@ -123,20 +123,50 @@ def create_sample_data():
         service = DichVu.objects.create(**dv)
         created_dich_vu.append(service)
 
-    # Create LichLamViec
-    today = timezone.now().date()
+    # Create LichLamViec: nhập dữ liệu cụ thể (3 tuần)
+    lich_lam_viec_data = [
+        (1, '2025-06-02', '08:00', '18:00'),
+        (1, '2025-06-03', '08:00', '19:00'),
+        (1, '2025-06-04', '08:00', '20:00'),
+        (1, '2025-06-05', '08:00', '20:00'),
+        (1, '2025-06-06', '08:00', '20:30'),
+        (1, '2025-06-09', '08:00', '19:00'),
+        (1, '2025-06-10', '08:00', '19:00'),
+        (1, '2025-06-11', '08:00', '20:00'),
+        (1, '2025-06-12', '08:00', '20:00'),
+        (1, '2025-06-13', '08:00', '21:00'),
+        (1, '2025-06-16', '08:00', '20:00'),
+        (1, '2025-06-17', '08:00', '21:00'),
+        (1, '2025-06-18', '08:00', '20:30'),
+        (2, '2025-06-02', '08:00', '17:00'),
+        (2, '2025-06-03', '08:00', '18:00'),
+        (2, '2025-06-05', '08:00', '21:00'),
+        (2, '2025-06-06', '08:00', '20:00'),
+        (2, '2025-06-09', '17:00', '22:00'),
+        (2, '2025-06-10', '08:00', '20:00'),
+        (2, '2025-06-11', '08:00', '21:00'),
+        (2, '2025-06-12', '08:00', '20:00'),
+        (2, '2025-06-13', '08:00', '21:00'),
+        (2, '2025-06-16', '08:00', '21:00'),
+        (2, '2025-06-17', '08:00', '20:00'),
+        (2, '2025-06-18', '08:00', '19:30'),
+    ]
+
     lich_lam_viec = []
-    for nv in created_nhan_vien:
-        for i in range(5):
-            llv = LichLamViec.objects.create(
-                MaNV=nv,
-                NgayLam=today + timedelta(days=i),
-                GioBatDau=datetime.strptime('08:00', '%H:%M').time(),
-                GioKetThuc=datetime.strptime('22:00', '%H:%M').time()
-            )
-            lich_lam_viec.append(llv)
+    for manv, ngay_str, gio_bd_str, gio_kt_str in lich_lam_viec_data:
+        nv_obj = created_nhan_vien[manv - 1]
+        llv = LichLamViec.objects.create(
+        MaNV=nv_obj,
+        NgayLam=datetime.strptime(ngay_str, '%Y-%m-%d').date(),
+        GioBatDau=datetime.strptime(gio_bd_str, '%H:%M').time(),
+        GioKetThuc=datetime.strptime(gio_kt_str, '%H:%M').time()
+    )
+    lich_lam_viec.append(llv)
+
 
     # Create LichHen
+    today = timezone.now().date()
+
     lich_hen = []
     gio_bat_dau_list = ['08:30', '10:30', '12:00', '14:40', '16:20']
     ghi_chu_list = [
