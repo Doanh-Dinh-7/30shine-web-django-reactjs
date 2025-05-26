@@ -1,6 +1,6 @@
 import os
 import django
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from decimal import Decimal
 from random import randint, sample
 from django.utils import timezone  # Import timezone để xử lý múi giờ
@@ -62,6 +62,7 @@ def create_sample_data():
 
     created_khach_hang = []
     for kh in khach_hang:
+        
         # Check if KhachHang already exists for this user
         if KhachHang.objects.filter(user=kh['user']).exists():
             customer = KhachHang.objects.get(user=kh['user'])
@@ -225,7 +226,37 @@ def create_sample_data():
             'chi_tiet': [
                 {'MaDV': 1, 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1}
             ]
-        }
+        },
+        {
+            'MaHD': 4, 'MaKH': 2, 'TongTien': Decimal('300000.00'), 
+            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 14, 0)), 
+            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1, 
+            'GhiChu': 'Nhuộm tóc và cắt tóc nữ',
+            'chi_tiet': [
+                {'MaDV': 2, 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1}
+            ]
+        },
+        {
+            'MaHD': 5, 'MaKH': 1, 'TongTien': Decimal('450000.00'), 
+            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 14, 0)), 
+            'SoTienThanhToan': Decimal('450000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1, 
+            'GhiChu': 'Nhuộm tóc và cắt tóc nữ',
+            'chi_tiet': [
+                {'MaDV': 2, 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1},
+                {'MaDV': 1, 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
+            ]
+        },
+        {
+            'MaHD': 6, 'MaKH': 2, 'TongTien': Decimal('750000.00'), 
+            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 14, 0)), 
+            'SoTienThanhToan': Decimal('750000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1, 
+            'GhiChu': 'Nhuộm tóc và cắt tóc nữ',
+            'chi_tiet': [
+                {'MaDV': 2, 'ThanhTien': Decimal('300000.00'), 'SoLuong': 2},
+                {'MaDV': 1, 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
+            ]
+        },
+        
         
     ]
 
@@ -251,26 +282,62 @@ def create_sample_data():
                 ThanhTien=ct_data['ThanhTien'],
                 SoLuong=ct_data['SoLuong']
             )
-
-    # Create DanhGia for HoaDon with TrangThaiTT=1
-    danh_gia_noi_dung = [
-        "Dịch vụ rất tốt, nhân viên thân thiện, cắt tóc rất đẹp.",
-        "Nhuộm tóc màu đẹp, gội đầu thoải mái, rất hài lòng.",
-        "Cắt tóc nữ đúng ý, dịch vụ chu đáo, sẽ quay lại.",
-        "Cắt tóc nam nhanh gọn, nhân viên nhiệt tình.",
-        "Nhuộm tóc đều màu, gội đầu thư giãn, tuyệt vời.",
-        "Cắt tóc nữ thời thượng, dịch vụ chuyên nghiệp.",
-        "Cắt tóc nam đúng kiểu, gội đầu sạch sẽ, rất tốt."
+    #đánh giá chi tiết
+    
+    danh_gias_chi_tiet = [
+    {
+        'MaHD': 2,
+        'MaKH': created_khach_hang[0],  # MaKH = 1
+        'NgayDanhGia': date(2025, 5, 26),
+        'NoiDung': "Nhuộm màu đẹp, nhân viên thân thiện, sẽ quay lại.",
+        'DiemDanhGia': 5,
+        'MaDV': created_dich_vu[1]  # MaDV=2 trong chi_tiet của HD 2
+    },
+    {
+        'MaHD': 3,
+        'MaKH': created_khach_hang[1],  # MaKH = 2
+        'NgayDanhGia': date(2025, 5, 26),
+        'NoiDung': "Dịch vụ chuyên nghiệp, tóc được tạo kiểu đẹp.",
+        'DiemDanhGia': 5,
+        'MaDV': created_dich_vu[0]  # MaDV=1 trong chi_tiet của HD 3
+    },
+    {
+        'MaHD': 4,
+        'MaKH': created_khach_hang[1],  # MaKH = 2
+        'NgayDanhGia': date(2025, 5, 27),
+        'NoiDung': "Tư vấn tận tâm, cắt tóc đúng ý, hài lòng.",
+        'DiemDanhGia': 4,
+        'MaDV': created_dich_vu[1]  # MaDV=2 trong chi_tiet của HD 4
+    },
+    {
+        'MaHD': 5,
+        'MaKH': created_khach_hang[0],  # MaKH = 1
+        'NgayDanhGia': date(2025, 5, 27),
+        'NoiDung': "Dịch vụ nhanh chóng, nhân viên vui vẻ, rất hài lòng.",
+        'DiemDanhGia': 5,
+        'MaDV': created_dich_vu[0]  # Ví dụ dịch vụ 1
+    },
+    {
+        'MaHD': 6,
+        'MaKH': created_khach_hang[0],  # MaKH = 1
+        'NgayDanhGia': date(2025, 5, 28),
+        'NoiDung': "Kỹ thuật nhuộm rất tốt, kết quả vượt mong đợi.",
+        'DiemDanhGia': 5,
+        'MaDV': created_dich_vu[1]  # Ví dụ dịch vụ 2
+    }
     ]
-    for i, hd_data in enumerate(hoa_don_data):
-        if hd_data['TrangThaiTT'] == 1:
-            selected_service = sample(hd_data['chi_tiet'], 1)[0]
+
+    for dg in danh_gias_chi_tiet:
+    # Tìm đối tượng HoaDon tương ứng
+        hd_obj = next((hd for hd in created_hoa_don if hd.MaHD == dg['MaHD']), None)
+        if hd_obj:
             DanhGia.objects.create(
-                MaKH=created_khach_hang[hd_data['MaKH'] - 1],
-                NoiDung=danh_gia_noi_dung[i % len(danh_gia_noi_dung)],
-                DiemDanhGia=randint(1, 5),
-                MaDV=created_dich_vu[selected_service['MaDV'] - 1],
-                MaHD=created_hoa_don[i]
+                MaKH=dg['MaKH'],
+                NgayDanhGia=dg['NgayDanhGia'],
+                NoiDung=dg['NoiDung'],
+                DiemDanhGia=dg['DiemDanhGia'],
+                MaDV=dg['MaDV'],
+                MaHD=hd_obj
             )
 
 if __name__ == '__main__':
