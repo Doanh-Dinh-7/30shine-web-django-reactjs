@@ -44,19 +44,19 @@ def create_sample_data():
     khach_hang = [
         {
             'user': created_users[0],
-            'HoTenKH': 'Nguyễn Trường Giang',
-            'SDT': '0914309797',
-            'Email': 'giang@gmail.com',
-            'DiaChi': '04 Mỹ An 7 - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
-            'AnhDaiDien': 'https://res.cloudinary.com/de3vts9dv/image/upload/v1748193677/xv4wywqna7ji686plj8p.jpg'
+            'HoTenKH': 'Hoàng Văn Anh',
+            'SDT': '0914555797',
+            'Email': 'anhg@gmail.com',
+            'DiaChi': '04 An Thượng - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
+            'AnhDaiDien': 'https://res.cloudinary.com/dikvlwfc5/image/upload/v1748256048/ac3snnvtnqglzitpo3ru.jpg'
         },
         {
             'user': created_users[1],
             'HoTenKH': 'Lê Đức Nhân',
             'SDT': '0914303897',
             'Email': 'nhan@gmail.com',
-            'DiaChi': '14 Mỹ An 3 - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
-            'AnhDaiDien': 'https://res.cloudinary.com/de3vts9dv/image/upload/v1748193646/k1ymuierlisa4dzk3pg8.jpg'
+            'DiaChi': '14 An Thượng 3 - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
+            'AnhDaiDien': 'https://res.cloudinary.com/dikvlwfc5/image/upload/v1748256254/nsw8ptkllvtkp08wzibm.jpg'
         }
     ]
 
@@ -75,16 +75,16 @@ def create_sample_data():
     nhan_vien = [
         {
             'user': created_users[2],
-            'HoTenNV': 'Trương Thái Bảo',
-            'SDT': '0914306897',
-            'DiaChi': '03 Nguyễn Văn Linh - Hòa Cường Nam - Hải Châu - Đà Nẵng',
+            'HoTenNV': 'Nguyễn Hoàng Sang',
+            'SDT': '091431237',
+            'DiaChi': '03 Nguyễn Hoàng - Hòa Cường Nam - Hải Châu - Đà Nẵng',
             'GioiTinh': 'Nam'
         },
         {
             'user': created_users[3],
-            'HoTenNV': 'Hồ Văn Trường',
-            'SDT': '0914306557',
-            'DiaChi': '33 Mỹ An 1 - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
+            'HoTenNV': 'Ngô Văn Cường',
+            'SDT': '091851557',
+            'DiaChi': '33 Mỹ An 5 - Mỹ An - Ngũ Hành Sơn - Đà Nẵng',
             'GioiTinh': 'Nam'
         }
     ]
@@ -103,39 +103,18 @@ def create_sample_data():
     # Create DichVu
     dich_vu = [
         {
-            'TenDV': 'Cắt tóc nam',
-            'MoTa': 'Cắt tóc nam nhanh gọn, tạo kiểu theo yêu cầu',
-            'GiaTien': Decimal('100000.00'),
+            'TenDV': 'Ép Side',
+            'MoTa': 'Ép Side tóc cho nam, tạo kiểu gọn gàng',
+            'GiaTien': Decimal('300000.00'),
             'ThoiGianLamDV': 30,
-            'AnhDaiDien': 'https://res.cloudinary.com/de3vts9dv/image/upload/v1748192502/mi2twthc5sdqboc50msr.jpg'
+            'AnhDaiDien': 'https://res.cloudinary.com/dikvlwfc5/image/upload/v1748265703/zrxhgngxru9iimtpzkc2.jpg'
         },
         {
-            'TenDV': 'Cắt tóc nữ',
-            'MoTa': 'Cắt tóc nữ, tạo kiểu thời trang',
+            'TenDV': 'Baby Light',
+            'MoTa': 'Nhuộm tóc highlight tạo hiệu ứng tự nhiên',
             'GiaTien': Decimal('150000.00'),
             'ThoiGianLamDV': 45,
-            'AnhDaiDien': 'https://res.cloudinary.com/de3vts9dv/image/upload/v1748194666/ydefmyvjcz2cxadle2ah.jpg'
-        },
-        {
-            'TenDV': 'Nhuộm tóc (Tẩy)',
-            'MoTa': 'Tẩy tóc và nhuộm những màu tóc tẩy hot trend 2025',
-            'GiaTien': Decimal('500000.00'),
-            'ThoiGianLamDV': 120,
-            'AnhDaiDien': 'https://res.cloudinary.com/de3vts9dv/image/upload/v1748192502/mi2twthc5sdqboc50msr.jpg'
-        },
-        {
-            'TenDV': 'Uốn tóc',
-            'MoTa': 'Uốn tóc tạo kiểu, giữ nếp lâu dài',
-            'GiaTien': Decimal('400000.00'),
-            'ThoiGianLamDV': 90,
-            'AnhDaiDien': 'https://res.cloudinary.com/de3vts9dv/image/upload/v1748194666/ydefmyvjcz2cxadle2ah.jpg'
-        },
-        {
-            'TenDV': 'Gội đầu',
-            'MoTa': 'Gội đầu sạch sẽ, massage thư giãn',
-            'GiaTien': Decimal('80000.00'),
-            'ThoiGianLamDV': 30,
-            'AnhDaiDien': 'https://res.cloudinary.com/de3vts9dv/image/upload/v1748194666/ydefmyvjcz2cxadle2ah.jpg'
+            'AnhDaiDien': 'https://res.cloudinary.com/dikvlwfc5/image/upload/v1748265878/ctdfdvmzmwbvwtjobevz.jpg'
         }
     ]
 
@@ -159,7 +138,7 @@ def create_sample_data():
 
     # Create LichHen
     lich_hen = []
-    gio_bat_dau_list = ['08:00', '10:00', '12:00', '14:00', '17:00']
+    gio_bat_dau_list = ['08:30', '10:30', '12:00', '14:40', '16:20']
     ghi_chu_list = [
         "Cắt tóc và tư vấn kiểu mới",
         "Nhuộm tóc màu thời trang",
@@ -191,105 +170,33 @@ def create_sample_data():
     # Create HoaDon and ChiTietHoaDon
     hoa_don_data = [
         {
-            'MaHD': 1, 'MaKH': 1, 'TongTien': Decimal('180000.00'), 
+            'MaHD': 1, 'MaKH': 1, 'TongTien': Decimal('300000.00'), 
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 10, 0)), 
-            'SoTienThanhToan': Decimal('180000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 2, 
+            'SoTienThanhToan': Decimal('180000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 0, 
             'GhiChu': 'Khách hàng thường xuyên, cắt tóc và gội đầu',
             'chi_tiet': [
-                {'MaDV': 1, 'ThanhTien': Decimal('100000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
+                {'MaDV': 1, 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1}
             ]
         },
         {
-            'MaHD': 2, 'MaKH': 1, 'TongTien': Decimal('580000.00'), 
+            'MaHD': 2, 'MaKH': 1, 'TongTien': Decimal('150000.00'), 
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 12, 0)), 
             'SoTienThanhToan': Decimal('580000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0, 
             'GhiChu': 'Nhuộm màu nâu hạt dẻ, gội sạch',
             'chi_tiet': [
-                {'MaDV': 3, 'ThanhTien': Decimal('500000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
+                {'MaDV': 2, 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
             ]
         },
         {
-            'MaHD': 3, 'MaKH': 1, 'TongTien': Decimal('550000.00'), 
+            'MaHD': 3, 'MaKH': 2, 'TongTien': Decimal('300000.00'), 
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 14, 0)), 
-            'SoTienThanhToan': Decimal('550000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1, 
+            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1, 
             'GhiChu': 'Nhuộm tóc và cắt tóc nữ',
             'chi_tiet': [
-                {'MaDV': 3, 'ThanhTien': Decimal('500000.00'), 'SoLuong': 1},
-                {'MaDV': 2, 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
-            ]
-        },
-        {
-            'MaHD': 4, 'MaKH': 1, 'TongTien': Decimal('480000.00'), 
-            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 16, 0)), 
-            'SoTienThanhToan': Decimal('480000.00'), 'HinhThucThanhToan': 2, 'TrangThaiTT': 0, 'TrangThaiHT': 0, 
-            'GhiChu': 'Uốn tóc và gội đầu',
-            'chi_tiet': [
-                {'MaDV': 4, 'ThanhTien': Decimal('400000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
-            ]
-        },
-        {
-            'MaHD': 5, 'MaKH': 1, 'TongTien': Decimal('180000.00'), 
-            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 26, 9, 0)), 
-            'SoTienThanhToan': Decimal('180000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 2, 
-            'GhiChu': 'Cắt tóc nam và gội đầu',
-            'chi_tiet': [
-                {'MaDV': 1, 'ThanhTien': Decimal('100000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
-            ]
-        },
-        {
-            'MaHD': 6, 'MaKH': 1, 'TongTien': Decimal('650000.00'), 
-            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 26, 11, 0)), 
-            'SoTienThanhToan': Decimal('650000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1, 
-            'GhiChu': 'Nhuộm tóc và cắt tóc nữ',
-            'chi_tiet': [
-                {'MaDV': 3, 'ThanhTien': Decimal('500000.00'), 'SoLuong': 1},
-                {'MaDV': 2, 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
-            ]
-        },
-        {
-            'MaHD': 7, 'MaKH': 2, 'TongTien': Decimal('480000.00'), 
-            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 26, 13, 0)), 
-            'SoTienThanhToan': Decimal('480000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 0, 
-            'GhiChu': 'Uốn tóc và gội đầu',
-            'chi_tiet': [
-                {'MaDV': 4, 'ThanhTien': Decimal('400000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
-            ]
-        },
-        {
-            'MaHD': 8, 'MaKH': 1, 'TongTien': Decimal('230000.00'), 
-            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 26, 15, 0)), 
-            'SoTienThanhToan': Decimal('230000.00'), 'HinhThucThanhToan': 2, 'TrangThaiTT': 1, 'TrangThaiHT': 2, 
-            'GhiChu': 'Cắt tóc nữ và gội đầu',
-            'chi_tiet': [
-                {'MaDV': 2, 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
-            ]
-        },
-        {
-            'MaHD': 9, 'MaKH': 2, 'TongTien': Decimal('180000.00'), 
-            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 26, 17, 0)), 
-            'SoTienThanhToan': Decimal('180000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1, 
-            'GhiChu': 'Cắt tóc nam nhanh gọn',
-            'chi_tiet': [
-                {'MaDV': 1, 'ThanhTien': Decimal('100000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
-            ]
-        },
-        {
-            'MaHD': 10, 'MaKH': 1, 'TongTien': Decimal('580000.00'), 
-            'NgayLapHD': timezone.make_aware(datetime(2025, 5, 27, 10, 0)), 
-            'SoTienThanhToan': Decimal('580000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 0, 'TrangThaiHT': 0, 
-            'GhiChu': 'Nhuộm tóc và gội đầu',
-            'chi_tiet': [
-                {'MaDV': 3, 'ThanhTien': Decimal('500000.00'), 'SoLuong': 1},
-                {'MaDV': 5, 'ThanhTien': Decimal('80000.00'), 'SoLuong': 1}
+                {'MaDV': 1, 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1}
             ]
         }
+        
     ]
 
     created_hoa_don = []
