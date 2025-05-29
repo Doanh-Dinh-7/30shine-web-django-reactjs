@@ -4,7 +4,7 @@
 
 **Tác giả:** Đinh Sỹ Quốc Doanh, Nguyễn Anh Tú, Nguyễn Hoàng, Lê Đức Kiên, Lê Nguyễn Ngọc Tú Hương.
 
-"Deployment platform"[https://30shine-web-django-reactjs.vercel.app/]
+Deployment platform Vercel: [30Shine website](https://30shine-web-django-reactjs.vercel.app)
 
 ## 1. Cấu trúc thư mục dự án
 
