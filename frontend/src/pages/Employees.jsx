@@ -87,8 +87,8 @@ const Employees = () => {
     try {
       if (selectedEmployee) {
         // Cập nhật nhân viên
-        // Assuming API PUT endpoint is /api/nhan-vien/{id}/
-        await axios.put(
+        // Assuming API PATCH endpoint is /api/nhan-vien/{id}/
+        await axios.patch(
           `http://127.0.0.1:8000/api/nhan-vien/${selectedEmployee.MaNV}/`,
           formData // Assuming formData structure matches API expected input
         );

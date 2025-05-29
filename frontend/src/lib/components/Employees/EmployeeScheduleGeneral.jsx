@@ -105,7 +105,7 @@ const EmployeeScheduleGeneral = () => {
           if (!empMap[maNV]) {
             empMap[maNV] = {
               MaNV: maNV,
-              TenNV: item.TenNV || item.MaNV,
+              TenNV: item.ten_nhan_vien || item.MaNV,
               color: colorMap[colorIdx % colorMap.length].color,
               textColor: colorMap[colorIdx % colorMap.length].textColor,
               schedule: {},
@@ -134,6 +134,8 @@ const EmployeeScheduleGeneral = () => {
       ignore = true;
     };
   }, [stateWeek]);
+
+  useEffect(() => {});
 
   // Reload lại tuần hiện tại
   const reloadSchedule = () => {

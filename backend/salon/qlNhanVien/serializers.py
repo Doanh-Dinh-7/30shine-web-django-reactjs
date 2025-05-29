@@ -32,6 +32,18 @@ class NhanVienSerializer(serializers.ModelSerializer):
         return instance
 
 class LichLamViecSerializer(serializers.ModelSerializer):
+    ten_nhan_vien = serializers.CharField(source='MaNV.HoTenNV', read_only=True)
+
     class Meta:
         model = LichLamViec
-        fields = ['MaLLV', 'MaNV', 'NgayLam', 'GioBatDau', 'GioKetThuc'] 
+        fields = ['MaLLV', 'MaNV', 'NgayLam', 'GioBatDau', 'GioKetThuc', 'ten_nhan_vien']
+
+    def create(self, validated_data):
+        lichlamviec = LichLamViec.objects.create(**validated_data)
+        return lichlamviec
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance 

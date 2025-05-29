@@ -92,7 +92,7 @@ const EmployeeTable = ({
                 </Td>
                 <Td>{employee.MaNV}</Td>
                 <Td>{employee.HoTenNV}</Td>
-                <Td>{employee.GioiTinh === 0 ? "Nam" : "Nữ"}</Td>
+                <Td>{employee.GioiTinh}</Td>
                 <Td>{employee.DiaChi}</Td>
                 <Td>{employee.SDT}</Td>
                 <Td>

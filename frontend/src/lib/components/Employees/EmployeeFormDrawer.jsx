@@ -40,7 +40,7 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
       setFormData({
         MaNV: employee.MaNV || "",
         HoTenNV: employee.HoTenNV || "",
-        GioiTinh: employee.GioiTinh === 0 ? "Nam" : "Nữ",
+        GioiTinh: employee.GioiTinh || "Nam",
         DiaChi: employee.DiaChi || "",
         SDT: employee.SDT || "",
         Email: employee.Email || "",
@@ -85,17 +85,14 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
       const submitData = {
         MaNV: formData.MaNV,
         HoTenNV: formData.HoTenNV,
-        GioiTinh:
-          formData.GioiTinh === "Nam"
-            ? 0
-            : formData.GioiTinh === "Nữ"
-            ? 1
-            : null,
+        GioiTinh: formData.GioiTinh,
         DiaChi: formData.DiaChi,
         SDT: formData.SDT,
         Email: formData.Email,
         user: {
-          username: formData.username,
+          ...(!employee || formData.username !== employee.user?.username
+            ? { username: formData.username }
+            : {}),
           is_superuser: formData.is_superuser,
           ...(formData.password && { password: formData.password }),
           ...(employee?.user?.id && { id: employee.user.id }),
