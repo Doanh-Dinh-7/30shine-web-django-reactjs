@@ -325,7 +325,7 @@ const InvoiceCreateDrawer = ({ isOpen, onClose, onSubmit }) => {
                           placeholder="Thành tiền"
                           type="number"
                           step="0.01"
-                          value={dv.ThanhTien}
+                          value={Number(dv.ThanhTien).toLocaleString("vi-VN")}
                           isReadOnly
                           bg="gray.100"
                         />

@@ -24,17 +24,20 @@ const CustomerAppointments = () => {
 
   useEffect(() => {
     const fetchAppointments = async () => {
+      const maKH = JSON.parse(localStorage.getItem("user"))?.MaKH;
       try {
         setLoading(true);
-        console.log('Fetching appointments for customer ID: 1');
-        const response = await axios.get("http://localhost:8000/api/lich-hen/by-khach-hang/?ma_kh=1");
-        console.log('API Response:', response.data);
+        const response = await axios.get(
+          `http://localhost:8000/api/lich-hen/by-khach-hang/?ma_kh=${maKH}`
+        );
+        console.log("API Response:", response.data);
         setAppointments(response.data);
       } catch (error) {
-        console.error('Error fetching appointments:', error);
+        console.error("Error fetching appointments:", error);
         toast({
           title: "Lỗi khi tải dữ liệu",
-          description: error.response?.data?.detail || "Không thể kết nối đến máy chủ",
+          description:
+            error.response?.data?.detail || "Không thể kết nối đến máy chủ",
           status: "error",
           duration: 3000,
           isClosable: true,
@@ -52,9 +55,11 @@ const CustomerAppointments = () => {
 
   const handleDelete = async (maLH) => {
     try {
-      console.log('Deleting appointment with ID:', maLH);
-      const response = await axios.delete(`http://localhost:8000/api/lich-hen/${maLH}/`);
-      console.log('Delete response:', response);
+      console.log("Deleting appointment with ID:", maLH);
+      const response = await axios.delete(
+        `http://localhost:8000/api/lich-hen/${maLH}/`
+      );
+      console.log("Delete response:", response);
       setAppointments(appointments.filter((app) => app.MaLH !== maLH));
       toast({
         title: "Xóa thành công",
@@ -64,7 +69,7 @@ const CustomerAppointments = () => {
         isClosable: true,
       });
     } catch (error) {
-      console.error('Error deleting appointment:', error);
+      console.error("Error deleting appointment:", error);
       toast({
         title: "Lỗi khi xóa",
         description: error.response?.data?.detail || "Không thể xóa lịch hẹn",
@@ -83,9 +88,16 @@ const CustomerAppointments = () => {
   const filteredAppointments = appointments
     .filter(
       (appointment) =>
-        (appointment.TenKH?.toLowerCase?.().includes(searchQuery.toLowerCase()) || "") ||
-        (appointment.SDT?.includes(searchQuery) || "") ||
-        (appointment.LoaiDV?.toLowerCase?.().includes(searchQuery.toLowerCase()) || "")
+        appointment.TenKH?.toLowerCase?.().includes(
+          searchQuery.toLowerCase()
+        ) ||
+        "" ||
+        appointment.SDT?.includes(searchQuery) ||
+        "" ||
+        appointment.LoaiDV?.toLowerCase?.().includes(
+          searchQuery.toLowerCase()
+        ) ||
+        ""
     )
     .filter(
       (appointment) =>

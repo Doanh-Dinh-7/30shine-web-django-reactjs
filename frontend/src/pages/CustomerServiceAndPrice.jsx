@@ -143,7 +143,7 @@ const CustomerServiceAndPrice = () => {
                     {service.ThoiGianLamDV} Phút
                   </Button>
                   <Text fontSize="lg" fontWeight="bold" color="blue.700">
-                    {service.GiaTien}
+                    {Number(service.GiaTien).toLocaleString("vi-VN")} VNĐ
                   </Text>
                 </Flex>
                 <Button

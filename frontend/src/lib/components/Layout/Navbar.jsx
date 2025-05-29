@@ -260,7 +260,11 @@ const Navbar = ({ onOpenRegister }) => {
                 <Flex align="center">
                   <Avatar
                     size="sm"
-                    src="/placeholder.svg?height=40&width=40"
+                    src={
+                      localStorage.getItem("user")
+                        ? JSON.parse(localStorage.getItem("user"))?.AnhDaiDien
+                        : "/placeholder.svg?height=40&width=40"
+                    }
                     mr="2"
                   />
                   <Box display={{ base: "none", md: "block" }}>
