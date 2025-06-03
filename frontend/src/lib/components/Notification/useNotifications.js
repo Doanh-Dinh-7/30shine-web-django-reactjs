@@ -96,6 +96,9 @@ export const useNotifications = () => {
     }
   }, []);
 
+  // Use WebSocket to listen for new notifications
+  useNotificationWebSocket(addNotification);
+
   return {
     notifications,
     hasUnread,

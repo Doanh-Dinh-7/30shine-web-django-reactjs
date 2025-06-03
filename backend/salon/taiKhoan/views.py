@@ -168,7 +168,7 @@ class DashboardAppointmentView(APIView): # Nhân viên hiệu suất
         completed_appointments = LichHen.objects.filter(NgayDatLich=today, TrangThai=1).count()
         top_staff = (NhanVien.objects
             .annotate(total=Count('lich_lam_viec'))
-            .order_by('-total')[:3]
+            .order_by('-total')[:5]
             .values('HoTenNV', 'total'))
         return Response({
             'total_appointments': total_appointments,
