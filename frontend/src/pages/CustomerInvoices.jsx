@@ -545,6 +545,7 @@ const CustomerInvoices = () => {
         onClose={onRefundClose}
         invoice={selectedInvoice}
         onRefundSuccess={fetchInvoicesAndRatings} // Pass the new fetch function
+        setInvoices={setInvoices}
       />
     </Box>
   );

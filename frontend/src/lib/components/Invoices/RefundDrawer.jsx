@@ -54,6 +54,8 @@ const RefundDrawer = ({ isOpen, onClose, invoice, setInvoices }) => {
       setLyDoKhachH("");
       setGhiChu("");
     } catch (err) {
+      console.log(err);
+      
       toast({
         title: "Lỗi",
         description: "Không thể gửi yêu cầu hoàn tiền.",
