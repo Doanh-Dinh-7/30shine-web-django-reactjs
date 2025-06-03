@@ -762,7 +762,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'nguyenanhduc', 'TongTien': Decimal('600000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 2, 11, 15)),
-            'SoTienThanhToan': Decimal('600000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('600000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 0,
             'GhiChu': 'Cắt tóc, nhuộm highlight, gội đầu.',
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc cơ bản', 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1},
@@ -772,7 +772,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'tranbuiquocan', 'TongTien': Decimal('150000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 3, 13, 0)),
-            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'GhiChu': 'Gội đầu dưỡng sinh.',
             'chi_tiet': [
                 {'dv_ten': 'Massage vai gáy', 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
@@ -781,7 +781,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'tranbuiquocan', 'TongTien': Decimal('450000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 4, 15, 45)),
-            'SoTienThanhToan': Decimal('450000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('450000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 0,
             'GhiChu': 'Cắt tóc, tạo kiểu, massage.',
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc cơ bản', 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1},
@@ -800,7 +800,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'tranbuiquocan', 'TongTien': Decimal('600000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 6, 19, 10)),
-            'SoTienThanhToan': Decimal('600000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('600000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 0, 'TrangThaiHT': 0,
             'GhiChu': 'Cắt tóc, massage, tạo kiểu.',
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc cơ bản', 'ThanhTien': Decimal('300000.00'), 'SoLuong': 2}
@@ -814,7 +814,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'nguyentruonggiang', 'TongTien': Decimal('150000'),
             'NgayLapHD': timezone.make_aware(datetime(2024, 6, 5)),
             'SoTienThanhToan': Decimal('150000'), 'HinhThucThanhToan': 1,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Gội đầu dưỡng sinh', 'ThanhTien': Decimal('150000'), 'SoLuong': 1}
             ]
@@ -823,7 +823,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'leducnhan', 'TongTien': Decimal('500000'),
             'NgayLapHD': timezone.make_aware(datetime(2024, 6, 7)),
             'SoTienThanhToan': Decimal('500000'), 'HinhThucThanhToan': 0,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Nhuộm tóc (Tẩy)', 'ThanhTien': Decimal('500000'), 'SoLuong': 1}
             ]
@@ -833,7 +833,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'NgayLapHD': timezone.make_aware(datetime(2024, 6, 8)),
             'SoTienThanhToan': Decimal('650000'), 'HinhThucThanhToan': 2,
             'ThoiGianThanhToan': timezone.make_aware(datetime(2024, 6, 8, 14, 0, 0)),
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Nhuộm tóc (Tẩy)', 'ThanhTien': Decimal('500000'), 'SoLuong': 1},
                 {'dv_ten': 'Gội đầu dưỡng sinh', 'ThanhTien': Decimal('150000'), 'SoLuong': 1}
@@ -847,7 +847,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'phamminhhoang', 'TongTien': Decimal('200000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 10, 0)),
             'SoTienThanhToan': Decimal('200000.00'), 'HinhThucThanhToan': 1,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc nam cao cấp', 'ThanhTien': Decimal('200000.00'), 'SoLuong': 1}
             ]
@@ -856,7 +856,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'nguyenvananh', 'TongTien': Decimal('800000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 12, 0)),
             'SoTienThanhToan': Decimal('800000.00'), 'HinhThucThanhToan': 0,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Uốn tóc nam', 'ThanhTien': Decimal('800000.00'), 'SoLuong': 1}
             ]
@@ -865,7 +865,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'phamminhhoang', 'TongTien': Decimal('1000000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 25, 14, 0)),
             'SoTienThanhToan': Decimal('1000000.00'), 'HinhThucThanhToan': 2,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc nam cao cấp', 'ThanhTien': Decimal('200000.00'), 'SoLuong': 1},
                 {'dv_ten': 'Uốn tóc nam', 'ThanhTien': Decimal('800000.00'), 'SoLuong': 1}
@@ -875,7 +875,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'nguyenvananh', 'TongTien': Decimal('400000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 26, 9, 0)),
             'SoTienThanhToan': Decimal('400000.00'), 'HinhThucThanhToan': 1,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc nam cao cấp', 'ThanhTien': Decimal('200000.00'), 'SoLuong': 2}
             ]
@@ -884,7 +884,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'phamminhhoang', 'TongTien': Decimal('1600000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 26, 15, 0)),
             'SoTienThanhToan': Decimal('1600000.00'), 'HinhThucThanhToan': 0,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Uốn tóc nam', 'ThanhTien': Decimal('800000.00'), 'SoLuong': 2}
             ]
@@ -893,7 +893,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'nguyenvananh', 'TongTien': Decimal('600000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 27, 11, 0)),
             'SoTienThanhToan': Decimal('600000.00'), 'HinhThucThanhToan': 1,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc nam cao cấp', 'ThanhTien': Decimal('200000.00'), 'SoLuong': 3}
             ]
@@ -902,7 +902,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'phamminhhoang', 'TongTien': Decimal('2400000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 27, 16, 0)),
             'SoTienThanhToan': Decimal('2400000.00'), 'HinhThucThanhToan': 2,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Uốn tóc nam', 'ThanhTien': Decimal('800000.00'), 'SoLuong': 3}
             ]
@@ -911,7 +911,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
             'kh_username': 'nguyenvananh', 'TongTien': Decimal('3000000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 5, 28, 14, 0)),
             'SoTienThanhToan': Decimal('3000000.00'), 'HinhThucThanhToan': 0,
-            'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc nam cao cấp', 'ThanhTien': Decimal('200000.00'), 'SoLuong': 3},
                 {'dv_ten': 'Uốn tóc nam', 'ThanhTien': Decimal('800000.00'), 'SoLuong': 3}
@@ -924,7 +924,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'hoangvananh', 'TongTien': Decimal('150000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 1, 9, 30)),
-            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Massage vai gáy', 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
             ]
@@ -932,7 +932,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'hoangvananh', 'TongTien': Decimal('300000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 2, 11, 15)),
-            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc cơ bản', 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1}
             ]
@@ -940,7 +940,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
          {
             'kh_username': 'leducnhan', 'TongTien': Decimal('150000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 3, 13, 0)),
-            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Massage vai gáy', 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
             ]
@@ -948,7 +948,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'leducnhan', 'TongTien': Decimal('300000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 4, 15, 45)),
-            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc cơ bản', 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1}
             ]
@@ -956,7 +956,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'hoangvananh', 'TongTien': Decimal('150000.00'),
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 5, 17, 20)),
-            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
              'chi_tiet': [
                 {'dv_ten': 'Massage vai gáy', 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1}
             ]
@@ -969,7 +969,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'hoangvananh', 'TongTien': Decimal('150000.00'), # Giá tiền ước tính dựa trên Massage vai gáy
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 1, 9, 30)),
-            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Massage vai gáy', 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1} # Giá tiền và số lượng ước tính
             ]
@@ -977,7 +977,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'hoangvananh', 'TongTien': Decimal('300000.00'), # Giá tiền ước tính dựa trên Cắt tóc cơ bản
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 2, 11, 15)),
-            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc cơ bản', 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1} # Giá tiền và số lượng ước tính
             ]
@@ -985,7 +985,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
          {
             'kh_username': 'leducnhan', 'TongTien': Decimal('150000.00'), # Giá tiền ước tính
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 3, 13, 0)), # Dựa trên hoa_don_details của Đánh giá
-            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Massage vai gáy', 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1} # Giá tiền và số lượng ước tính
             ]
@@ -993,7 +993,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'leducnhan', 'TongTien': Decimal('300000.00'), # Giá tiền ước tính
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 4, 15, 45)), # Dựa trên hoa_don_details của Đánh giá
-            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('300000.00'), 'HinhThucThanhToan': 1, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
             'chi_tiet': [
                 {'dv_ten': 'Cắt tóc cơ bản', 'ThanhTien': Decimal('300000.00'), 'SoLuong': 1} # Giá tiền và số lượng ước tính
             ]
@@ -1001,7 +1001,7 @@ def create_hoa_don_and_chi_tiet(khach_hang, dich_vu):
         {
             'kh_username': 'hoangvananh', 'TongTien': Decimal('150000.00'), # Giá tiền ước tính
             'NgayLapHD': timezone.make_aware(datetime(2025, 6, 5, 17, 20)), # Dựa trên hoa_don_details cuối cùng của Kiên
-            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 1,
+            'SoTienThanhToan': Decimal('150000.00'), 'HinhThucThanhToan': 0, 'TrangThaiTT': 1, 'TrangThaiHT': 0,
              'chi_tiet': [
                 {'dv_ten': 'Massage vai gáy', 'ThanhTien': Decimal('150000.00'), 'SoLuong': 1} # Giá tiền và số lượng ước tính
             ]
