@@ -154,10 +154,13 @@ const EmployeeScheduleGeneral = () => {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const res = await fetch("/api/nhan-vien/lich-lam-viec/import-csv/", {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/nhan-vien/lich-lam-viec/import-csv/",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
       if (res.ok) {
         alert("Import lịch làm việc thành công!");
         reloadSchedule();

@@ -391,6 +391,7 @@ const Home = () => {
                 size="md"
                 fontWeight="bold"
                 _hover={{ bg: "#1E40AF" }}
+                onClick={() => navigate("/services")}
               >
                 Tìm hiểu thêm
               </Button>
@@ -432,6 +433,7 @@ const Home = () => {
                   size="sm"
                   fontWeight="bold"
                   _hover={{ bg: "#1E40AF" }}
+                  onClick={() => navigate("/services")}
                 >
                   Tìm hiểu thêm
                 </Button>
@@ -471,6 +473,7 @@ const Home = () => {
                   size="sm"
                   fontWeight="bold"
                   _hover={{ bg: "#1E40AF" }}
+                  onClick={() => navigate("/services")}
                 >
                   Tìm hiểu thêm
                 </Button>
@@ -513,6 +516,7 @@ const Home = () => {
                   size="sm"
                   fontWeight="bold"
                   _hover={{ bg: "#1E40AF" }}
+                  onClick={() => navigate("/services")}
                 >
                   Tìm hiểu thêm
                 </Button>
@@ -552,6 +556,7 @@ const Home = () => {
                   size="sm"
                   fontWeight="bold"
                   _hover={{ bg: "#1E40AF" }}
+                  onClick={() => navigate("/services")}
                 >
                   Tìm hiểu thêm
                 </Button>
@@ -601,6 +606,7 @@ const Home = () => {
                   size="sm"
                   fontWeight="bold"
                   _hover={{ bg: "#1E40AF" }}
+                  onClick={() => navigate("/services")}
                 >
                   Tìm hiểu thêm
                 </Button>
