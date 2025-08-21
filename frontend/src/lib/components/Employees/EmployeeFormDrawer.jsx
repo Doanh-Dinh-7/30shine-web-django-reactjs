@@ -83,19 +83,13 @@ const EmployeeFormDrawer = ({ isOpen, onClose, employee, onSubmit }) => {
     e.preventDefault();
     try {
       const submitData = {
-        MaNV: formData.MaNV,
         HoTenNV: formData.HoTenNV,
         GioiTinh: formData.GioiTinh,
         DiaChi: formData.DiaChi,
         SDT: formData.SDT,
-        Email: formData.Email,
         user: {
-          ...(!employee || formData.username !== employee.user?.username
-            ? { username: formData.username }
-            : {}),
-          is_superuser: formData.is_superuser,
-          ...(formData.password && { password: formData.password }),
-          ...(employee?.user?.id && { id: employee.user.id }),
+          username: formData.username,
+          ...(formData.Email && { email: formData.Email }),
         },
       };
 
